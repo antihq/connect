@@ -1,99 +1,73 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased">
     <head>
-        @include('partials.head')
+        @include('partials.head', ['title' => 'Launch your marketplace within hours, or even minutes'])
     </head>
     <body>
-        <flux:header container class="[&>div]:max-w-2xl! min-h-18">
-            <flux:brand href="route('dashboard')" name="Flowpilot" class="[&>div]:first:hidden" />
+        <flux:main container>
+            <h1
+                class="mt-16 text-4xl font-medium tracking-tighter text-pretty text-zinc-950 data-dark:text-white sm:text-6xl"
+            >
+                Launch your marketplace within hours, or even minutes
+            </h1>
+            <div class="mt-16 grid grid-cols-1 gap-8 pb-24 lg:grid-cols-[15rem_1fr] xl:grid-cols-[15rem_1fr_15rem]">
+                <div class="flex flex-wrap items-center gap-8 max-lg:justify-between lg:flex-col lg:items-start">
+                    <a href="https://x.com/oliverservinX" class="flex items-center gap-3">
+                        <img
+                            alt=""
+                            class="aspect-square size-6 rounded-full object-cover"
+                            src="/avatar.jpg"
+                        />
+                        <div class="text-sm/5 text-zinc-700">Oliver Servín</div>
+                    </a>
+                </div>
+                <div class="max-w-2xl text-zinc-700 xl:mx-auto">
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        Do you want to create your own marketplace for rentals, service bookings, product sales, or
+                        service offerings, but don’t want to hire a software development agency or freelancer and spend
+                        too much money? You need a platform that enables you to launch your marketplace idea within
+                        hours, or even minutes.
+                    </p>
 
-            <flux:spacer />
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        I’m Oliver, a software developer, and I’m building a marketplace platform designed to save you
+                        time and money. With this platform, you can quickly launch a marketplace for bookings, product
+                        sales, or a service directory, and start monetizing almost immediately.
+                    </p>
 
-            <div class="flex gap-2">
-                @guest
-                    <flux:button :href="route('login')" variant="ghost" size="sm">{{ __('Sign in') }}</flux:button>
-                    <flux:button :href="route('register')" size="sm">{{ __('Get Started') }}</flux:button>
-                @else
-                    <flux:button :href="route('dashboard')" size="sm">{{ __('Dashboard') }}</flux:button>
-                @endguest
-            </div>
-        </flux:header>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        The platform is easy for you, your providers, and customers to use. You can effortlessly manage
+                        your marketplace, providers can publish their listings easily, and customers can book services
+                        or buy products without hassle.
+                    </p>
 
-        <flux:main class="[:where(&)]:max-w-2xl!" container>
-            <flux:heading level="1" size="xl" class="font-serif">Supercharge Your Team’s Productivity</flux:heading>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        The marketplace relies on trust, offering messaging and review systems for both customers and
+                        providers to ensure quality products and reliable service.
+                    </p>
 
-            <flux:text variant="strong" size="lg" class="mt-6">
-                Effortlessly automate your workflows and collaborate in real time, so your team can focus on what matters most and achieve more together.
-            </flux:text>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        As the marketplace owner, you’ll benefit from a monetization system that lets you earn a
+                        commission on every booking or purchase made through your marketplace.
+                    </p>
 
-            <flux:button :href="route('register')" variant="primary" class="mt-6">{{ __('Get Started') }}</flux:button>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        The platform offers flexibility, allowing you to define different user types and separate
+                        sign-up processes for providers and customers. You can request additional information during
+                        sign-up with custom user fields. Providers can add more details to their listings using custom
+                        listing fields. You can also offer various listing types, so providers can publish bookings or
+                        rental services, products for sale, or service offers.
+                    </p>
 
-            <flux:text variant="strong" size="lg" class="mt-20">
-                This cloud-based solution streamlines your team’s daily operations. It enables you to automate repetitive tasks and centralize project management.
-            </flux:text>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        Design customization is simple, allowing you to adjust the look and feel to match your branding.
+                    </p>
 
-            <flux:text variant="strong" size="lg" class="mt-6">
-                With less time spent on manual processes, your team can focus on delivering results. Every member works more efficiently and stays aligned on shared goals.
-            </flux:text>
-
-            <flux:heading size="lg" level="2" class="font-serif mt-20">Everything You Need, All in One Place</flux:heading>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                At the heart of the platform is a <strong>visual workflow builder</strong> that lets you create, customize, and deploy automated workflows using a simple drag-and-drop interface.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                <strong>Real-time collaboration</strong> is built in, allowing you to share tasks, files, and updates instantly with your team. The solution integrates seamlessly with popular tools such as Slack, Google Workspace, and Trello, making it easy to fit into your existing workflow.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                An intuitive <strong>analytics dashboard</strong> provides insights into productivity, workflow efficiency, and team performance, helping you make data-driven decisions every day.
-            </flux:text>
-
-            <flux:heading size="lg" level="2" class="font-serif mt-20">Get Up and Running in Minutes</flux:heading>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                Getting started is simple. After signing up, you can invite your team and begin building workflows within minutes.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                The platform enables you to automate approvals, notifications, and data entry <strong>without any coding required</strong>. Its user-friendly dashboard keeps everyone on the same page, ensuring that projects move forward smoothly and nothing falls through the cracks.
-            </flux:text>
-
-            <flux:heading size="lg" level="2" class="font-serif mt-20">Unlock Your Team’s Full Potential</flux:heading>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                By automating repetitive tasks, the platform <strong>saves your team valuable time</strong> and reduces manual work.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                Collaboration is enhanced as everyone stays in sync with shared boards and real-time updates. Transparency increases as you monitor progress and quickly identify bottlenecks through powerful analytics.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                Whether you’re a startup or a large enterprise, this solution is designed to scale with your team and support your growth every step of the way.
-            </flux:text>
-
-            <flux:heading size="lg" level="2" class="font-serif mt-20">Start Your Journey Today</flux:heading>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                If you’re ready to transform the way your team works, <strong>sign up for a free 14-day trial</strong> and experience the benefits for yourself.
-            </flux:text>
-
-            <flux:text variant="strong" size="lg" class="mt-6">
-                There’s no credit card required, and you’ll discover how easy it is to boost productivity and streamline your workflow from day one.
-            </flux:text>
-
-            <flux:button :href="route('register')" variant="primary" class="mt-8">
-                Get started
-            </flux:button>
-
-            <div class="mt-64 flex items-center justify-between">
-                <flux:text variant="subtle" class="flex items-center gap-2">
-                    <x-app-logo-icon class="size-4" />
-                    <span><strong>flowpilot</strong>.com</span>
-                </flux:text>
-                <flux:text variant="subtle">by <strong>Oliver Servín</strong></flux:text>
+                    <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                        I’m building this platform, and if you’re interested, you can sign up to receive updates on its
+                        development and be notified when it’s ready to launch.
+                    </p>
+                </div>
             </div>
         </flux:main>
     </body>
