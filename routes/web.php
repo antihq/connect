@@ -3,6 +3,8 @@
 use App\Http\Controllers\OrganizationInvitationAcceptController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\UpdateSubscription;
+use App\Notifications\NewUpdateSubscriberNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -39,6 +41,9 @@ Route::get('subscribe/confirm/{subscription}', function (UpdateSubscription $sub
     }
 
     $subscription->update(['confirmed_at' => now()]);
+
+    Notification::route('mail', config('mail.from.address'))
+        ->notify(new NewUpdateSubscriberNotification($subscription->email));
 
     return redirect()->to(route('home', ['status' => 'Your email has been confirmed!']).'#subscribe');
 })->middleware('signed')->name('subscribe.confirm');

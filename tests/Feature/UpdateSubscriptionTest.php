@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\UpdateSubscription;
+use App\Notifications\NewUpdateSubscriberNotification;
 use App\Notifications\UpdateSubscriptionConfirmationNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
@@ -29,14 +30,24 @@ it('subscribes with valid email and sends confirmation', function () {
 });
 
 it('confirms subscription via signed url', function () {
+    Notification::fake();
+
     $subscription = UpdateSubscription::create(['email' => 'confirmme@example.com']);
     $url = URL::signedRoute('subscribe.confirm', ['subscription' => $subscription->id]);
 
     $response = get($url);
-    $response->assertRedirect(route('home'));
+    $response->assertRedirect(route('home', ['status' => 'Your email has been confirmed!']).'#subscribe');
 
     $subscription = UpdateSubscription::find($subscription->id);
     expect($subscription->confirmed_at)->not->toBeNull();
+
+    Notification::assertSentOnDemand(
+        NewUpdateSubscriberNotification::class,
+        function ($notification, $channels, $notifiable) use ($subscription) {
+            return $notifiable->routes['mail'] === config('mail.from.address')
+                && $notification->subscriberEmail === $subscription->email;
+        }
+    );
 });
 
 it('shows error for invalid email', function () {
