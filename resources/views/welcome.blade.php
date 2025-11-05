@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased bg-white">
     <head>
         @include('partials.head', ['title' => 'Launch your marketplace within hours, or even minutes'])
     </head>
     <body>
         <flux:main container>
             <h1
-                class="mt-16 text-4xl font-medium tracking-tighter text-pretty text-zinc-950 data-dark:text-white sm:text-6xl"
+                class="mt-16 text-4xl font-medium tracking-tighter text-pretty text-zinc-950 sm:text-6xl"
             >
                 Launch your marketplace within hours, or even minutes
             </h1>
