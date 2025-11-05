@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\OrganizationInvitationAcceptController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
+use App\Models\UpdateSubscription;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-use App\Http\Controllers\OrganizationInvitationAcceptController;
 
 Volt::route('/', 'welcome')->name('home');
 
@@ -31,5 +32,15 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('subscribe/confirm/{subscription}', function (UpdateSubscription $subscription) {
+    if ($subscription->confirmed_at) {
+        return redirect()->to(route('home', ['status' => 'Your email is already confirmed.']).'#subscribe');
+    }
+
+    $subscription->update(['confirmed_at' => now()]);
+
+    return redirect()->to(route('home', ['status' => 'Your email has been confirmed!']).'#subscribe');
+})->middleware('signed')->name('subscribe.confirm');
 
 require __DIR__.'/billing.php';
