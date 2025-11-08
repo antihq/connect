@@ -15,9 +15,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->withPersonalOrganizationAndSubscription()->create([
+        $user = User::factory()->withPersonalOrganizationAndSubscription()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Create a marketplace for the user's first organization
+        $organization = $user->organizations()->first();
+        if ($organization) {
+            $organization->marketplace()->create();
+        }
     }
 }
