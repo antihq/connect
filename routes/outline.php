@@ -30,10 +30,10 @@ Volt::route('/marketplace/1/test/listings/1/edit/photos', 'marketplaces.listings
 
 Volt::route('/marketplace/1/test/account/profile', 'marketplaces.profile');
 
-Volt::route('/marketplace/1/test/account/settings/contact', 'marketplaces.accout.settings.contact');
-Volt::route('/marketplace/1/test/account/settings/password', 'marketplaces.accout.settings.password');
-Volt::route('/marketplace/1/test/account/settings/payout', 'marketplaces.accout.settings.payout');
-Volt::route('/marketplace/1/test/account/settings/payment', 'marketplaces.accout.settings.payment');
+Volt::route('/marketplace/1/test/account/settings/contact', 'marketplaces.account.settings.contact');
+Volt::route('/marketplace/1/test/account/settings/password', 'marketplaces.account.settings.password');
+Volt::route('/marketplace/1/test/account/settings/payout', 'marketplaces.account.settings.payout');
+Volt::route('/marketplace/1/test/account/settings/payment', 'marketplaces.account.settings.payment');
 
 Volt::route('/marketplace/1/test/users/1', 'marketplaces.users.show');
 
@@ -107,7 +107,7 @@ Volt::route('/cp/marketplaces/1/settings/search', 'cp.marketplaces.settings.sear
 Volt::route('/cp/marketplaces/1/settings/transaction', 'cp.marketplaces.settings.transaction');
 Volt::route('/cp/marketplaces/1/settings/commission', 'cp.marketplaces.settings.commission');
 
-Volt::route('/cp/marketplaces/1/settings/paymenents', 'cp.marketplaces.settings.paymenents');
+Volt::route('/cp/marketplaces/1/settings/paymenents', 'cp.marketplaces.settings.payments');
 Volt::route('/cp/marketplaces/1/settings/maps', 'cp.marketplaces.settings.maps');
 Volt::route('/cp/marketplaces/1/settings/analytics', 'cp.marketplaces.settings.analytics');
 Volt::route('/cp/marketplaces/1/settings/google', 'cp.marketplaces.settings.google');
