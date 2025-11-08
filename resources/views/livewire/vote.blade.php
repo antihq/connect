@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Vote;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
-use App\Models\Vote;
 
 new #[Layout('components.layouts.site')] class extends Component
 {
@@ -17,8 +17,16 @@ new #[Layout('components.layouts.site')] class extends Component
     {
         $this->validate([
             'option' => ['required', 'integer', 'between:1,10'],
-            'email' => ['required', 'email', 'unique:votes,email'],
+            'email' => ['required', 'email'],
         ]);
+
+        $vote = Vote::where('email', $this->email)->first();
+        if ($vote) {
+            $vote->option = $this->option;
+            $vote->save();
+
+            return;
+        }
 
         Vote::create([
             'option' => $this->option,
@@ -28,7 +36,5 @@ new #[Layout('components.layouts.site')] class extends Component
 } ?>
 
 <div x-init="$wire.vote" class="flex justify-center">
-    <flux:heading size="xl">
-        Thank you for voting!
-    </flux:heading>
+    <flux:heading size="xl">Thank you for voting!</flux:heading>
 </div>
