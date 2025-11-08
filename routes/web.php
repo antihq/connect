@@ -10,6 +10,8 @@ use Livewire\Volt\Volt;
 
 Volt::route('/', 'welcome')->name('home');
 
+Volt::route('/vote', 'vote');
+
 Route::middleware(['auth', 'verified', EnsureUserIsSubscribed::class])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
