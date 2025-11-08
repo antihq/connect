@@ -57,6 +57,11 @@ class Organization extends Model
         ]);
     }
 
+    public function marketplace()
+    {
+        return $this->hasOne(Marketplace::class);
+    }
+
     protected function casts(): array
     {
         return [
