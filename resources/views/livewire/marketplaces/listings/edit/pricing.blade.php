@@ -1,11 +1,48 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Models\Marketplace;
+use App\Models\Listing;
 
 new class extends Component {
-    //
+    public Marketplace $marketplace;
+    public Listing $listing;
+    public string $price = '';
+
+    public function mount()
+    {
+        $this->price = (string) $this->listing->price;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'price' => ['required', 'numeric', 'min:0'],
+        ];
+    }
+
+    public function update()
+    {
+        $this->validate();
+        $this->listing->update([
+            'price' => $this->price,
+        ]);
+        // Optionally, emit event or redirect
+    }
 }; ?>
 
 <div>
-    //
+    <flux:navbar>
+        <flux:navbar.item :href="route('marketplaces.show', $marketplace)">Home</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.create', $marketplace)">Post a new listings</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.inbox.orders', $marketplace)">Inbox</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.account.listings', $marketplace)">Profile</flux:navbar.item>
+    </flux:navbar>
+
+    <flux:separator class="mb-6" />
+
+    <form class="space-y-6" wire:submit="update">
+        <flux:input label='price' wire:model="price" type="number" step="0.01" min="0" />
+        <flux:button type="submit">save</flux:button>
+    </form>
 </div>

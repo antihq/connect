@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
+            $table->string('address');
+            $table->string('apt_suite')->nullable();
+            $table->decimal('price', 10, 2);
             $table->string('status')->default('draft');
             $table->timestamps();
         });
