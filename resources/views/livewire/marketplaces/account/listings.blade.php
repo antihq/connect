@@ -22,16 +22,8 @@ new class extends Component {
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $missing = [];
-        if (empty($listing->title)) $missing[] = 'title';
-        if (empty($listing->description)) $missing[] = 'description';
-        if (empty($listing->address)) $missing[] = 'address';
-        if (!is_numeric($listing->price) || $listing->price <= 0) $missing[] = 'price';
-        if (empty($listing->weekly_schedule) || !is_array($listing->weekly_schedule) || count($listing->weekly_schedule) === 0) $missing[] = 'weekly_schedule';
-        if (empty($listing->photos) || !is_array($listing->photos) || count($listing->photos) === 0) $missing[] = 'photos';
-
-        if (!empty($missing)) {
-            $this->addError('openToPublic', 'Listing is missing required fields: ' . implode(', ', $missing));
+        if (! $listing->isPublishable()) {
+            $this->addError('openToPublic', 'Listing is missing required fields.');
             return;
         }
 
@@ -90,7 +82,7 @@ new class extends Component {
                             <flux:button size="xs" color="warning" wire:click="closeToPublic({{ $listing->id }})" class="ml-2">
                                 Close to Public
                             </flux:button>
-                        @else
+                        @elseif ($listing->isPublishable())
                             <flux:button size="xs" color="primary" wire:click="openToPublic({{ $listing->id }})" class="ml-2">
                                 Open to Public
                             </flux:button>

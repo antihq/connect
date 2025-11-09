@@ -32,4 +32,14 @@ class Listing extends Model
             'photos' => 'array', // Store photo paths as array
         ];
     }
+
+    public function isPublishable(): bool
+    {
+        return filled($this->title)
+            && filled($this->description)
+            && filled($this->address)
+            && is_numeric($this->price) && $this->price > 0
+            && is_array($this->weekly_schedule) && count($this->weekly_schedule) > 0
+            && is_array($this->photos) && count($this->photos) > 0;
+    }
 }
