@@ -20,9 +20,23 @@ new #[Layout('components.layouts.site'), Title('Updates')] class extends Compone
             </h3>
 
             <p class="my-10 text-base/8 first:mt-0 last:mb-0">
-                Do you want to create your own marketplace for rentals, service bookings, product sales, or service
-                offerings, but don’t want to hire a software development agency or freelancer and spend too much money?
-                You need a platform that enables you to launch your marketplace idea within hours, or even minutes.
+                Completed the overall outline of the web paths Anticonnect will use. These include paths for displaying the marketplace landing page and searching the marketplace. There are also paths for static pages such as About, Terms, and Privacy Policies. The inbox paths let users view received messages. Consumers have a path to view their orders, while providers have a path to view their sales. There are paths for displaying individual orders or sales, and for creating and viewing listings. Providers can access a path listing all their created listings.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                Paths exist for editing listings, including details, location, pricing, availability, and photos. Users can view and edit their profiles, update contact information and passwords, configure payout options, and set up payment methods. There are paths for login and registration pages for new users.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                On the admin or control panel site, paths display all marketplace users and allow editing their information. Admins can view and edit all listings, as well as see all platform transactions. Paths display all user reviews with options to edit them. For marketplace configuration, paths set the marketplace name, domain, email provider, localization, and access settings.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                Admins can manage pages by viewing, editing, or creating them. Paths configure the top navigation links. Additional paths allow editing the footer, including social media links and content blocks. There are paths to manage branding elements like logos and layouts. Paths exist for setting up user types and customizing user fields.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                Other paths handle the configuration of listing types, custom listing fields, and categories. Admins can configure search settings, transaction handling, and marketplace commissions. Lastly, there are paths to configure Stripe, the map provider, analytics, and Zapier integrations.
             </p>
         </div>
     </div>
