@@ -27,3 +27,23 @@ it('can open a listing to the public', function () {
     $listing->refresh();
     expect($listing->status)->toBe('public');
 });
+
+it('can close a listing to the public', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+        'status' => 'public',
+    ]);
+
+    $this->actingAs($user);
+
+    Volt::test('marketplaces.account.listings', [
+        'marketplace' => $marketplace,
+    ])->call('closeToPublic', $listing->id)
+      ->assertOk();
+
+    $listing->refresh();
+    expect($listing->status)->toBe('draft');
+});

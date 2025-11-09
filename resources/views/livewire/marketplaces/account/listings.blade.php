@@ -26,6 +26,17 @@ new class extends Component {
         $this->refreshListings();
     }
 
+    public function closeToPublic($listingId)
+    {
+        $listing = Listing::where('id', $listingId)
+            ->where('marketplace_id', $this->marketplace->id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        $listing->status = 'draft';
+        $listing->save();
+        $this->refreshListings();
+    }
+
     private function refreshListings()
     {
         $this->listings = Listing::where('marketplace_id', $this->marketplace->id)
@@ -61,7 +72,11 @@ new class extends Component {
                     <flux:table.cell>{{ $listing->description }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" color="zinc" inset="top bottom">{{ $listing->status }}</flux:badge>
-                        @if ($listing->status !== 'public')
+                        @if ($listing->status === 'public')
+                            <flux:button size="xs" color="warning" wire:click="closeToPublic({{ $listing->id }})" class="ml-2">
+                                Close to Public
+                            </flux:button>
+                        @else
                             <flux:button size="xs" color="primary" wire:click="openToPublic({{ $listing->id }})" class="ml-2">
                                 Open to Public
                             </flux:button>
