@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\OrganizationInvitationAcceptController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\UpdateSubscription;
 use App\Notifications\NewUpdateSubscriberNotification;
@@ -9,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Volt::route('/', 'welcome')->name('home');
+Volt::route('/updates', 'updates')->name('updates');
 
 Volt::route('/vote', 'vote');
 

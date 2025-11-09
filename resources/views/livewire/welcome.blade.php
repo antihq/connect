@@ -3,10 +3,11 @@
 use App\Models\UpdateSubscription;
 use App\Notifications\UpdateSubscriptionConfirmationNotification;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.site')] class extends Component
+new #[Layout('components.layouts.site'), Title('Launch your marketplace within hours, or even minutes')] class extends Component
 {
     public string $email = '';
 
