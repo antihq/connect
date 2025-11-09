@@ -78,17 +78,28 @@ new class extends Component {
         </flux:navbar.item>
     </flux:navbar>
 
-    <form class="space-y-6" wire:submit="upload" enctype="multipart/form-data">
-        <flux:input label='Add Photos' wire:model="newPhotos" type="file" multiple accept="image/*" />
-        <flux:button type="submit">Upload</flux:button>
-    </form>
-
-    <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-        @foreach(($listing->photos ?? []) as $idx => $photo)
-            <div class="relative group">
-                <img src="/{{ $photo }}" class="rounded shadow w-full h-32 object-cover" />
-                <button type="button" wire:click="removePhoto({{ $idx }})" class="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-1 text-red-600 hover:bg-opacity-100">Remove</button>
-            </div>
+    <form class="space-y-6" wire:submit="upload">
+    <flux:file-upload wire:model="newPhotos" label="Add Photos" multiple>
+        <flux:file-upload.dropzone heading="Drop photos here or click to browse" text="JPG, PNG, GIF up to 2MB" />
+    </flux:file-upload>
+    <div class="mt-3 flex flex-col gap-2">
+        @foreach ($newPhotos as $idx => $photo)
+            <flux:file-item :heading="$photo->getClientOriginalName()" :image="$photo->temporaryUrl()" :size="$photo->getSize()">
+                <x-slot name="actions">
+                    <flux:file-item.remove wire:click="removePhoto({{ $idx }})" aria-label="Remove file: {{ $photo->getClientOriginalName() }}" />
+                </x-slot>
+            </flux:file-item>
         @endforeach
     </div>
+    <flux:button type="submit">Upload</flux:button>
+</form>
+
+<div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+    @foreach(($listing->photos ?? []) as $idx => $photo)
+        <div class="relative group">
+            <img src="/{{ $photo }}" class="rounded shadow w-full h-32 object-cover" />
+            <button type="button" wire:click="removePhoto({{ $idx }})" class="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-1 text-red-600 hover:bg-opacity-100">Remove</button>
+        </div>
+    @endforeach
+</div>
 </div>
