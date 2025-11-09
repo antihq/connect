@@ -17,9 +17,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->string('apt_suite')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10, 2)->nullable();
+            $table->string('timezone')->nullable();
+            $table->json('weekly_schedule')->nullable();
+            $table->json('availability_exceptions')->nullable();
             $table->string('status')->default('draft');
             $table->timestamps();
         });

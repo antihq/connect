@@ -25,7 +25,10 @@ class Listing extends Model
     protected function casts(): array
     {
         return [
-            // Add casts if needed
+            'weekly_schedule' => 'array',
+            'availability_exceptions' => 'array',
+            'timezone' => 'string',
+            'price' => 'float',
         ];
     }
 }
