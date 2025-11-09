@@ -22,7 +22,7 @@ Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.listings.index'
 Volt::route('/marketplace/{marketplace}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
 Volt::route('/marketplace/{marketplace}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
 
-Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
+Volt::route('/marketplace/{marketplace}/account/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
 Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
 Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
 Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');

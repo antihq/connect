@@ -12,6 +12,22 @@ new class extends Component {
 
     public function mount()
     {
+        $this->refreshListings();
+    }
+
+    public function openToPublic($listingId)
+    {
+        $listing = Listing::where('id', $listingId)
+            ->where('marketplace_id', $this->marketplace->id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        $listing->status = 'public';
+        $listing->save();
+        $this->refreshListings();
+    }
+
+    private function refreshListings()
+    {
         $this->listings = Listing::where('marketplace_id', $this->marketplace->id)
             ->where('user_id', Auth::id())
             ->latest()
@@ -45,6 +61,11 @@ new class extends Component {
                     <flux:table.cell>{{ $listing->description }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" color="zinc" inset="top bottom">{{ $listing->status }}</flux:badge>
+                        @if ($listing->status !== 'public')
+                            <flux:button size="xs" color="primary" wire:click="openToPublic({{ $listing->id }})" class="ml-2">
+                                Open to Public
+                            </flux:button>
+                        @endif
                     </flux:table.cell>
                     <flux:table.cell>{{ $listing->created_at->diffForHumans() }}</flux:table.cell>
                 </flux:table.row>
