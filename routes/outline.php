@@ -20,13 +20,14 @@ Volt::route('/marketplace/{marketplace}/orders/1', 'marketplaces.orders.show')->
 
 Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
 Volt::route('/marketplace/{marketplace}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
-Volt::route('/marketplace/{marketplace}/listings/1', 'marketplaces.listings.show')->name('marketplaces.listings.show');
+Volt::route('/marketplace/{marketplace}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
 
-Volt::route('/marketplace/{marketplace}/listings/1/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
-Volt::route('/marketplace/{marketplace}/listings/1/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
-Volt::route('/marketplace/{marketplace}/listings/1/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
-Volt::route('/marketplace/{marketplace}/listings/1/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
-Volt::route('/marketplace/{marketplace}/listings/1/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
+Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
+Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
+Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
+Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
+Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
+Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
 
 Volt::route('/marketplace/{marketplace}/account/profile', 'marketplaces.profile')->name('marketplaces.profile');
 

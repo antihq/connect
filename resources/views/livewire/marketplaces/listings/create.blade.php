@@ -39,14 +39,14 @@ new class extends Component {
         <flux:navbar.item :href="route('marketplaces.show', $marketplace)">Home</flux:navbar.item>
         <flux:navbar.item :href="route('marketplaces.listings.create', $marketplace)">Post a new listings</flux:navbar.item>
         <flux:navbar.item :href="route('marketplaces.inbox.orders', $marketplace)">Inbox</flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.profile', $marketplace)">Profile</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.account.listings', $marketplace)">Profile</flux:navbar.item>
     </flux:navbar>
 
     <flux:separator class="mb-6" />
 
-    <form class="space-y-6">
-        <flux:input label='title' />
-        <flux:textarea label='description'></flux:textarea>
+    <form class="space-y-6" wire:submit="create">
+        <flux:input label='title' wire:model="title" />
+        <flux:textarea label='description' wire:model="description"></flux:textarea>
         <flux:text>custom fields...</flux:text>
         <flux:button type="submit">next</flux:button>
     </form>

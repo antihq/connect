@@ -1,11 +1,54 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Models\Marketplace;
+use App\Models\Listing;
 
 new class extends Component {
-    //
+    public Marketplace $marketplace;
+    public Listing $listing;
+    public string $title = '';
+    public string $description = '';
+
+    public function mount()
+    {
+        $this->title = $this->listing->title;
+        $this->description = $this->listing->description;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string'],
+            'description' => ['required', 'string'],
+        ];
+    }
+
+    public function update()
+    {
+        $this->validate();
+        $this->listing->update([
+            'title' => $this->title,
+            'description' => $this->description,
+        ]);
+        // Optionally, emit event or redirect
+    }
 }; ?>
 
 <div>
-    //
+    <flux:navbar>
+        <flux:navbar.item :href="route('marketplaces.show', $marketplace)">Home</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.create', $marketplace)">Post a new listings</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.inbox.orders', $marketplace)">Inbox</flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.account.listings', $marketplace)">Profile</flux:navbar.item>
+    </flux:navbar>
+
+    <flux:separator class="mb-6" />
+
+    <form class="space-y-6" wire:submit="update">
+        <flux:input label='title' wire:model="title" />
+        <flux:textarea label='description' wire:model="description"></flux:textarea>
+        <flux:text>custom fields...</flux:text>
+        <flux:button type="submit">save</flux:button>
+    </form>
 </div>
