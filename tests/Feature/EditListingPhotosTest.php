@@ -24,7 +24,7 @@ it('uploads, validates, and removes listing photos', function () {
             'listing' => $listing,
         ])
         ->set('newPhotos', [UploadedFile::fake()->create('not-an-image.txt', 10)])
-        ->call('upload')
+        ->call('savePhotos')
         ->assertHasErrors(['newPhotos.0' => 'image']);
 
     // Validation: max size (2MB)
@@ -34,7 +34,7 @@ it('uploads, validates, and removes listing photos', function () {
             'listing' => $listing,
         ])
         ->set('newPhotos', [UploadedFile::fake()->image('large.jpg')->size(3000)])
-        ->call('upload')
+        ->call('savePhotos')
         ->assertHasErrors(['newPhotos.0' => 'max']);
 
     // Success: upload valid images
@@ -46,7 +46,7 @@ it('uploads, validates, and removes listing photos', function () {
             'listing' => $listing,
         ])
         ->set('newPhotos', [$photo1, $photo2])
-        ->call('upload')
+        ->call('savePhotos')
         ->assertHasNoErrors();
 
     $listing->refresh();
