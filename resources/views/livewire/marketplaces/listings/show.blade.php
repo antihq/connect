@@ -7,6 +7,13 @@ use App\Models\Listing;
 new class extends Component {
     public Marketplace $marketplace;
     public Listing $listing;
+
+    public function mount()
+    {
+        if ($this->listing->marketplace_id !== $this->marketplace->id) {
+            abort(404);
+        }
+    }
 }; ?>
 
 <div>
