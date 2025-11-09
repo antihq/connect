@@ -55,14 +55,7 @@ new class extends Component
 }; ?>
 
 <div>
-    <flux:navbar>
-        <flux:navbar.item :href="route('marketplaces.show', $marketplace)">Home</flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.create', $marketplace)">
-            Post a new listings
-        </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.inbox.orders', $marketplace)">Inbox</flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.account.listings', $marketplace)">Profile</flux:navbar.item>
-    </flux:navbar>
+    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
 
     <flux:separator class="mb-6" />
 

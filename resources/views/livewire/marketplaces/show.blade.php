@@ -8,7 +8,7 @@ new class extends Component {
 }; ?>
 
 <div>
+    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
     <flux:separator class="mb-6" />
-
     <flux:heading>Marketplace home</flux:heading>
 </div>
