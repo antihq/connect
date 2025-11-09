@@ -21,6 +21,20 @@ new class extends Component {
             ->where('marketplace_id', $this->marketplace->id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+
+        $missing = [];
+        if (empty($listing->title)) $missing[] = 'title';
+        if (empty($listing->description)) $missing[] = 'description';
+        if (empty($listing->address)) $missing[] = 'address';
+        if (!is_numeric($listing->price) || $listing->price <= 0) $missing[] = 'price';
+        if (empty($listing->weekly_schedule) || !is_array($listing->weekly_schedule) || count($listing->weekly_schedule) === 0) $missing[] = 'weekly_schedule';
+        if (empty($listing->photos) || !is_array($listing->photos) || count($listing->photos) === 0) $missing[] = 'photos';
+
+        if (!empty($missing)) {
+            $this->addError('openToPublic', 'Listing is missing required fields: ' . implode(', ', $missing));
+            return;
+        }
+
         $listing->status = 'public';
         $listing->save();
         $this->refreshListings();
