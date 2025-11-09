@@ -29,6 +29,7 @@ class Listing extends Model
             'availability_exceptions' => 'array',
             'timezone' => 'string',
             'price' => 'float',
+            'photos' => 'array', // Store photo paths as array
         ];
     }
 }
