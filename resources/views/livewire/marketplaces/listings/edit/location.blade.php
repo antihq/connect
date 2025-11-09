@@ -12,7 +12,7 @@ new class extends Component {
 
     public function mount()
     {
-        $this->address = $this->listing->address;
+        $this->address = $this->listing->address ?? '';
         $this->apt_suite = $this->listing->apt_suite ?? '';
     }
 
@@ -44,6 +44,24 @@ new class extends Component {
     </flux:navbar>
 
     <flux:separator class="mb-6" />
+
+    <flux:navbar class="mb-6">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])">
+            Details
+        </flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])" active>
+            Location
+        </flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.pricing', [$marketplace, $listing])">
+            Pricing
+        </flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.availability', [$marketplace, $listing])">
+            Availability
+        </flux:navbar.item>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.photos', [$marketplace, $listing])">
+            Photos
+        </flux:navbar.item>
+    </flux:navbar>
 
     <form class="space-y-6" wire:submit="update">
         <flux:input label='address' wire:model="address" />
