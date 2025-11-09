@@ -15,8 +15,28 @@ new #[Layout('components.layouts.site'), Title('Updates')] class extends Compone
             </a>
         </div>
         <div class="max-w-2xl text-zinc-700 xl:mx-auto">
-            <h3 class="mt-12 mb-10 text-xl/8 font-medium tracking-tight text-zinc-950 first:mt-0 last:mb-0">
+            <h2 class="mt-12 mb-10 text-2xl/8 font-medium tracking-tight text-zinc-950 first:mt-0 last:mb-0">
                 November 8, 2025
+            </h2>
+
+            <h3 class="mt-12 mb-10 text-xl/8 font-medium tracking-tight text-zinc-950 first:mt-0 last:mb-0">
+                Publishing listings
+            </h3>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                Worked on the backbone for publishing listings. The process consists of five steps: entering listing details, specifying the location, setting the pricing, defining listing availability, and uploading photos.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                For listing availability, users can set a default weekly schedule when the listing is offered. They can also add date range exceptions to specify when the listing is available or unavailable.
+            </p>
+
+            <p class="my-10 text-base/8 first:mt-0 last:mb-0">
+                I also made photos a required step, as most visitors now expect to see visuals of the listings.
+            </p>        
+
+            <h3 class="mt-12 mb-10 text-xl/8 font-medium tracking-tight text-zinc-950 first:mt-0 last:mb-0">
+                Paths overview
             </h3>
 
             <p class="my-10 text-base/8 first:mt-0 last:mb-0">
