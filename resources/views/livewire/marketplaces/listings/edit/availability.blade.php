@@ -34,6 +34,8 @@ new class extends Component {
 
     public function addException()
     {
+        // Ensure available is boolean
+        $this->new_exception['available'] = (bool) $this->new_exception['available'];
         $this->validate([
             'new_exception.available' => ['required', 'boolean'],
             'new_exception.start_date' => ['required', 'date'],
@@ -137,10 +139,10 @@ new class extends Component {
             @endforeach
         </div>
         <div class="flex items-center gap-2 mt-4">
-            <flux:select wire:model="new_exception.available" label="Available?">
-                <option :value="true">Available</option>
-                <option :value="false">Not available</option>
-            </flux:select>
+<flux:select wire:model="new_exception.available" label="Available?">
+    <option value="1">Available</option>
+    <option value="0">Not available</option>
+</flux:select>
             <flux:input type="date" wire:model="new_exception.start_date" label="Start date" />
             <flux:input type="date" wire:model="new_exception.end_date" label="End date" />
             <flux:button type="button" wire:click="addException">Add exception</flux:button>
