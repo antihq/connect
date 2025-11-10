@@ -20,6 +20,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Listings owned by the user.
+     */
+    public function listings()
+    {
+        return $this->hasMany(Listing::class);
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
