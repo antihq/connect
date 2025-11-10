@@ -20,6 +20,18 @@ class Review extends Model
         return $this->belongsTo(Transaction::class);
     }
 
+    public function marketplace()
+    {
+        // Get the marketplace through the transaction
+        return $this->transaction?->marketplace();
+    }
+
+    public function user()
+    {
+        // The reviewer is the user who wrote the review
+        return $this->belongsTo(User::class, 'reviewer_id');
+    }
+
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewer_id');

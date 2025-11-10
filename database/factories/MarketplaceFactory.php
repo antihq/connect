@@ -19,6 +19,7 @@ class MarketplaceFactory extends Factory
     {
         return [
             'organization_id' => Organization::factory(),
+            'name' => $this->faker->company(),
         ];
     }
 }
