@@ -21,6 +21,7 @@ new class extends Component {
 
 <div>
     @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
+    @include('partials.marketplace-inbox-navbar', ['marketplace' => $marketplace])
 
     <flux:heading size="lg" class="mb-4">Your Orders</flux:heading>
     @if ($transactions->isEmpty())
