@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Transaction extends Model
 {
     /** @use HasFactory<\Database\Factories\TransactionFactory> */
@@ -41,5 +43,10 @@ class Transaction extends Model
     public function activities()
     {
         return $this->hasMany(TransactionActivity::class);
+    }
+
+    public function marketplace()
+    {
+        return $this->belongsTo(Marketplace::class);
     }
 }
