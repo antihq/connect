@@ -1,5 +1,16 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "lsp": {
+    "intelephense": {
+      "command": [
+        "intelephense",
+        "--stdio"
+      ],
+      "extensions": [
+        ".php"
+      ]
+    }
+  },
   "mcp": {
     "laravel-boost": {
       "type": "local",

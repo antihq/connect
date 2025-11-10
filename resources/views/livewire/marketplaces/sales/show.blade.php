@@ -69,6 +69,22 @@ new class extends Component {
         ]);
         $this->transaction->load(['activities.user']);
     }
+
+    public function markAsComplete()
+    {
+        $user = auth()->user();
+        if ($user->id !== $this->transaction->listing->user_id || $this->transaction->status !== 'accepted') {
+            abort(403);
+        }
+        $this->transaction->status = 'completed';
+        $this->transaction->save();
+        $this->transaction->activities()->create([
+            'type' => 'status_change',
+            'description' => 'Provider marked the transaction as completed.',
+            'user_id' => $user->id,
+        ]);
+        $this->transaction->load(['activities.user']);
+    }
 }; ?>
 
 <div>
@@ -119,6 +135,17 @@ new class extends Component {
             </form>
             <form wire:submit="rejectRequest">
                 <flux:button type="submit" color="danger">Reject</flux:button>
+            </form>
+        </div>
+    @endif
+
+    @if (
+        $transaction->status === 'accepted' &&
+        $transaction->listing->user_id === auth()->id()
+    )
+        <div class="flex gap-2 mb-4">
+            <form wire:submit="markAsComplete">
+                <flux:button type="submit" color="primary">Mark as Complete</flux:button>
             </form>
         </div>
     @endif

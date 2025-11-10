@@ -8,6 +8,82 @@ use App\Models\TransactionActivity;
 use Livewire\Volt\Volt;
 use function Pest\Laravel\assertDatabaseHas;
 
+
+it('provider can mark an accepted transaction as complete', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'accepted',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('markAsComplete')
+        ->assertHasNoErrors()
+        ->assertSee('completed')
+        ->assertSee('Provider marked the transaction as completed.');
+
+    expect($sale->fresh()->status)->toBe('completed');
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $sale->id,
+        'type' => 'status_change',
+        'description' => 'Provider marked the transaction as completed.',
+        'user_id' => $provider->id,
+    ]);
+});
+
+it('non-provider cannot mark as complete', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'accepted',
+    ]);
+    $otherUser = User::factory()->create();
+
+    Volt::actingAs($otherUser)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('markAsComplete')
+        ->assertStatus(403);
+});
+
+it('provider cannot mark as complete unless status is accepted', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'paid',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('markAsComplete')
+        ->assertStatus(403);
+});
+
+
 it('shows only the user\'s sales in the inbox', function () {
     $provider = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
