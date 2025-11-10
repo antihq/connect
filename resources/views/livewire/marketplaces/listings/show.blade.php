@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Models\Listing;
@@ -50,6 +51,60 @@ new class extends Component
             abort(404);
         }
     }
+
+    public ?string $bookingMessage = null;
+    public ?string $bookingError = null;
+
+    public function requestToBook()
+    {
+        $this->bookingMessage = null;
+        $this->bookingError = null;
+
+        if (!auth()->check()) {
+            $this->bookingError = 'You must be logged in to book.';
+            return;
+        }
+        if (!$this->startDate || !$this->endDate) {
+            $this->bookingError = 'Please select both start and end dates.';
+            return;
+        }
+        $start = \Carbon\Carbon::parse($this->startDate);
+        $end = \Carbon\Carbon::parse($this->endDate);
+        if ($end->lessThanOrEqualTo($start)) {
+            $this->bookingError = 'End date must be after start date.';
+            return;
+        }
+        $nights = $start->diffInDays($end);
+        if ($nights < 1) {
+            $this->bookingError = 'Booking must be at least one night.';
+            return;
+        }
+        // Check for overlapping transactions
+        $overlap = $this->listing->transactions()
+            ->where(function($q) use ($start, $end) {
+                $q->where(function($q2) use ($start, $end) {
+                    $q2->where('start_date', '<', $end)
+                        ->where('end_date', '>', $start);
+                });
+            })
+            ->exists();
+        if ($overlap) {
+            $this->bookingError = 'Selected dates are not available.';
+            return;
+        }
+        $pricePerNight = $this->listing->price ?? 0;
+        $total = $nights * $pricePerNight;
+        $transaction = $this->listing->transactions()->create([
+            'user_id' => auth()->id(),
+            'start_date' => $start,
+            'end_date' => $end,
+            'nights' => $nights,
+            'price_per_night' => $pricePerNight,
+            'total' => $total,
+            'status' => 'pending',
+        ]);
+        $this->bookingMessage = 'Booking request submitted!';
+    }
 }; ?>
 
 <div>
@@ -83,7 +138,7 @@ new class extends Component
 
         <div class="mt-8">
             <flux:card>
-                <form wire:submit.prevent>
+                <form wire:submit="requestToBook">
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="flex-1">
                             <flux:input type="date" label="Start Date" wire:model.live="startDate" />
@@ -107,7 +162,13 @@ new class extends Component
                                 ${{ number_format($bookingBreakdown['total'], 2) }}
                             </flux:text>
                         </flux:card>
-                        <flux:button type="button" color="primary" class="mt-4 w-full">Request to Book</flux:button>
+                        <flux:button type="submit" color="primary" class="mt-4 w-full">Request to Book</flux:button>
+                    @endif
+                    @if ($bookingMessage)
+                        <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
+                    @endif
+                    @if ($bookingError)
+                        <flux:text class="mt-4 text-red-600">{{ $bookingError }}</flux:text>
                     @endif
                 </form>
             </flux:card>

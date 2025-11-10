@@ -12,6 +12,11 @@ class Listing extends Model
 
     protected $guarded = [];
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     public function marketplace()
     {
         return $this->belongsTo(Marketplace::class);
