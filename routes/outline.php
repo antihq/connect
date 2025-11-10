@@ -44,75 +44,75 @@ Volt::route('/marketplace/{marketplace}/users/1', 'marketplaces.users.show')->na
 Volt::route('/marketplace/{marketplace}/login', 'marketplaces.login')->name('marketplaces.login');
 Volt::route('/marketplace/{marketplace}/register', 'marketplaces.register')->name('marketplaces.register');
 
-Volt::route('/cp', 'cp')->name('/cp');
+Volt::route('/backstage', 'backstage.home')->name('backstage.home');
 
-Volt::route('/cp/users', 'cp.users.index')->name('cp.users.index');
-Volt::route('/cp/users/1', 'cp.users.show')->name('cp.users.show');
-Volt::route('/cp/users/1/edit', 'cp.users.edit')->name('cp.users.edit');
+Volt::route('/backstage/users', 'backstage.users.index')->name('backstage.users.index');
+Volt::route('/backstage/users/1', 'backstage.users.show')->name('backstage.users.show');
+Volt::route('/backstage/users/1/edit', 'backstage.users.edit')->name('backstage.users.edit');
 
-Volt::route('/cp/listings', 'cp.listings.index')->name('cp.listings.index');
-Volt::route('/cp/listings/1', 'cp.listings.show')->name('cp.listings.show');
-Volt::route('/cp/listings/1/edit', 'cp.listings.edit')->name('cp.listings.edit');
+Volt::route('/backstage/listings', 'backstage.listings.index')->name('backstage.listings.index');
+Volt::route('/backstage/listings/1', 'backstage.listings.show')->name('backstage.listings.show');
+Volt::route('/backstage/listings/1/edit', 'backstage.listings.edit')->name('backstage.listings.edit');
 
-Volt::route('/cp/transactions', 'cp.transactions.index')->name('cp.transactions.index');
-Volt::route('/cp/transactions/1', 'cp.transactions.show')->name('cp.transactions.show');
+Volt::route('/backstage/transactions', 'backstage.transactions.index')->name('backstage.transactions.index');
+Volt::route('/backstage/transactions/1', 'backstage.transactions.show')->name('backstage.transactions.show');
 
-Volt::route('/cp/reviews', 'cp.reviews.index')->name('cp.reviews.index');
-Volt::route('/cp/reviews/1', 'cp.reviews.show')->name('cp.reviews.show');
-Volt::route('/cp/reviews/1/edit', 'cp.reviews.edit')->name('cp.reviews.edit');
+Volt::route('/backstage/reviews', 'backstage.reviews.index')->name('backstage.reviews.index');
+Volt::route('/backstage/reviews/1', 'backstage.reviews.show')->name('backstage.reviews.show');
+Volt::route('/backstage/reviews/1/edit', 'backstage.reviews.edit')->name('backstage.reviews.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/name', 'cp.marketplaces.settings.name')->name('cp.marketplaces.settings.name');
-Volt::route('/cp/marketplaces/{marketplace}/settings/domain', 'cp.marketplaces.settings.domain')->name('cp.marketplaces.settings.domain');
-Volt::route('/cp/marketplaces/{marketplace}/settings/domain', 'cp.marketplaces.settings.domain')->name('cp.marketplaces.settings.domain');
-Volt::route('/cp/marketplaces/{marketplace}/settings/email', 'cp.marketplaces.settings.email')->name('cp.marketplaces.settings.email');
-Volt::route('/cp/marketplaces/{marketplace}/settings/localization', 'cp.marketplaces.settings.localization')->name('cp.marketplaces.settings.localization');
-Volt::route('/cp/marketplaces/{marketplace}/settings/access', 'cp.marketplaces.settings.access')->name('cp.marketplaces.settings.access');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/name', 'backstage.marketplaces.settings.name')->name('backstage.marketplaces.settings.name');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/email', 'backstage.marketplaces.settings.email')->name('backstage.marketplaces.settings.email');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/localization', 'backstage.marketplaces.settings.localization')->name('backstage.marketplaces.settings.localization');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/access', 'backstage.marketplaces.settings.access')->name('backstage.marketplaces.settings.access');
 
-Volt::route('/cp/marketplaces/{marketplace}/pages', 'cp.marketplaces.pages.index')->name('cp.marketplaces.pages.index');
-Volt::route('/cp/marketplaces/{marketplace}/pages/create', 'cp.marketplaces.pages.create')->name('cp.marketplaces.pages.create');
-Volt::route('/cp/marketplaces/{marketplace}/pages/1/edit', 'cp.marketplaces.pages.edit')->name('cp.marketplaces.pages.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/pages', 'backstage.marketplaces.pages.index')->name('backstage.marketplaces.pages.index');
+Volt::route('/backstage/marketplaces/{marketplace}/pages/create', 'backstage.marketplaces.pages.create')->name('backstage.marketplaces.pages.create');
+Volt::route('/backstage/marketplaces/{marketplace}/pages/1/edit', 'backstage.marketplaces.pages.edit')->name('backstage.marketplaces.pages.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/top-bar', 'cp.marketplaces.settings.top-bar')->name('cp.marketplaces.settings.top-bar');
-Volt::route('/cp/marketplaces/{marketplace}/top-bar-links/create', 'cp.marketplaces.top-bar-links.create')->name('cp.marketplaces.top-bar-links.create');
-Volt::route('/cp/marketplaces/{marketplace}/top-bar-links/1/edit', 'cp.marketplaces.top-bar-links.edit')->name('cp.marketplaces.top-bar-links.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/top-bar', 'backstage.marketplaces.settings.top-bar')->name('backstage.marketplaces.settings.top-bar');
+Volt::route('/backstage/marketplaces/{marketplace}/top-bar-links/create', 'backstage.marketplaces.top-bar-links.create')->name('backstage.marketplaces.top-bar-links.create');
+Volt::route('/backstage/marketplaces/{marketplace}/top-bar-links/1/edit', 'backstage.marketplaces.top-bar-links.edit')->name('backstage.marketplaces.top-bar-links.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/footer', 'cp.marketplaces.settings.footer')->name('cp.marketplaces.settings.footer');
-Volt::route('/cp/marketplaces/{marketplace}/social-media-links/create', 'cp.marketplaces.social-media-links.create')->name('cp.marketplaces.social-media-links.create');
-Volt::route('/cp/marketplaces/{marketplace}/social-media-links/1/edit', 'cp.marketplaces.social-media-links.edit')->name('cp.marketplaces.social-media-links.edit');
-Volt::route('/cp/marketplaces/{marketplace}/content-blocks/create', 'cp.marketplaces.content-blocks.create')->name('cp.marketplaces.content-blocks.create');
-Volt::route('/cp/marketplaces/{marketplace}/content-blocks/1/edit', 'cp.marketplaces.content-blocks.edit')->name('cp.marketplaces.content-blocks.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/footer', 'backstage.marketplaces.settings.footer')->name('backstage.marketplaces.settings.footer');
+Volt::route('/backstage/marketplaces/{marketplace}/social-media-links/create', 'backstage.marketplaces.social-media-links.create')->name('backstage.marketplaces.social-media-links.create');
+Volt::route('/backstage/marketplaces/{marketplace}/social-media-links/1/edit', 'backstage.marketplaces.social-media-links.edit')->name('backstage.marketplaces.social-media-links.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/content-blocks/create', 'backstage.marketplaces.content-blocks.create')->name('backstage.marketplaces.content-blocks.create');
+Volt::route('/backstage/marketplaces/{marketplace}/content-blocks/1/edit', 'backstage.marketplaces.content-blocks.edit')->name('backstage.marketplaces.content-blocks.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/texts', 'cp.marketplaces.settings.texts')->name('cp.marketplaces.settings.texts');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/texts', 'backstage.marketplaces.settings.texts')->name('backstage.marketplaces.settings.texts');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/design/branding', 'cp.marketplaces.settings.design.branding')->name('cp.marketplaces.settings.design.branding');
-Volt::route('/cp/marketplaces/{marketplace}/settings/design/layout', 'cp.marketplaces.settings.design.layout')->name('cp.marketplaces.settings.design.layout');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/design/branding', 'backstage.marketplaces.settings.design.branding')->name('backstage.marketplaces.settings.design.branding');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/design/layout', 'backstage.marketplaces.settings.design.layout')->name('backstage.marketplaces.settings.design.layout');
 
-Volt::route('/cp/marketplaces/{marketplace}/user-types', 'cp.marketplaces.user-types')->name('cp.marketplaces.user-types');
-Volt::route('/cp/marketplaces/{marketplace}/user-types/create', 'cp.marketplaces.user-types.create')->name('cp.marketplaces.user-types.create');
-Volt::route('/cp/marketplaces/{marketplace}/user-types/1/edit', 'cp.marketplaces.user-types.edit')->name('cp.marketplaces.user-types.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/user-types', 'backstage.marketplaces.user-types')->name('backstage.marketplaces.user-types');
+Volt::route('/backstage/marketplaces/{marketplace}/user-types/create', 'backstage.marketplaces.user-types.create')->name('backstage.marketplaces.user-types.create');
+Volt::route('/backstage/marketplaces/{marketplace}/user-types/1/edit', 'backstage.marketplaces.user-types.edit')->name('backstage.marketplaces.user-types.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/user-fields', 'cp.marketplaces.user-fields')->name('cp.marketplaces.user-fields');
-Volt::route('/cp/marketplaces/{marketplace}/user-fields/create', 'cp.marketplaces.user-fields.create')->name('cp.marketplaces.user-fields.create');
-Volt::route('/cp/marketplaces/{marketplace}/user-fields/1/edit', 'cp.marketplaces.user-fields.edit')->name('cp.marketplaces.user-fields.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/user-fields', 'backstage.marketplaces.user-fields')->name('backstage.marketplaces.user-fields');
+Volt::route('/backstage/marketplaces/{marketplace}/user-fields/create', 'backstage.marketplaces.user-fields.create')->name('backstage.marketplaces.user-fields.create');
+Volt::route('/backstage/marketplaces/{marketplace}/user-fields/1/edit', 'backstage.marketplaces.user-fields.edit')->name('backstage.marketplaces.user-fields.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/listing-types', 'cp.marketplaces.listing-types')->name('cp.marketplaces.listing-types');
-Volt::route('/cp/marketplaces/{marketplace}/listing-types/create', 'cp.marketplaces.listing-types.create')->name('cp.marketplaces.listing-types.create');
-Volt::route('/cp/marketplaces/{marketplace}/listing-types/1/edit', 'cp.marketplaces.listing-types.edit')->name('cp.marketplaces.listing-types.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-types', 'backstage.marketplaces.listing-types')->name('backstage.marketplaces.listing-types');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-types/create', 'backstage.marketplaces.listing-types.create')->name('backstage.marketplaces.listing-types.create');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-types/1/edit', 'backstage.marketplaces.listing-types.edit')->name('backstage.marketplaces.listing-types.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/listing-categories', 'cp.marketplaces.listing-categories')->name('cp.marketplaces.listing-categories');
-Volt::route('/cp/marketplaces/{marketplace}/listing-categories/create', 'cp.marketplaces.listing-categories.create')->name('cp.marketplaces.listing-categories.create');
-Volt::route('/cp/marketplaces/{marketplace}/listing-categories/1/edit', 'cp.marketplaces.listing-categories.edit')->name('cp.marketplaces.listing-categories.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-categories', 'backstage.marketplaces.listing-categories')->name('backstage.marketplaces.listing-categories');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-categories/create', 'backstage.marketplaces.listing-categories.create')->name('backstage.marketplaces.listing-categories.create');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-categories/1/edit', 'backstage.marketplaces.listing-categories.edit')->name('backstage.marketplaces.listing-categories.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/listing-fields', 'cp.marketplaces.listing-fields')->name('cp.marketplaces.listing-fields');
-Volt::route('/cp/marketplaces/{marketplace}/listing-fields/create', 'cp.marketplaces.listing-fields.create')->name('cp.marketplaces.listing-fields.create');
-Volt::route('/cp/marketplaces/{marketplace}/listing-fields/1/edit', 'cp.marketplaces.listing-fields.edit')->name('cp.marketplaces.listing-fields.edit');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-fields', 'backstage.marketplaces.listing-fields')->name('backstage.marketplaces.listing-fields');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-fields/create', 'backstage.marketplaces.listing-fields.create')->name('backstage.marketplaces.listing-fields.create');
+Volt::route('/backstage/marketplaces/{marketplace}/listing-fields/1/edit', 'backstage.marketplaces.listing-fields.edit')->name('backstage.marketplaces.listing-fields.edit');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/search', 'cp.marketplaces.settings.search')->name('cp.marketplaces.settings.search');
-Volt::route('/cp/marketplaces/{marketplace}/settings/transaction', 'cp.marketplaces.settings.transaction')->name('cp.marketplaces.settings.transaction');
-Volt::route('/cp/marketplaces/{marketplace}/settings/commission', 'cp.marketplaces.settings.commission')->name('cp.marketplaces.settings.commission');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/search', 'backstage.marketplaces.settings.search')->name('backstage.marketplaces.settings.search');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/transaction', 'backstage.marketplaces.settings.transaction')->name('backstage.marketplaces.settings.transaction');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/commission', 'backstage.marketplaces.settings.commission')->name('backstage.marketplaces.settings.commission');
 
-Volt::route('/cp/marketplaces/{marketplace}/settings/paymenents', 'cp.marketplaces.settings.payments')->name('cp.marketplaces.settings.payments');
-Volt::route('/cp/marketplaces/{marketplace}/settings/maps', 'cp.marketplaces.settings.maps')->name('cp.marketplaces.settings.maps');
-Volt::route('/cp/marketplaces/{marketplace}/settings/analytics', 'cp.marketplaces.settings.analytics')->name('cp.marketplaces.settings.analytics');
-Volt::route('/cp/marketplaces/{marketplace}/settings/google', 'cp.marketplaces.settings.google')->name('cp.marketplaces.settings.google');
-Volt::route('/cp/marketplaces/{marketplace}/settings/zapier', 'cp.marketplaces.settings.zapier')->name('cp.marketplaces.settings.zapier');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/paymenents', 'backstage.marketplaces.settings.payments')->name('backstage.marketplaces.settings.payments');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/maps', 'backstage.marketplaces.settings.maps')->name('backstage.marketplaces.settings.maps');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/analytics', 'backstage.marketplaces.settings.analytics')->name('backstage.marketplaces.settings.analytics');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/google', 'backstage.marketplaces.settings.google')->name('backstage.marketplaces.settings.google');
+Volt::route('/backstage/marketplaces/{marketplace}/settings/zapier', 'backstage.marketplaces.settings.zapier')->name('backstage.marketplaces.settings.zapier');
