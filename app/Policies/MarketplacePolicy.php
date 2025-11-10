@@ -37,7 +37,7 @@ class MarketplacePolicy
      */
     public function update(User $user, Marketplace $marketplace): bool
     {
-        return false;
+        return $marketplace->organization->user->is($user);
     }
 
     /**
