@@ -1,5 +1,4 @@
 <?php
-
 use App\Models\User;
 use App\Models\Marketplace;
 use App\Models\Listing;
@@ -7,6 +6,73 @@ use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use Livewire\Volt\Volt;
 use function Pest\Laravel\assertDatabaseHas;
+
+it('provider can review the customer after transaction is completed', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'completed',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->set('review_rating', 5)
+        ->set('review_comment', 'Great customer!')
+        ->call('submitReview')
+        ->assertHasNoErrors()
+        ->assertSee('Review submitted')
+        ->assertSee('Great customer!');
+
+    assertDatabaseHas('reviews', [
+        'transaction_id' => $sale->id,
+        'reviewer_id' => $provider->id,
+        'reviewee_id' => $buyer->id,
+        'rating' => 5,
+        'comment' => 'Great customer!',
+    ]);
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $sale->id,
+        'type' => 'review',
+        'user_id' => $provider->id,
+        'description' => 'Provider reviewed the customer: Great customer!',
+    ]);
+});
+
+it('provider cannot review the customer unless transaction is completed', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'completed',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    // Simulate already reviewed
+    TransactionActivity::factory()->for($sale)->for($provider)->create([
+        'type' => 'review',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->set('review_rating', 5)
+        ->set('review_comment', 'Another review')
+        ->call('submitReview')
+        ->assertStatus(403);
+});
+
 
 
 it('provider can mark an accepted transaction as complete', function () {

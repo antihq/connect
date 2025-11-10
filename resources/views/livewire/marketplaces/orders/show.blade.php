@@ -3,15 +3,21 @@
 use Livewire\Volt\Component;
 use App\Models\Marketplace;
 use App\Models\Transaction;
+use App\Models\Review;
+use App\Models\TransactionActivity;
 
 new class extends Component {
     public Marketplace $marketplace;
     public Transaction $transaction;
     public string $message = '';
+    public int $review_rating = 0;
+    public string $review_comment = '';
+    public bool $review_submitted = false;
 
     public function mount()
     {
         $this->transaction->load(['listing', 'user', 'activities.user']);
+        $this->review_submitted = $this->hasReviewed();
     }
 
     public function postMessage()
@@ -37,6 +43,53 @@ new class extends Component {
         $this->message = '';
         $this->transaction->load(['activities.user']);
     }
+
+    public function submitReview()
+    {
+        $user = auth()->user();
+        $providerId = $this->transaction->listing->user_id;
+        $customerId = $this->transaction->user_id;
+        // Only customer can review provider in orders
+        if ($user->id !== $customerId) {
+            abort(403);
+        }
+        if ($this->transaction->status !== 'completed') {
+            abort(403);
+        }
+        if ($this->hasReviewed()) {
+            abort(403);
+        }
+        $this->validate([
+            'review_rating' => 'required|integer|min:1|max:5',
+            'review_comment' => 'required|string|max:1000',
+        ]);
+        // Save review
+        Review::create([
+            'transaction_id' => $this->transaction->id,
+            'reviewer_id' => $customerId,
+            'reviewee_id' => $providerId,
+            'rating' => $this->review_rating,
+            'comment' => $this->review_comment,
+        ]);
+        // Log activity
+        $this->transaction->activities()->create([
+            'type' => 'review',
+            'description' => 'Customer reviewed the provider: ' . $this->review_comment,
+            'user_id' => $customerId,
+        ]);
+        $this->review_submitted = true;
+        $this->transaction->load(['activities.user']);
+        session()->flash('success', 'Review submitted');
+    }
+
+    private function hasReviewed(): bool
+    {
+        $customerId = $this->transaction->user_id;
+        return TransactionActivity::where('transaction_id', $this->transaction->id)
+            ->where('type', 'review')
+            ->where('user_id', $customerId)
+            ->exists();
+    }
 }; ?>
 
 <div>
@@ -50,9 +103,9 @@ new class extends Component {
                 {{ $transaction->listing->title ?? 'N/A' }}
             </flux:link>
         </flux:text>
-        <flux:text class="mb-2">
-            <strong>Buyer:</strong> {{ $transaction->user->name ?? 'N/A' }} ({{ $transaction->user->email ?? '' }})
-        </flux:text>
+         <flux:text class="mb-2">
+             <strong>Buyer:</strong> {{ $transaction->user?->name ?? 'N/A' }} ({{ $transaction->user?->email ?? '' }})
+         </flux:text>
         <flux:text class="mb-2">
             <strong>Dates:</strong> {{ $transaction->start_date?->format('M d, Y') ?? '-' }} - {{ $transaction->end_date?->format('M d, Y') ?? '-' }}
         </flux:text>
@@ -75,6 +128,39 @@ new class extends Component {
             <strong>Created at:</strong> {{ $transaction->created_at?->format('M d, Y H:i') ?? '-' }}
         </flux:text>
     </flux:card>
+
+    {{-- Review form for customer reviewing provider --}}
+    @if ($transaction->status === 'completed' && $transaction->user_id === auth()->id())
+        <flux:card class="mt-6">
+            @if (session('success'))
+                <div class="text-green-600 mb-2">{{ session('success') }}</div>
+            @endif
+            @if ($review_submitted)
+                <div class="mb-2">Review submitted</div>
+                <div class="mb-2">{{ $review_comment }}</div>
+            @else
+                <form wire:submit="submitReview">
+                    <flux:heading size="sm" class="mb-2">Review the provider</flux:heading>
+                    <div class="mb-2">
+                        <label for="review_rating">Rating</label>
+                        <select wire:model.defer="review_rating" id="review_rating" class="block w-full">
+                            <option value="">Select rating</option>
+                            @for ($i = 1; $i <= 5; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+                        @error('review_rating') <div class="text-red-500 text-xs mb-2">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-2">
+                        <label for="review_comment">Comment</label>
+                        <flux:textarea wire:model.defer="review_comment" id="review_comment" placeholder="Write your review..." rows="3" />
+                        @error('review_comment') <div class="text-red-500 text-xs mb-2">{{ $message }}</div> @enderror
+                    </div>
+                    <flux:button type="submit" color="primary">Submit Review</flux:button>
+                </form>
+            @endif
+        </flux:card>
+    @endif
 
     <flux:card class="mt-8">
         <flux:heading size="md" class="mb-2">Activity Log</flux:heading>
