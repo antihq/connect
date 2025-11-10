@@ -29,6 +29,7 @@ it('allows an authenticated user to book available dates', function () {
             'transaction' => Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first()->id,
         ]));
 
+    $transaction = Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first();
     assertDatabaseHas('transactions', [
         'listing_id' => $listing->id,
         'user_id' => $user->id,
@@ -38,6 +39,10 @@ it('allows an authenticated user to book available dates', function () {
         'price_per_night' => 100,
         'total' => 300,
         'status' => 'pending',
+    ]);
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $transaction->id,
+        'type' => 'created',
     ]);
 });
 

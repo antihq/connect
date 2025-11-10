@@ -58,6 +58,10 @@ it('marks the transaction as paid and redirects to confirmation', function () {
         'id' => $transaction->id,
         'status' => 'paid',
     ]);
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $transaction->id,
+        'type' => 'payment_succeeded',
+    ]);
 });
 
 it('shows the confirmation page with correct details', function () {

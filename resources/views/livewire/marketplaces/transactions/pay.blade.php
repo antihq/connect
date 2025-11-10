@@ -23,6 +23,14 @@ new class extends Component
             return;
         }
         $this->transaction->update(['status' => 'paid']);
+        $this->transaction->activities()->create([
+            'type' => 'payment_succeeded',
+            'description' => 'Payment completed by user',
+            'meta' => [
+                'user_id' => auth()->id(),
+                'ip' => request()->ip(),
+            ],
+        ]);
         session()->flash('success', 'Payment successful!');
         $marketplace = $this->transaction->listing->marketplace;
         return $this->redirectRoute('marketplaces.transactions.pay.confirmation', [

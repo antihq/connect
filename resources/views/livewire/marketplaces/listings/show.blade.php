@@ -104,6 +104,14 @@ new class extends Component
             'total' => $total,
             'status' => 'pending',
         ]);
+        $transaction->activities()->create([
+            'type' => 'created',
+            'description' => 'Transaction created by user',
+            'meta' => [
+                'user_id' => auth()->id(),
+                'ip' => request()->ip(),
+            ],
+        ]);
         $marketplace = $this->listing->marketplace;
         return $this->redirectRoute('marketplaces.transactions.pay', [
             'marketplace' => $marketplace->id,

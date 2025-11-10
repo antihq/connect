@@ -37,4 +37,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(TransactionActivity::class);
+    }
 }
