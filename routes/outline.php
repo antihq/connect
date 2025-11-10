@@ -16,7 +16,7 @@ Volt::route('/marketplace/{marketplace}/inbox/orders', 'marketplaces.inbox.order
 Volt::route('/marketplace/{marketplace}/inbox/sales', 'marketplaces.inbox.sales')->name('marketplaces.inbox.sales');
 
 Volt::route('/marketplace/{marketplace}/sales', 'marketplaces.sales.index')->name('marketplaces.sales.index');
-Volt::route('/marketplace/{marketplace}/sales/1', 'marketplaces.sales.show')->name('marketplaces.sales.show');
+Volt::route('/marketplace/{marketplace}/sales/{transaction}', 'marketplaces.sales.show')->name('marketplaces.sales.show');
 
 Volt::route('/marketplace/{marketplace}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
 Volt::route('/marketplace/{marketplace}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
