@@ -20,11 +20,6 @@ class Review extends Model
         return $this->belongsTo(Transaction::class);
     }
 
-    public function marketplace()
-    {
-        // Get the marketplace through the transaction
-        return $this->transaction?->marketplace();
-    }
 
     public function user()
     {

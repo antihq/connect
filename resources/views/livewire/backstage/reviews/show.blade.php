@@ -33,4 +33,6 @@ new class extends Component {
         $owner = $review->transaction?->marketplace?->organization?->user;
     @endphp
     <p>{{ $owner?->name ?? 'N/A' }}{{ $owner ? ' (' . $owner->email . ')' : '' }}</p>
+
+    <a href="{{ route('backstage.reviews.edit', $review) }}" class="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Edit Review</a>
 </div>

@@ -59,7 +59,7 @@ Volt::route('/backstage/transactions/{transaction}', 'backstage.transactions.sho
 
 Volt::route('/backstage/reviews', 'backstage.reviews.index')->middleware('auth')->name('backstage.reviews.index');
 Volt::route('/backstage/reviews/{review}', 'backstage.reviews.show')->middleware('auth')->name('backstage.reviews.show');
-Volt::route('/backstage/reviews/1/edit', 'backstage.reviews.edit')->name('backstage.reviews.edit');
+Volt::route('/backstage/reviews/{review}/edit', 'backstage.reviews.edit')->name('backstage.reviews.edit');
 
 Volt::route('/backstage/marketplaces/{marketplace}/settings/name', 'backstage.marketplaces.settings.name')->name('backstage.marketplaces.settings.name');
 Volt::route('/backstage/marketplaces/{marketplace}/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
