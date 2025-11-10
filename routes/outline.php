@@ -19,7 +19,7 @@ Volt::route('/marketplace/{marketplace}/sales', 'marketplaces.sales.index')->nam
 Volt::route('/marketplace/{marketplace}/sales/1', 'marketplaces.sales.show')->name('marketplaces.sales.show');
 
 Volt::route('/marketplace/{marketplace}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
-Volt::route('/marketplace/{marketplace}/orders/1', 'marketplaces.orders.show')->name('marketplaces.orders.show');
+Volt::route('/marketplace/{marketplace}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
 
 Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
 Volt::route('/marketplace/{marketplace}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
