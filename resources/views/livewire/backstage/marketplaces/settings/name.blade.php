@@ -7,6 +7,20 @@ use Livewire\Volt\Component;
 new class extends Component {
     public string $name = '';
 
+    public function mount()
+    {
+        $this->name = $this->marketplace()->name ?? '';
+    }
+
+    public function save()
+    {
+        $this->authorize('update', $this->marketplace());
+        $this->validate();
+        $this->marketplace()->update([
+            'name' => $this->name,
+        ]);
+    }
+
     #[Computed]
     public function user()
     {
@@ -19,22 +33,6 @@ new class extends Component {
         return $this->user()
             ->currentOrganization
             ->marketplace;
-    }
-
-    public function mount()
-    {
-        $this->name = $this->marketplace()?->name ?? '';
-    }
-
-    public function save()
-    {
-        $this->authorize('update', $this->marketplace());
-
-        $this->validate();
-
-        $this->marketplace()->update([
-            'name' => $this->name,
-        ]);
     }
 
     protected function rules(): array
