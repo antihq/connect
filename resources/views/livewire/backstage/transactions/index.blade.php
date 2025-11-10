@@ -31,7 +31,11 @@ new class extends Component {
         <flux:table.rows>
             @forelse ($this->transactions as $transaction)
                 <flux:table.row :key="$transaction->id">
-                    <flux:table.cell>{{ $transaction->id }}</flux:table.cell>
+                    <flux:table.cell>
+    <a href="{{ route('backstage.transactions.show', $transaction) }}" class="text-blue-600 hover:underline">
+        {{ $transaction->id }}
+    </a>
+</flux:table.cell>
                     <flux:table.cell>{{ $transaction->listing->title ?? '-' }}</flux:table.cell>
                     <flux:table.cell>{{ $transaction->user->name ?? '-' }}</flux:table.cell>
                     <flux:table.cell>{{ number_format($transaction->total, 2) }}</flux:table.cell>

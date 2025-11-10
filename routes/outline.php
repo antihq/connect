@@ -55,7 +55,7 @@ Volt::route('/backstage/listings/{listing}', 'backstage.listings.show')->name('b
 Volt::route('/backstage/listings/{listing}/edit', 'backstage.listings.edit')->name('backstage.listings.edit')->middleware('auth');
 
 Volt::route('/backstage/transactions', 'backstage.transactions.index')->name('backstage.transactions.index')->middleware('auth');
-Volt::route('/backstage/transactions/1', 'backstage.transactions.show')->name('backstage.transactions.show');
+Volt::route('/backstage/transactions/{transaction}', 'backstage.transactions.show')->name('backstage.transactions.show')->middleware('auth');
 
 Volt::route('/backstage/reviews', 'backstage.reviews.index')->name('backstage.reviews.index');
 Volt::route('/backstage/reviews/1', 'backstage.reviews.show')->name('backstage.reviews.show');
