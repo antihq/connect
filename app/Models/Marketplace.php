@@ -22,5 +22,10 @@ class Marketplace extends Model
         return $this->hasMany(Listing::class);
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     // Add casts() if you have attributes to cast in the future
 }
