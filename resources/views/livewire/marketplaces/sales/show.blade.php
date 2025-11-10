@@ -7,10 +7,35 @@ use App\Models\Transaction;
 new class extends Component {
     public Marketplace $marketplace;
     public Transaction $transaction;
+    public string $message = '';
 
     public function mount()
     {
-        $this->transaction->load(['listing', 'user', 'activities']);
+        $this->transaction->load(['listing', 'user', 'activities.user']);
+    }
+
+    public function postMessage()
+    {
+        $this->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        // Only buyer or provider can post
+        $user = auth()->user();
+        $isBuyer = $user->id === $this->transaction->user_id;
+        $isProvider = $user->id === $this->transaction->listing->user_id;
+        if (!($isBuyer || $isProvider)) {
+            abort(403);
+        }
+
+        $this->transaction->activities()->create([
+            'type' => 'message',
+            'description' => $this->message,
+            'user_id' => $user->id,
+        ]);
+
+        $this->message = '';
+        $this->transaction->load(['activities.user']);
     }
 }; ?>
 
@@ -57,26 +82,47 @@ new class extends Component {
         @if ($transaction->activities->isEmpty())
             <flux:text>No activity recorded for this transaction.</flux:text>
         @else
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column>Type</flux:table.column>
-                    <flux:table.column>Description</flux:table.column>
-                    <flux:table.column>Meta</flux:table.column>
-                    <flux:table.column>Date</flux:table.column>
-                </flux:table.columns>
-                <flux:table.rows>
-                    @foreach ($transaction->activities as $activity)
-                        <flux:table.row :key="$activity->id">
-                            <flux:table.cell>{{ $activity->type }}</flux:table.cell>
-                            <flux:table.cell>{{ $activity->description }}</flux:table.cell>
-                            <flux:table.cell>
-                                <pre class="text-xs bg-zinc-50 dark:bg-zinc-900 p-2 rounded">{{ json_encode($activity->meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
-                            </flux:table.cell>
-                            <flux:table.cell>{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</flux:table.cell>
-                        </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
+            <div class="space-y-4">
+                @foreach ($transaction->activities as $activity)
+                    @if ($activity->type === 'message')
+                        <div class="flex items-start gap-3 p-3 rounded bg-zinc-50 dark:bg-zinc-900">
+                            <div class="font-bold text-sm">
+                                @if ($activity->user_id === auth()->id())
+                                    You
+                                @elseif ($activity->user_id === $transaction->user_id)
+                                    Buyer
+                                @elseif ($activity->user_id === $transaction->listing->user_id)
+                                    Provider
+                                @else
+                                    User #{{ $activity->user_id }}
+                                @endif
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm">{{ $activity->description }}</div>
+                                <div class="text-xs text-zinc-500 mt-1">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex items-center gap-2 p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-xs">
+                            <span class="font-semibold">[{{ ucfirst($activity->type) }}]</span>
+                            <span>{{ $activity->description }}</span>
+                            @if ($activity->meta)
+                                <span class="ml-2"><pre class="inline">{{ json_encode($activity->meta, JSON_UNESCAPED_SLASHES) }}</pre></span>
+                            @endif
+                            <span class="ml-auto text-zinc-400">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</span>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
         @endif
+    </flux:card>
+
+    <flux:card class="mt-6">
+        <form wire:submit="postMessage">
+            <flux:heading size="sm" class="mb-2">Send a message</flux:heading>
+            <flux:textarea wire:model.defer="message" placeholder="Type your message..." rows="3" class="mb-2" />
+            @error('message') <div class="text-red-500 text-xs mb-2">{{ $message }}</div> @enderror
+            <flux:button type="submit" color="primary">Send</flux:button>
+        </form>
     </flux:card>
 </div>

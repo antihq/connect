@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transaction_activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('type');
             $table->string('description')->nullable();
             $table->json('meta')->nullable();
