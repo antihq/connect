@@ -36,7 +36,8 @@ new class extends Component {
         <span class="font-semibold">Marketplace:</span>
         <span>{{ $listing->marketplace->name ?? 'N/A' }}</span>
     </div>
-    <div class="mt-6">
+    <div class="mt-6 flex items-center gap-4">
         <a href="{{ route('backstage.listings.index') }}" class="text-blue-600 hover:underline">&larr; Back to Listings</a>
+        <a href="{{ route('backstage.listings.edit', $listing) }}" class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition">Edit Listing</a>
     </div>
 </div>
