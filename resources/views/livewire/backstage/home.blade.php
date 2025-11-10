@@ -13,5 +13,9 @@ new class extends Component {
 }; ?>
 
 <div>
-    Marketplace: {{ $this->marketplace->id }}
+    @include('partials.backstage-navbar')
+
+    <div>
+        Marketplace: {{ $this->marketplace->id }}
+    </div>
 </div>
