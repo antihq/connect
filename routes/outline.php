@@ -2,6 +2,9 @@
 
 use Livewire\Volt\Volt;
 
+Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
+Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');
+
 Volt::route('/marketplace/{marketplace}/', 'marketplaces.show')->name('marketplaces.show');
 Volt::route('/marketplace/{marketplace}/search', 'marketplaces.search')->name('marketplaces.search');
 

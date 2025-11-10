@@ -17,7 +17,9 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'marketplace_id' => \App\Models\Marketplace::factory(),
+            // Add other sensible defaults if needed
+
         ];
     }
 }

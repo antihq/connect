@@ -24,8 +24,10 @@ it('allows an authenticated user to book available dates', function () {
         ->set('startDate', $start)
         ->set('endDate', $end)
         ->call('requestToBook')
-        ->assertSet('bookingMessage', 'Booking request submitted!')
-        ->assertSet('bookingError', null);
+        ->assertRedirect(route('marketplaces.transactions.pay', [
+            'marketplace' => $marketplace->id,
+            'transaction' => Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first()->id,
+        ]));
 
     assertDatabaseHas('transactions', [
         'listing_id' => $listing->id,
@@ -66,6 +68,7 @@ it('prevents booking overlapping dates', function () {
     $marketplace = Marketplace::factory()->create();
     $listing = Listing::factory()->for($marketplace)->create(['price' => 100]);
     $existing = Transaction::factory()->for($listing)->for($user)->create([
+        'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
         'nights' => 3,

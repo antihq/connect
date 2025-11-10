@@ -95,6 +95,7 @@ new class extends Component
         $pricePerNight = $this->listing->price ?? 0;
         $total = $nights * $pricePerNight;
         $transaction = $this->listing->transactions()->create([
+            'marketplace_id' => $this->marketplace->id,
             'user_id' => auth()->id(),
             'start_date' => $start,
             'end_date' => $end,
@@ -103,7 +104,11 @@ new class extends Component
             'total' => $total,
             'status' => 'pending',
         ]);
-        $this->bookingMessage = 'Booking request submitted!';
+        $marketplace = $this->listing->marketplace;
+        return $this->redirectRoute('marketplaces.transactions.pay', [
+            'marketplace' => $marketplace->id,
+            'transaction' => $transaction->id,
+        ]);
     }
 }; ?>
 

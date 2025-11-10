@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('marketplace_id')->constrained()->cascadeOnDelete();
             $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->date('start_date');
