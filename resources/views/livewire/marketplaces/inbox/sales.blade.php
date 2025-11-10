@@ -45,7 +45,7 @@ new class extends Component {
                             {{ $transaction->user->name ?? 'N/A' }}
                         </flux:table.cell>
                         <flux:table.cell>
-                            <flux:link :href="route('marketplaces.orders.show', [$transaction->listing->marketplace_id, $transaction->id])">
+                            <flux:link :href="route('marketplaces.sales.show', [$transaction->listing->marketplace_id, $transaction->id])">
                                 {{ $transaction->listing->title ?? 'N/A' }}
                             </flux:link>
                         </flux:table.cell>
