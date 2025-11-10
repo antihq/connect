@@ -37,6 +37,38 @@ new class extends Component {
         $this->message = '';
         $this->transaction->load(['activities.user']);
     }
+
+    public function acceptRequest()
+    {
+        $user = auth()->user();
+        if ($user->id !== $this->transaction->listing->user_id || $this->transaction->status !== 'paid') {
+            abort(403);
+        }
+        $this->transaction->status = 'accepted';
+        $this->transaction->save();
+        $this->transaction->activities()->create([
+            'type' => 'status_change',
+            'description' => 'Provider accepted the request.',
+            'user_id' => $user->id,
+        ]);
+        $this->transaction->load(['activities.user']);
+    }
+
+    public function rejectRequest()
+    {
+        $user = auth()->user();
+        if ($user->id !== $this->transaction->listing->user_id || $this->transaction->status !== 'paid') {
+            abort(403);
+        }
+        $this->transaction->status = 'rejected';
+        $this->transaction->save();
+        $this->transaction->activities()->create([
+            'type' => 'status_change',
+            'description' => 'Provider rejected the request.',
+            'user_id' => $user->id,
+        ]);
+        $this->transaction->load(['activities.user']);
+    }
 }; ?>
 
 <div>
@@ -77,6 +109,20 @@ new class extends Component {
         </flux:text>
     </flux:card>
 
+    @if (
+        $transaction->status === 'paid' &&
+        $transaction->listing->user_id === auth()->id()
+    )
+        <div class="flex gap-2 mb-4">
+            <form wire:submit="acceptRequest">
+                <flux:button type="submit" color="success">Accept</flux:button>
+            </form>
+            <form wire:submit="rejectRequest">
+                <flux:button type="submit" color="danger">Reject</flux:button>
+            </form>
+        </div>
+    @endif
+
     <flux:card class="mt-8">
         <flux:heading size="md" class="mb-2">Activity Log</flux:heading>
         @if ($transaction->activities->isEmpty())
@@ -106,6 +152,11 @@ new class extends Component {
                         <div class="flex items-center gap-2 p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-xs">
                             <span class="font-semibold">[{{ ucfirst($activity->type) }}]</span>
                             <span>{{ $activity->description }}</span>
+                            @if ($activity->user_id === $transaction->listing->user_id)
+                                <span class="ml-2 text-zinc-500">(Provider)</span>
+                            @elseif ($activity->user_id === $transaction->user_id)
+                                <span class="ml-2 text-zinc-500">(Buyer)</span>
+                            @endif
                             @if ($activity->meta)
                                 <span class="ml-2"><pre class="inline">{{ json_encode($activity->meta, JSON_UNESCAPED_SLASHES) }}</pre></span>
                             @endif

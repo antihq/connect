@@ -119,3 +119,118 @@ it('non-provider cannot post a message', function () {
         ->call('postMessage')
         ->assertStatus(403);
 });
+
+it('provider can accept a paid transaction', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'paid',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('acceptRequest')
+        ->assertHasNoErrors()
+        ->assertSee('accepted')
+        ->assertSee('Provider accepted the request.');
+
+    expect($sale->fresh()->status)->toBe('accepted');
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $sale->id,
+        'type' => 'status_change',
+        'description' => 'Provider accepted the request.',
+        'user_id' => $provider->id,
+    ]);
+});
+
+it('provider can reject a paid transaction', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'paid',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('rejectRequest')
+        ->assertHasNoErrors()
+        ->assertSee('rejected')
+        ->assertSee('Provider rejected the request.');
+
+    expect($sale->fresh()->status)->toBe('rejected');
+    assertDatabaseHas('transaction_activities', [
+        'transaction_id' => $sale->id,
+        'type' => 'status_change',
+        'description' => 'Provider rejected the request.',
+        'user_id' => $provider->id,
+    ]);
+});
+
+it('non-provider cannot accept or reject', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'paid',
+    ]);
+    $otherUser = User::factory()->create();
+
+    Volt::actingAs($otherUser)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('acceptRequest')
+        ->assertStatus(403);
+
+    Volt::actingAs($otherUser)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('rejectRequest')
+        ->assertStatus(403);
+});
+
+it('provider cannot accept or reject unless status is paid', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $sale = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+        'status' => 'pending',
+    ]);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('acceptRequest')
+        ->assertStatus(403);
+
+    Volt::actingAs($provider)
+        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->call('rejectRequest')
+        ->assertStatus(403);
+});
