@@ -43,7 +43,11 @@ new class extends Component {
         <tbody>
             @foreach ($this->reviews as $review)
                 <tr>
-                    <td class="border px-4 py-2">{{ $review->id }}</td>
+                    <td class="border px-4 py-2">
+    <a href="{{ route('backstage.reviews.show', $review) }}" class="text-blue-600 hover:underline">
+        {{ $review->id }}
+    </a>
+</td>
                     <td class="border px-4 py-2">{{ $review->reviewer->name ?? 'N/A' }}</td>
                     <td class="border px-4 py-2">{{ $review->reviewee->name ?? 'N/A' }}</td>
                     <td class="border px-4 py-2">
