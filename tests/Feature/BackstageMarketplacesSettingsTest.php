@@ -46,18 +46,60 @@ it('shows validation errors for invalid input', function () {
         ->assertHasErrors(['name' => 'required']);
 });
 
-it('forbids non-organization user from updating the marketplace name', function () {
+
+it('shows the marketplace slug edit form for organization user', function () {
     $user = User::factory()->create();
-    $otherOrg = Organization::factory()->for($user)->create(); // user belongs to this org
-    $org = Organization::factory()->create(); // marketplace belongs to this org
-    $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Original Name']);
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'original-slug']);
 
     Volt::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
-        ->set('name', 'Hacked Name')
+        ->assertSet('slug', 'original-slug');
+});
+
+it('allows organization user to update the marketplace slug', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'old-slug']);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.name')
+        ->set('slug', 'new-slug')
         ->call('save')
-        ->assertForbidden();
+        ->assertHasNoErrors();
 
     $marketplace->refresh();
-    expect($marketplace->name)->toBe('Original Name');
+    expect($marketplace->slug)->toBe('new-slug');
 });
+
+it('validates that the marketplace slug is unique', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'unique-slug']);
+    $otherMarketplace = Marketplace::factory()->create(['slug' => 'taken-slug']);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.name')
+        ->set('slug', 'taken-slug')
+        ->call('save')
+        ->assertHasErrors(['slug' => 'unique']);
+});
+
+it('validates that the marketplace slug is required and alpha_dash', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'valid-slug']);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.name')
+        ->set('slug', '')
+        ->call('save')
+        ->assertHasErrors(['slug' => 'required']);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.name')
+        ->set('slug', 'invalid slug!')
+        ->call('save')
+        ->assertHasErrors(['slug' => 'alpha_dash']);
+});
+
