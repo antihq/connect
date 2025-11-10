@@ -47,7 +47,7 @@ Volt::route('/marketplace/{marketplace}/register', 'marketplaces.register')->nam
 Volt::route('/backstage', 'backstage.home')->name('backstage.home');
 
 Volt::route('/backstage/users', 'backstage.users.index')->name('backstage.users.index');
-Volt::route('/backstage/users/1', 'backstage.users.show')->name('backstage.users.show');
+Volt::route('/backstage/users/{user}', 'backstage.users.show')->name('backstage.users.show');
 Volt::route('/backstage/users/1/edit', 'backstage.users.edit')->name('backstage.users.edit');
 
 Volt::route('/backstage/listings', 'backstage.listings.index')->name('backstage.listings.index');

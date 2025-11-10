@@ -24,7 +24,11 @@ new class extends Component {
         <flux:table.rows>
             @foreach ($this->users as $user)
                 <flux:table.row :key="$user->id">
-                    <flux:table.cell>{{ $user->name }}</flux:table.cell>
+                    <flux:table.cell>
+                        <flux:link :href="route('backstage.users.show', $user)">
+                            {{ $user->name }}
+                        </flux:link>
+                    </flux:table.cell>
                     <flux:table.cell>{{ $user->email }}</flux:table.cell>
                     <flux:table.cell>{{ $user->created_at->format('Y-m-d') }}</flux:table.cell>
                 </flux:table.row>
