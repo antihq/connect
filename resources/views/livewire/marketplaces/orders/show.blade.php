@@ -14,10 +14,16 @@ new class extends Component {
     public string $review_comment = '';
     public bool $review_submitted = false;
 
+    public $reviews = [];
+
     public function mount()
     {
         $this->transaction->load(['listing', 'user', 'activities.user']);
         $this->review_submitted = $this->hasReviewed();
+        // Eager load all reviews for this transaction, keyed by reviewer_id
+        $this->reviews = Review::where('transaction_id', $this->transaction->id)
+            ->get()
+            ->keyBy('reviewer_id');
     }
 
     public function postMessage()
@@ -168,36 +174,79 @@ new class extends Component {
             <flux:text>No activity recorded for this transaction.</flux:text>
         @else
             <div class="space-y-4">
-                @foreach ($transaction->activities as $activity)
-                    @if ($activity->type === 'message')
-                        <div class="flex items-start gap-3 p-3 rounded bg-zinc-50 dark:bg-zinc-900">
-                            <div class="font-bold text-sm">
-                                @if ($activity->user_id === auth()->id())
-                                    You
-                                @elseif ($activity->user_id === $transaction->user_id)
-                                    Buyer
-                                @elseif ($activity->user_id === $transaction->listing->user_id)
-                                    Provider
-                                @else
-                                    User #{{ $activity->user_id }}
-                                @endif
-                            </div>
-                            <div class="flex-1">
-                                <div class="text-sm">{{ $activity->description }}</div>
-                                <div class="text-xs text-zinc-500 mt-1">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</div>
-                            </div>
-                        </div>
-                    @else
-                        <div class="flex items-center gap-2 p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-xs">
-                            <span class="font-semibold">[{{ ucfirst($activity->type) }}]</span>
-                            <span>{{ $activity->description }}</span>
-                            @if ($activity->meta)
-                                <span class="ml-2"><pre class="inline">{{ json_encode($activity->meta, JSON_UNESCAPED_SLASHES) }}</pre></span>
-                            @endif
-                            <span class="ml-auto text-zinc-400">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</span>
-                        </div>
-                    @endif
-                @endforeach
+@foreach ($transaction->activities as $activity)
+    @if ($activity->type === 'review')
+        @php
+            $review = $reviews[$activity->user_id] ?? null;
+        @endphp
+        @if ($review)
+            <div class="flex items-center gap-2 p-2 rounded bg-yellow-50 dark:bg-yellow-900 text-xs">
+                <span class="font-semibold">[Review]</span>
+                <span>
+                    <strong>
+                        @if ($review->reviewer_id === $transaction->listing->user_id)
+                            Provider
+                        @elseif ($review->reviewer_id === $transaction->user_id)
+                            Buyer
+                        @else
+                            User #{{ $review->reviewer_id }}
+                        @endif
+                    </strong>
+                    reviewed
+                    <strong>
+                        @if ($review->reviewee_id === $transaction->listing->user_id)
+                            Provider
+                        @elseif ($review->reviewee_id === $transaction->user_id)
+                            Buyer
+                        @else
+                            User #{{ $review->reviewee_id }}
+                        @endif
+                    </strong>
+                </span>
+                <span class="ml-2">Rating: {{ $review->rating }}★</span>
+                <span class="ml-2">"{{ $review->comment }}"</span>
+                <span class="ml-auto text-zinc-400">{{ $review->created_at?->format('M d, Y H:i') ?? '-' }}</span>
+            </div>
+        @else
+            <div class="flex items-center gap-2 p-2 rounded bg-red-50 text-xs">
+                <span class="font-semibold">[Review]</span>
+                <span>Review data missing.</span>
+            </div>
+        @endif
+    @elseif ($activity->type === 'message')
+        <div class="flex items-start gap-3 p-3 rounded bg-zinc-50 dark:bg-zinc-900">
+            <div class="font-bold text-sm">
+                @if ($activity->user_id === auth()->id())
+                    You
+                @elseif ($activity->user_id === $transaction->user_id)
+                    Buyer
+                @elseif ($activity->user_id === $transaction->listing->user_id)
+                    Provider
+                @else
+                    User #{{ $activity->user_id }}
+                @endif
+            </div>
+            <div class="flex-1">
+                <div class="text-sm">{{ $activity->description }}</div>
+                <div class="text-xs text-zinc-500 mt-1">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</div>
+            </div>
+        </div>
+    @else
+        <div class="flex items-center gap-2 p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-xs">
+            <span class="font-semibold">[{{ ucfirst($activity->type) }}]</span>
+            <span>{{ $activity->description }}</span>
+            @if ($activity->user_id === $transaction->listing->user_id)
+                <span class="ml-2 text-zinc-500">(Provider)</span>
+            @elseif ($activity->user_id === $transaction->user_id)
+                <span class="ml-2 text-zinc-500">(Buyer)</span>
+            @endif
+            @if ($activity->meta)
+                <span class="ml-2"><pre class="inline">{{ json_encode($activity->meta, JSON_UNESCAPED_SLASHES) }}</pre></span>
+            @endif
+            <span class="ml-auto text-zinc-400">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</span>
+        </div>
+    @endif
+@endforeach
             </div>
         @endif
     </flux:card>
