@@ -17,5 +17,10 @@ class Marketplace extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function listings()
+    {
+        return $this->hasMany(Listing::class);
+    }
+
     // Add casts() if you have attributes to cast in the future
 }
