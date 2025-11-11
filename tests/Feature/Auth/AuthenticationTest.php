@@ -3,8 +3,10 @@
 use App\Models\User;
 use Livewire\Volt\Volt as LivewireVolt;
 
+use function Pest\Laravel\get;
+
 it('renders the login screen', function () {
-    $response = $this->get('/login');
+    $response = get(route('login'));
 
     $response->assertStatus(200);
 });

@@ -3,47 +3,53 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
-Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');
+Route::domain(config('connect.on_url'))->group(function () {
+    Route::get('/', function() {
+        return 'On Connect';
+    })->name('marketplaces.index');
 
-Volt::route('/marketplace/{marketplace}/', 'marketplaces.show')->name('marketplaces.show');
-Volt::route('/marketplace/{marketplace}/search', 'marketplaces.search')->name('marketplaces.search');
+    Volt::route('/{marketplace:slug}', 'marketplaces.show')->name('marketplaces.show');
 
-Volt::route('/marketplace/{marketplace}/pages/about', 'marketplaces.pages.about')->name('marketplaces.pages.about');
-Volt::route('/marketplace/{marketplace}/pages/terms', 'marketplaces.pages.terms')->name('marketplaces.pages.terms');
-Volt::route('/marketplace/{marketplace}/pages/privacy', 'marketplaces.pages.privacy')->name('marketplaces.pages.privacy');
+    Volt::route('/{marketplace:slug}/search', 'marketplaces.search')->name('marketplaces.search');
 
-Volt::route('/marketplace/{marketplace}/inbox/orders', 'marketplaces.inbox.orders')->name('marketplaces.inbox.orders');
-Volt::route('/marketplace/{marketplace}/inbox/sales', 'marketplaces.inbox.sales')->name('marketplaces.inbox.sales');
+    Volt::route('/{marketplace:slug}/pages/about', 'marketplaces.pages.about')->name('marketplaces.pages.about');
+    Volt::route('/{marketplace:slug}/pages/terms', 'marketplaces.pages.terms')->name('marketplaces.pages.terms');
+    Volt::route('/{marketplace:slug}/pages/privacy', 'marketplaces.pages.privacy')->name('marketplaces.pages.privacy');
 
-Volt::route('/marketplace/{marketplace}/sales', 'marketplaces.sales.index')->name('marketplaces.sales.index');
-Volt::route('/marketplace/{marketplace}/sales/{transaction}', 'marketplaces.sales.show')->name('marketplaces.sales.show');
+    Volt::route('/{marketplace:slug}/inbox/orders', 'marketplaces.inbox.orders')->name('marketplaces.inbox.orders');
+    Volt::route('/{marketplace:slug}/inbox/sales', 'marketplaces.inbox.sales')->name('marketplaces.inbox.sales');
 
-Volt::route('/marketplace/{marketplace}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
-Volt::route('/marketplace/{marketplace}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
+    Volt::route('/{marketplace:slug}/sales', 'marketplaces.sales.index')->name('marketplaces.sales.index');
+    Volt::route('/{marketplace:slug}/sales/{transaction}', 'marketplaces.sales.show')->name('marketplaces.sales.show');
 
-Volt::route('/marketplace/{marketplace}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
-Volt::route('/marketplace/{marketplace}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
-Volt::route('/marketplace/{marketplace}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
+    Volt::route('/{marketplace:slug}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
+    Volt::route('/{marketplace:slug}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
 
-Volt::route('/marketplace/{marketplace}/account/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
-Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
-Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
-Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
-Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
-Volt::route('/marketplace/{marketplace}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
+    Volt::route('/{marketplace:slug}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
+    Volt::route('/{marketplace:slug}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
+    Volt::route('/{marketplace:slug}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
 
-Volt::route('/marketplace/{marketplace}/account/profile', 'marketplaces.profile')->name('marketplaces.profile');
+    Volt::route('/{marketplace:slug}/account/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
+    Volt::route('/{marketplace:slug}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
+    Volt::route('/{marketplace:slug}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
+    Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
+    Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
+    Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
 
-Volt::route('/marketplace/{marketplace}/account/settings/contact', 'marketplaces.account.settings.contact')->name('marketplaces.account.settings.contact');
-Volt::route('/marketplace/{marketplace}/account/settings/password', 'marketplaces.account.settings.password')->name('marketplaces.account.settings.password');
-Volt::route('/marketplace/{marketplace}/account/settings/payout', 'marketplaces.account.settings.payout')->name('marketplaces.account.settings.payout');
-Volt::route('/marketplace/{marketplace}/account/settings/payment', 'marketplaces.account.settings.payment')->name('marketplaces.account.settings.payment');
+    Volt::route('/{marketplace:slug}/account/profile', 'marketplaces.profile')->name('marketplaces.profile');
 
-Volt::route('/marketplace/{marketplace}/users/1', 'marketplaces.users.show')->name('marketplaces.users.show');
+    Volt::route('/{marketplace:slug}/account/settings/contact', 'marketplaces.account.settings.contact')->name('marketplaces.account.settings.contact');
+    Volt::route('/{marketplace:slug}/account/settings/password', 'marketplaces.account.settings.password')->name('marketplaces.account.settings.password');
+    Volt::route('/{marketplace:slug}/account/settings/payout', 'marketplaces.account.settings.payout')->name('marketplaces.account.settings.payout');
+    Volt::route('/{marketplace:slug}/account/settings/payment', 'marketplaces.account.settings.payment')->name('marketplaces.account.settings.payment');
 
-Volt::route('/marketplace/{marketplace}/login', 'marketplaces.login')->name('marketplaces.login');
-Volt::route('/marketplace/{marketplace}/register', 'marketplaces.register')->name('marketplaces.register');
+    Volt::route('/{marketplace:slug}/users/1', 'marketplaces.users.show')->name('marketplaces.users.show');
+
+    Volt::route('/{marketplace:slug}/login', 'marketplaces.login')->name('marketplaces.login');
+
+    Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
+    Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');
+});
 
 Route::prefix('backstage')->middleware('auth')->group(function () {
     Volt::route('/', 'backstage.home')->name('backstage.home');
