@@ -150,13 +150,15 @@ it('shows validation errors for invalid sender email name', function () {
 
 it('prevents users from accessing the sender email name settings for marketplaces they do not own', function () {
     $user = User::factory()->create();
-    $otherUser = User::factory()->create();
-    $org = Organization::factory()->for($otherUser)->create();
+    $owner = User::factory()->create();
+    $org = Organization::factory()->for($owner)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Other Sender']);
+    $user->switchOrganization($org);
 
     Volt::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
-        ->assertNotFound();
+        ->call('save')
+        ->assertForbidden();
 });
 
 
@@ -230,12 +232,13 @@ it('validates that the domain is not too long', function () {
 
 it('prevents users from accessing the domain settings for marketplaces they do not own', function () {
     $user = User::factory()->create();
-    $otherUser = User::factory()->create();
-    $org = Organization::factory()->for($otherUser)->create();
+    $owner = User::factory()->create();
+    $org = Organization::factory()->for($owner)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
+    $user->switchOrganization($org);
 
     Volt::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
-        ->assertNotFound();
+        ->call('save')
+        ->assertForbidden();
 });
-

@@ -17,7 +17,9 @@ new class extends Component {
     public function save()
     {
         $this->authorize('update', $this->marketplace());
+
         $this->validate();
+
         $this->marketplace()->update([
             'domain' => $this->domain,
         ]);
@@ -32,10 +34,7 @@ new class extends Component {
     #[Computed]
     public function marketplace()
     {
-        $org = $this->user()?->currentOrganization;
-        $marketplace = $org?->marketplace;
-        abort_unless($marketplace, 404);
-        return $marketplace;
+        return $this->user()->currentOrganization->marketplace;
     }
 
     protected function rules(): array

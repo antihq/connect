@@ -1,28 +1,40 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 
 new class extends Component {
     public string $sender_email_name = '';
-    public $marketplace;
 
     public function mount()
     {
-        $org = \Illuminate\Support\Facades\Auth::user()?->currentOrganization;
-        abort_unless($org && $org->marketplace, 404);
-        $this->marketplace = $org->marketplace;
         $this->fill(
-            $this->marketplace->only(['sender_email_name'])
+            $this->marketplace()->only(['sender_email_name'])
         );
     }
 
     public function save()
     {
-        $this->authorize('update', $this->marketplace);
+        $this->authorize('update', $this->marketplace());
+
         $this->validate();
-        $this->marketplace->update([
+
+        $this->marketplace()->update([
             'sender_email_name' => $this->sender_email_name,
         ]);
+    }
+
+    #[Computed]
+    public function user()
+    {
+        return Auth::user();
+    }
+
+    #[Computed]
+    public function marketplace()
+    {
+        return $this->user()->currentOrganization->marketplace;
     }
 
     protected function rules(): array
