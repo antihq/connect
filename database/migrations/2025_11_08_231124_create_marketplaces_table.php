@@ -18,7 +18,13 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('domain')->nullable()->unique();
             $table->string('sender_email_name')->nullable();
-            $table->timestamps();
+            $table->boolean('is_private')->default(false);
+$table->boolean('require_user_approval')->default(false);
+$table->boolean('restrict_view_listings')->default(false);
+$table->boolean('restrict_posting')->default(false);
+$table->boolean('restrict_transactions')->default(false);
+$table->boolean('require_listing_approval')->default(false);
+$table->timestamps();
         });
     }
 

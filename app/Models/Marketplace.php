@@ -35,7 +35,12 @@ class Marketplace extends Model
     protected function casts(): array
     {
         return [
-            // Add more casts as needed
+            'is_private' => 'boolean',
+            'require_user_approval' => 'boolean',
+            'restrict_view_listings' => 'boolean',
+            'restrict_posting' => 'boolean',
+            'restrict_transactions' => 'boolean',
+            'require_listing_approval' => 'boolean',
             'sender_email_name' => 'string',
         ];
     }
