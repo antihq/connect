@@ -21,6 +21,7 @@ class MarketplaceFactory extends Factory
             'organization_id' => Organization::factory(),
             'name' => $name = fake()->company(),
             'slug' => str($name)->slug(),
+            'domain' => fake()->optional()->domainName(),
         ];
     }
 }

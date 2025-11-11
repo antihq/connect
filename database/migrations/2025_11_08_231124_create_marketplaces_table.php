@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('organization_id')->unique()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('domain')->nullable()->unique();
             $table->timestamps();
         });
     }
