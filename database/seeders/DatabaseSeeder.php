@@ -23,7 +23,10 @@ class DatabaseSeeder extends Seeder
         // Create a marketplace for the user's first organization
         $organization = $user->organizations()->first();
         if ($organization) {
-            $organization->marketplace()->create(['name' => 'Test Marketplace']);
+            $organization->marketplace()->create([
+                'name' => 'Test Marketplace',
+                'slug' => 'test-marketplace',
+            ]);
         }
     }
 }
