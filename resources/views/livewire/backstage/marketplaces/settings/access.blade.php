@@ -30,6 +30,10 @@ new class extends Component {
     {
         $this->authorize('update', $this->marketplace());
 
+        if (!$this->is_private) {
+            $this->restrict_view_listings = false;
+        }
+
         $this->validate();
 
         $this->marketplace()->update([
@@ -80,7 +84,7 @@ new class extends Component {
             <flux:error name="require_user_approval" />
         </flux:field>
         <flux:field variant="inline">
-            <flux:checkbox wire:model="restrict_view_listings" />
+            <flux:checkbox wire:model="restrict_view_listings" x-bind:disabled="!$wire.is_private" />
             <flux:label>Restrict right to view listings</flux:label>
             <flux:error name="restrict_view_listings" />
         </flux:field>

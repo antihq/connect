@@ -51,10 +51,11 @@ it('allows owner to update require_user_approval', function () {
 it('allows owner to update restrict_view_listings', function () {
     $user = User::factory()->create();
     $org = Organization::factory()->for($user)->create();
-    $marketplace = Marketplace::factory()->for($org)->create(['restrict_view_listings' => false]);
+    $marketplace = Marketplace::factory()->for($org)->create(['restrict_view_listings' => false, 'is_private' => false]);
 
     Volt::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
         ->set('restrict_view_listings', true)
         ->call('save')
         ->assertHasNoErrors();
@@ -120,6 +121,42 @@ it('prevents users from updating access settings for marketplaces they do not ow
         ->set('is_private', true)
         ->call('save')
         ->assertForbidden();
+});
+
+it('prevents setting restrict_view_listings to true when is_private is false', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => false,
+        'restrict_view_listings' => false,
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_view_listings', true)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $marketplace->refresh();
+    expect($marketplace->restrict_view_listings)->toBeFalse();
+});
+
+it('allows setting restrict_view_listings to true only when is_private is true', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => true,
+        'restrict_view_listings' => false,
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_view_listings', true)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $marketplace->refresh();
+    expect($marketplace->restrict_view_listings)->toBeTrue();
 });
 
 it('shows all toggles with correct state', function () {
