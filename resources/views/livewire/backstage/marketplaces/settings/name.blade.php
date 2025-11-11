@@ -49,17 +49,9 @@ new class extends Component {
 }; ?>
 
 <div>
-    <form wire:submit="save">
-        <label for="marketplace-name">Marketplace Name</label>
-        <input id="marketplace-name" type="text" wire:model="name" />
-        @error('name')
-            <div class="text-red-500">{{ $message }}</div>
-        @enderror
-        <label for="marketplace-slug">Marketplace Slug</label>
-        <input id="marketplace-slug" type="text" wire:model="slug" />
-        @error('slug')
-            <div class="text-red-500">{{ $message }}</div>
-        @enderror
-        <button type="submit">Save</button>
+    <form wire:submit="save" class="space-y-6">
+        <flux:input wire:model="name" label="Marketplace Name" />
+        <flux:input wire:model="slug" label="Marketplace Slug" />
+        <flux:button type="submit" variant="primary">Save</flux:button>
     </form>
 </div>
