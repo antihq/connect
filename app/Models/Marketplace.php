@@ -47,6 +47,30 @@ class Marketplace extends Model
             'require_user_approval_internal_text' => 'string',
             'require_user_approval_external_link' => 'string',
             'require_user_approval_external_text' => 'string',
+
+            'restrict_view_listings_action' => 'string',
+            'restrict_view_listings_internal_link' => 'string',
+            'restrict_view_listings_internal_text' => 'string',
+            'restrict_view_listings_external_link' => 'string',
+            'restrict_view_listings_external_text' => 'string',
+
+            'restrict_posting_action' => 'string',
+            'restrict_posting_internal_link' => 'string',
+            'restrict_posting_internal_text' => 'string',
+            'restrict_posting_external_link' => 'string',
+            'restrict_posting_external_text' => 'string',
+
+            'restrict_transactions_action' => 'string',
+            'restrict_transactions_internal_link' => 'string',
+            'restrict_transactions_internal_text' => 'string',
+            'restrict_transactions_external_link' => 'string',
+            'restrict_transactions_external_text' => 'string',
+
+            'require_listing_approval_action' => 'string',
+            'require_listing_approval_internal_link' => 'string',
+            'require_listing_approval_internal_text' => 'string',
+            'require_listing_approval_external_link' => 'string',
+            'require_listing_approval_external_text' => 'string',
         ];
     }
 

@@ -182,6 +182,392 @@ it('shows all toggles with correct state', function () {
 });
 
 // --- New TDD tests for require_user_approval call-to-action settings ---
+it('allows owner to set restrict_view_listings_action to none, internal, or external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => true,
+        'restrict_view_listings' => true,
+        'restrict_view_listings_action' => 'none',
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'internal')
+        ->set('restrict_view_listings_internal_link', '/dashboard')
+        ->set('restrict_view_listings_internal_text', 'Go to Dashboard')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_view_listings_action)->toBe('internal');
+    expect($marketplace->restrict_view_listings_internal_link)->toBe('/dashboard');
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'external')
+        ->set('restrict_view_listings_external_link', 'https://example.com')
+        ->set('restrict_view_listings_external_text', 'Visit Site')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_view_listings_action)->toBe('external');
+    expect($marketplace->restrict_view_listings_external_link)->toBe('https://example.com');
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'none')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_view_listings_action)->toBe('none');
+});
+it('requires internal link if restrict_view_listings_action is internal', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => true,
+        'restrict_view_listings' => true,
+        'restrict_view_listings_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'internal')
+        ->set('restrict_view_listings_internal_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_view_listings_internal_link' => 'required_if']);
+});
+it('requires external link and valid url if restrict_view_listings_action is external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => true,
+        'restrict_view_listings' => true,
+        'restrict_view_listings_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'external')
+        ->set('restrict_view_listings_external_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_view_listings_external_link' => 'required_if']);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'external')
+        ->set('restrict_view_listings_external_link', 'not-a-url')
+        ->call('save')
+        ->assertHasErrors(['restrict_view_listings_external_link' => 'url']);
+});
+it('does not require links if restrict_view_listings_action is none', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'is_private' => true,
+        'restrict_view_listings' => true,
+        'restrict_view_listings_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('is_private', true)
+        ->set('restrict_view_listings', true)
+        ->set('restrict_view_listings_action', 'none')
+        ->set('restrict_view_listings_internal_link', null)
+        ->set('restrict_view_listings_external_link', null)
+        ->call('save')
+        ->assertHasNoErrors();
+});
+
+// Posting rights action
+it('allows owner to set restrict_posting_action to none, internal, or external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_posting' => true,
+        'restrict_posting_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'internal')
+        ->set('restrict_posting_internal_link', '/dashboard')
+        ->set('restrict_posting_internal_text', 'Go to Dashboard')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_posting_action)->toBe('internal');
+    expect($marketplace->restrict_posting_internal_link)->toBe('/dashboard');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'external')
+        ->set('restrict_posting_external_link', 'https://example.com')
+        ->set('restrict_posting_external_text', 'Visit Site')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_posting_action)->toBe('external');
+    expect($marketplace->restrict_posting_external_link)->toBe('https://example.com');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'none')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_posting_action)->toBe('none');
+});
+it('requires internal link if restrict_posting_action is internal', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_posting' => true,
+        'restrict_posting_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'internal')
+        ->set('restrict_posting_internal_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_posting_internal_link' => 'required_if']);
+});
+it('requires external link and valid url if restrict_posting_action is external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_posting' => true,
+        'restrict_posting_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'external')
+        ->set('restrict_posting_external_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_posting_external_link' => 'required_if']);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'external')
+        ->set('restrict_posting_external_link', 'not-a-url')
+        ->call('save')
+        ->assertHasErrors(['restrict_posting_external_link' => 'url']);
+});
+it('does not require links if restrict_posting_action is none', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_posting' => true,
+        'restrict_posting_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_posting', true)
+        ->set('restrict_posting_action', 'none')
+        ->set('restrict_posting_internal_link', null)
+        ->set('restrict_posting_external_link', null)
+        ->call('save')
+        ->assertHasNoErrors();
+});
+
+// Transactions rights action
+it('allows owner to set restrict_transactions_action to none, internal, or external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_transactions' => true,
+        'restrict_transactions_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'internal')
+        ->set('restrict_transactions_internal_link', '/dashboard')
+        ->set('restrict_transactions_internal_text', 'Go to Dashboard')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_transactions_action)->toBe('internal');
+    expect($marketplace->restrict_transactions_internal_link)->toBe('/dashboard');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'external')
+        ->set('restrict_transactions_external_link', 'https://example.com')
+        ->set('restrict_transactions_external_text', 'Visit Site')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_transactions_action)->toBe('external');
+    expect($marketplace->restrict_transactions_external_link)->toBe('https://example.com');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'none')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->restrict_transactions_action)->toBe('none');
+});
+it('requires internal link if restrict_transactions_action is internal', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_transactions' => true,
+        'restrict_transactions_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'internal')
+        ->set('restrict_transactions_internal_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_transactions_internal_link' => 'required_if']);
+});
+it('requires external link and valid url if restrict_transactions_action is external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_transactions' => true,
+        'restrict_transactions_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'external')
+        ->set('restrict_transactions_external_link', null)
+        ->call('save')
+        ->assertHasErrors(['restrict_transactions_external_link' => 'required_if']);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'external')
+        ->set('restrict_transactions_external_link', 'not-a-url')
+        ->call('save')
+        ->assertHasErrors(['restrict_transactions_external_link' => 'url']);
+});
+it('does not require links if restrict_transactions_action is none', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'restrict_transactions' => true,
+        'restrict_transactions_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('restrict_transactions', true)
+        ->set('restrict_transactions_action', 'none')
+        ->set('restrict_transactions_internal_link', null)
+        ->set('restrict_transactions_external_link', null)
+        ->call('save')
+        ->assertHasNoErrors();
+});
+
+// Listing approval action
+it('allows owner to set require_listing_approval_action to none, internal, or external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_listing_approval' => true,
+        'require_listing_approval_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'internal')
+        ->set('require_listing_approval_internal_link', '/dashboard')
+        ->set('require_listing_approval_internal_text', 'Go to Dashboard')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->require_listing_approval_action)->toBe('internal');
+    expect($marketplace->require_listing_approval_internal_link)->toBe('/dashboard');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'external')
+        ->set('require_listing_approval_external_link', 'https://example.com')
+        ->set('require_listing_approval_external_text', 'Visit Site')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->require_listing_approval_action)->toBe('external');
+    expect($marketplace->require_listing_approval_external_link)->toBe('https://example.com');
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'none')
+        ->call('save')
+        ->assertHasNoErrors();
+    $marketplace->refresh();
+    expect($marketplace->require_listing_approval_action)->toBe('none');
+});
+it('requires internal link if require_listing_approval_action is internal', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_listing_approval' => true,
+        'require_listing_approval_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'internal')
+        ->set('require_listing_approval_internal_link', null)
+        ->call('save')
+        ->assertHasErrors(['require_listing_approval_internal_link' => 'required_if']);
+});
+it('requires external link and valid url if require_listing_approval_action is external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_listing_approval' => true,
+        'require_listing_approval_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'external')
+        ->set('require_listing_approval_external_link', null)
+        ->call('save')
+        ->assertHasErrors(['require_listing_approval_external_link' => 'required_if']);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'external')
+        ->set('require_listing_approval_external_link', 'not-a-url')
+        ->call('save')
+        ->assertHasErrors(['require_listing_approval_external_link' => 'url']);
+});
+it('does not require links if require_listing_approval_action is none', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_listing_approval' => true,
+        'require_listing_approval_action' => 'none',
+    ]);
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_listing_approval', true)
+        ->set('require_listing_approval_action', 'none')
+        ->set('require_listing_approval_internal_link', null)
+        ->set('require_listing_approval_external_link', null)
+        ->call('save')
+        ->assertHasNoErrors();
+});
+
+// --- New TDD tests for require_user_approval call-to-action settings ---
 it('allows owner to set require_user_approval_action to none, internal, or external', function () {
     $user = User::factory()->create();
     $org = Organization::factory()->for($user)->create();
