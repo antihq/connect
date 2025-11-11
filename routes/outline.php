@@ -45,7 +45,7 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Volt::route('/{marketplace:slug}/users/1', 'marketplaces.users.show')->name('marketplaces.users.show');
 
-    Volt::route('/{marketplace:slug}/login', 'marketplaces.login')->name('marketplaces.login');
+    Volt::route('/{marketplace:slug}/sign-in', 'on-marketplace.sign-in')->name('on-marketplace.sign-in');
 
     Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
     Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');

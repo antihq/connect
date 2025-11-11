@@ -1,6 +1,5 @@
 ## IMPORTANT
 
-- All tests must follow BDD style.
 - Always use the `artisan make:*` command when creating models, migrations, factories, controllers, and other Laravel files. This ensures proper boilerplate, registration, and maintainability.
 - Always refactor code to import classes at the top and use the imported class directly (never use the fully qualified namespace in code bodies).
 - Always use constructor property promotion for public/protected properties in classes, including models, notifications, and other Laravel files.
