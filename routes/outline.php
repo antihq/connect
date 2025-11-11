@@ -63,7 +63,6 @@ Volt::route('/backstage/reviews/{review}/edit', 'backstage.reviews.edit')->name(
 
 Volt::route('/backstage/settings/name', 'backstage.marketplaces.settings.name')->name('backstage.marketplaces.settings.name');
 Volt::route('/backstage/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
-Volt::route('/backstage/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
 Volt::route('/backstage/settings/email', 'backstage.marketplaces.settings.email')->name('backstage.marketplaces.settings.email');
 Volt::route('/backstage/settings/localization', 'backstage.marketplaces.settings.localization')->name('backstage.marketplaces.settings.localization');
 Volt::route('/backstage/settings/access', 'backstage.marketplaces.settings.access')->name('backstage.marketplaces.settings.access');

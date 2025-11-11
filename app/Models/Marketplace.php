@@ -27,5 +27,18 @@ class Marketplace extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            // Add more casts as needed
+            'sender_email_name' => 'string',
+        ];
+    }
+
     // Add casts() if you have attributes to cast in the future
 }

@@ -22,6 +22,7 @@ class MarketplaceFactory extends Factory
             'name' => $name = fake()->company(),
             'slug' => str($name)->slug(),
             'domain' => fake()->optional()->domainName(),
+            'sender_email_name' => fake()->company(),
         ];
     }
 }
