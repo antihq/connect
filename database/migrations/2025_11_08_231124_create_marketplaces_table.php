@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('sender_email_name')->nullable();
             $table->boolean('is_private')->default(false);
 $table->boolean('require_user_approval')->default(false);
+$table->string('require_user_approval_action')->default('none');
+$table->string('require_user_approval_internal_link')->nullable();
+$table->string('require_user_approval_internal_text')->nullable();
+$table->string('require_user_approval_external_link')->nullable();
+$table->string('require_user_approval_external_text')->nullable();
 $table->boolean('restrict_view_listings')->default(false);
 $table->boolean('restrict_posting')->default(false);
 $table->boolean('restrict_transactions')->default(false);

@@ -180,3 +180,111 @@ it('shows all toggles with correct state', function () {
         ->assertSet('restrict_transactions', true)
         ->assertSet('require_listing_approval', true);
 });
+
+// --- New TDD tests for require_user_approval call-to-action settings ---
+it('allows owner to set require_user_approval_action to none, internal, or external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_user_approval' => true,
+        'require_user_approval_action' => 'none',
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'internal')
+        ->set('require_user_approval_internal_link', '/dashboard')
+        ->set('require_user_approval_internal_text', 'Go to Dashboard')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $marketplace->refresh();
+    expect($marketplace->require_user_approval_action)->toBe('internal');
+    expect($marketplace->require_user_approval_internal_link)->toBe('/dashboard');
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'external')
+        ->set('require_user_approval_external_link', 'https://example.com')
+        ->set('require_user_approval_external_text', 'Visit Site')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $marketplace->refresh();
+    expect($marketplace->require_user_approval_action)->toBe('external');
+    expect($marketplace->require_user_approval_external_link)->toBe('https://example.com');
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'none')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $marketplace->refresh();
+    expect($marketplace->require_user_approval_action)->toBe('none');
+});
+
+it('requires internal link if require_user_approval_action is internal', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_user_approval' => true,
+        'require_user_approval_action' => 'none',
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'internal')
+        ->set('require_user_approval_internal_link', null)
+        ->call('save')
+        ->assertHasErrors(['require_user_approval_internal_link' => 'required_if']);
+});
+
+it('requires external link and valid url if require_user_approval_action is external', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_user_approval' => true,
+        'require_user_approval_action' => 'none',
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'external')
+        ->set('require_user_approval_external_link', null)
+        ->call('save')
+        ->assertHasErrors(['require_user_approval_external_link' => 'required_if']);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'external')
+        ->set('require_user_approval_external_link', 'not-a-url')
+        ->call('save')
+        ->assertHasErrors(['require_user_approval_external_link' => 'url']);
+});
+
+it('does not require links if require_user_approval_action is none', function () {
+    $user = User::factory()->create();
+    $org = Organization::factory()->for($user)->create();
+    $marketplace = Marketplace::factory()->for($org)->create([
+        'require_user_approval' => true,
+        'require_user_approval_action' => 'none',
+    ]);
+
+    Volt::actingAs($user)
+        ->test('backstage.marketplaces.settings.access')
+        ->set('require_user_approval', true)
+        ->set('require_user_approval_action', 'none')
+        ->set('require_user_approval_internal_link', null)
+        ->set('require_user_approval_external_link', null)
+        ->call('save')
+        ->assertHasNoErrors();
+});
+
+// // UI/Alpine/Livewire integration test would be in a browser test suite, but you can assert the fields are always present and disabled appropriately in a browser test.

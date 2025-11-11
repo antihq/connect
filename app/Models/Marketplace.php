@@ -42,6 +42,11 @@ class Marketplace extends Model
             'restrict_transactions' => 'boolean',
             'require_listing_approval' => 'boolean',
             'sender_email_name' => 'string',
+            'require_user_approval_action' => 'string',
+            'require_user_approval_internal_link' => 'string',
+            'require_user_approval_internal_text' => 'string',
+            'require_user_approval_external_link' => 'string',
+            'require_user_approval_external_text' => 'string',
         ];
     }
 
