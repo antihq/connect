@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
@@ -44,74 +45,76 @@ Volt::route('/marketplace/{marketplace}/users/1', 'marketplaces.users.show')->na
 Volt::route('/marketplace/{marketplace}/login', 'marketplaces.login')->name('marketplaces.login');
 Volt::route('/marketplace/{marketplace}/register', 'marketplaces.register')->name('marketplaces.register');
 
-Volt::route('/backstage', 'backstage.home')->name('backstage.home');
+Route::prefix('backstage')->middleware('auth')->group(function () {
+    Volt::route('/', 'backstage.home')->name('backstage.home');
 
-Volt::route('/backstage/users', 'backstage.users.index')->name('backstage.users.index');
-Volt::route('/backstage/users/{user}', 'backstage.users.show')->name('backstage.users.show');
-Volt::route('/backstage/users/{user}/edit', 'backstage.users.edit')->name('backstage.users.edit');
+    Volt::route('/users', 'backstage.users.index')->name('backstage.users.index');
+    Volt::route('/users/{user}', 'backstage.users.show')->name('backstage.users.show');
+    Volt::route('/users/{user}/edit', 'backstage.users.edit')->name('backstage.users.edit');
 
-Volt::route('/backstage/listings', 'backstage.listings.index')->name('backstage.listings.index')->middleware('auth');
-Volt::route('/backstage/listings/{listing}', 'backstage.listings.show')->name('backstage.listings.show')->middleware('auth');
-Volt::route('/backstage/listings/{listing}/edit', 'backstage.listings.edit')->name('backstage.listings.edit')->middleware('auth');
+    Volt::route('/listings', 'backstage.listings.index')->name('backstage.listings.index');
+    Volt::route('/listings/{listing}', 'backstage.listings.show')->name('backstage.listings.show');
+    Volt::route('/listings/{listing}/edit', 'backstage.listings.edit')->name('backstage.listings.edit');
 
-Volt::route('/backstage/transactions', 'backstage.transactions.index')->name('backstage.transactions.index')->middleware('auth');
-Volt::route('/backstage/transactions/{transaction}', 'backstage.transactions.show')->name('backstage.transactions.show')->middleware('auth');
+    Volt::route('/transactions', 'backstage.transactions.index')->name('backstage.transactions.index');
+    Volt::route('/transactions/{transaction}', 'backstage.transactions.show')->name('backstage.transactions.show');
 
-Volt::route('/backstage/reviews', 'backstage.reviews.index')->middleware('auth')->name('backstage.reviews.index');
-Volt::route('/backstage/reviews/{review}', 'backstage.reviews.show')->middleware('auth')->name('backstage.reviews.show');
-Volt::route('/backstage/reviews/{review}/edit', 'backstage.reviews.edit')->name('backstage.reviews.edit');
+    Volt::route('/reviews', 'backstage.reviews.index')->middleware('auth')->name('backstage.reviews.index');
+    Volt::route('/reviews/{review}', 'backstage.reviews.show')->middleware('auth')->name('backstage.reviews.show');
+    Volt::route('/reviews/{review}/edit', 'backstage.reviews.edit')->name('backstage.reviews.edit');
 
-Volt::route('/backstage/settings/name', 'backstage.marketplaces.settings.name')->name('backstage.marketplaces.settings.name');
-Volt::route('/backstage/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
-Volt::route('/backstage/settings/email', 'backstage.marketplaces.settings.email')->name('backstage.marketplaces.settings.email');
-Volt::route('/backstage/settings/localization', 'backstage.marketplaces.settings.localization')->name('backstage.marketplaces.settings.localization');
-Volt::route('/backstage/settings/access', 'backstage.marketplaces.settings.access')->name('backstage.marketplaces.settings.access');
+    Volt::route('/settings/name', 'backstage.marketplaces.settings.name')->name('backstage.marketplaces.settings.name');
+    Volt::route('/settings/domain', 'backstage.marketplaces.settings.domain')->name('backstage.marketplaces.settings.domain');
+    Volt::route('/settings/email', 'backstage.marketplaces.settings.email')->name('backstage.marketplaces.settings.email');
+    Volt::route('/settings/localization', 'backstage.marketplaces.settings.localization')->name('backstage.marketplaces.settings.localization');
+    Volt::route('/settings/access', 'backstage.marketplaces.settings.access')->name('backstage.marketplaces.settings.access');
 
-Volt::route('/backstage/pages', 'backstage.marketplaces.pages.index')->name('backstage.marketplaces.pages.index');
-Volt::route('/backstage/pages/create', 'backstage.marketplaces.pages.create')->name('backstage.marketplaces.pages.create');
-Volt::route('/backstage/pages/1/edit', 'backstage.marketplaces.pages.edit')->name('backstage.marketplaces.pages.edit');
+    Volt::route('/pages', 'backstage.marketplaces.pages.index')->name('backstage.marketplaces.pages.index');
+    Volt::route('/pages/create', 'backstage.marketplaces.pages.create')->name('backstage.marketplaces.pages.create');
+    Volt::route('/pages/1/edit', 'backstage.marketplaces.pages.edit')->name('backstage.marketplaces.pages.edit');
 
-Volt::route('/backstage/settings/top-bar', 'backstage.marketplaces.settings.top-bar')->name('backstage.marketplaces.settings.top-bar');
-Volt::route('/backstage/top-bar-links/create', 'backstage.marketplaces.top-bar-links.create')->name('backstage.marketplaces.top-bar-links.create');
-Volt::route('/backstage/top-bar-links/1/edit', 'backstage.marketplaces.top-bar-links.edit')->name('backstage.marketplaces.top-bar-links.edit');
+    Volt::route('/settings/top-bar', 'backstage.marketplaces.settings.top-bar')->name('backstage.marketplaces.settings.top-bar');
+    Volt::route('/top-bar-links/create', 'backstage.marketplaces.top-bar-links.create')->name('backstage.marketplaces.top-bar-links.create');
+    Volt::route('/top-bar-links/1/edit', 'backstage.marketplaces.top-bar-links.edit')->name('backstage.marketplaces.top-bar-links.edit');
 
-Volt::route('/backstage/settings/footer', 'backstage.marketplaces.settings.footer')->name('backstage.marketplaces.settings.footer');
-Volt::route('/backstage/social-media-links/create', 'backstage.marketplaces.social-media-links.create')->name('backstage.marketplaces.social-media-links.create');
-Volt::route('/backstage/social-media-links/1/edit', 'backstage.marketplaces.social-media-links.edit')->name('backstage.marketplaces.social-media-links.edit');
-Volt::route('/backstage/content-blocks/create', 'backstage.marketplaces.content-blocks.create')->name('backstage.marketplaces.content-blocks.create');
-Volt::route('/backstage/content-blocks/1/edit', 'backstage.marketplaces.content-blocks.edit')->name('backstage.marketplaces.content-blocks.edit');
+    Volt::route('/settings/footer', 'backstage.marketplaces.settings.footer')->name('backstage.marketplaces.settings.footer');
+    Volt::route('/social-media-links/create', 'backstage.marketplaces.social-media-links.create')->name('backstage.marketplaces.social-media-links.create');
+    Volt::route('/social-media-links/1/edit', 'backstage.marketplaces.social-media-links.edit')->name('backstage.marketplaces.social-media-links.edit');
+    Volt::route('/content-blocks/create', 'backstage.marketplaces.content-blocks.create')->name('backstage.marketplaces.content-blocks.create');
+    Volt::route('/content-blocks/1/edit', 'backstage.marketplaces.content-blocks.edit')->name('backstage.marketplaces.content-blocks.edit');
 
-Volt::route('/backstage/settings/texts', 'backstage.marketplaces.settings.texts')->name('backstage.marketplaces.settings.texts');
+    Volt::route('/settings/texts', 'backstage.marketplaces.settings.texts')->name('backstage.marketplaces.settings.texts');
 
-Volt::route('/backstage/settings/design/branding', 'backstage.marketplaces.settings.design.branding')->name('backstage.marketplaces.settings.design.branding');
-Volt::route('/backstage/settings/design/layout', 'backstage.marketplaces.settings.design.layout')->name('backstage.marketplaces.settings.design.layout');
+    Volt::route('/settings/design/branding', 'backstage.marketplaces.settings.design.branding')->name('backstage.marketplaces.settings.design.branding');
+    Volt::route('/settings/design/layout', 'backstage.marketplaces.settings.design.layout')->name('backstage.marketplaces.settings.design.layout');
 
-Volt::route('/backstage/user-types', 'backstage.marketplaces.user-types')->name('backstage.marketplaces.user-types');
-Volt::route('/backstage/user-types/create', 'backstage.marketplaces.user-types.create')->name('backstage.marketplaces.user-types.create');
-Volt::route('/backstage/user-types/1/edit', 'backstage.marketplaces.user-types.edit')->name('backstage.marketplaces.user-types.edit');
+    Volt::route('/user-types', 'backstage.marketplaces.user-types')->name('backstage.marketplaces.user-types');
+    Volt::route('/user-types/create', 'backstage.marketplaces.user-types.create')->name('backstage.marketplaces.user-types.create');
+    Volt::route('/user-types/1/edit', 'backstage.marketplaces.user-types.edit')->name('backstage.marketplaces.user-types.edit');
 
-Volt::route('/backstage/user-fields', 'backstage.marketplaces.user-fields')->name('backstage.marketplaces.user-fields');
-Volt::route('/backstage/user-fields/create', 'backstage.marketplaces.user-fields.create')->name('backstage.marketplaces.user-fields.create');
-Volt::route('/backstage/user-fields/1/edit', 'backstage.marketplaces.user-fields.edit')->name('backstage.marketplaces.user-fields.edit');
+    Volt::route('/user-fields', 'backstage.marketplaces.user-fields')->name('backstage.marketplaces.user-fields');
+    Volt::route('/user-fields/create', 'backstage.marketplaces.user-fields.create')->name('backstage.marketplaces.user-fields.create');
+    Volt::route('/user-fields/1/edit', 'backstage.marketplaces.user-fields.edit')->name('backstage.marketplaces.user-fields.edit');
 
-Volt::route('/backstage/listing-types', 'backstage.marketplaces.listing-types')->name('backstage.marketplaces.listing-types');
-Volt::route('/backstage/listing-types/create', 'backstage.marketplaces.listing-types.create')->name('backstage.marketplaces.listing-types.create');
-Volt::route('/backstage/listing-types/1/edit', 'backstage.marketplaces.listing-types.edit')->name('backstage.marketplaces.listing-types.edit');
+    Volt::route('/listing-types', 'backstage.marketplaces.listing-types')->name('backstage.marketplaces.listing-types');
+    Volt::route('/listing-types/create', 'backstage.marketplaces.listing-types.create')->name('backstage.marketplaces.listing-types.create');
+    Volt::route('/listing-types/1/edit', 'backstage.marketplaces.listing-types.edit')->name('backstage.marketplaces.listing-types.edit');
 
-Volt::route('/backstage/listing-categories', 'backstage.marketplaces.listing-categories')->name('backstage.marketplaces.listing-categories');
-Volt::route('/backstage/listing-categories/create', 'backstage.marketplaces.listing-categories.create')->name('backstage.marketplaces.listing-categories.create');
-Volt::route('/backstage/listing-categories/1/edit', 'backstage.marketplaces.listing-categories.edit')->name('backstage.marketplaces.listing-categories.edit');
+    Volt::route('/listing-categories', 'backstage.marketplaces.listing-categories')->name('backstage.marketplaces.listing-categories');
+    Volt::route('/listing-categories/create', 'backstage.marketplaces.listing-categories.create')->name('backstage.marketplaces.listing-categories.create');
+    Volt::route('/listing-categories/1/edit', 'backstage.marketplaces.listing-categories.edit')->name('backstage.marketplaces.listing-categories.edit');
 
-Volt::route('/backstage/listing-fields', 'backstage.marketplaces.listing-fields')->name('backstage.marketplaces.listing-fields');
-Volt::route('/backstage/listing-fields/create', 'backstage.marketplaces.listing-fields.create')->name('backstage.marketplaces.listing-fields.create');
-Volt::route('/backstage/listing-fields/1/edit', 'backstage.marketplaces.listing-fields.edit')->name('backstage.marketplaces.listing-fields.edit');
+    Volt::route('/listing-fields', 'backstage.marketplaces.listing-fields')->name('backstage.marketplaces.listing-fields');
+    Volt::route('/listing-fields/create', 'backstage.marketplaces.listing-fields.create')->name('backstage.marketplaces.listing-fields.create');
+    Volt::route('/listing-fields/1/edit', 'backstage.marketplaces.listing-fields.edit')->name('backstage.marketplaces.listing-fields.edit');
 
-Volt::route('/backstage/settings/search', 'backstage.marketplaces.settings.search')->name('backstage.marketplaces.settings.search');
-Volt::route('/backstage/settings/transaction', 'backstage.marketplaces.settings.transaction')->name('backstage.marketplaces.settings.transaction');
-Volt::route('/backstage/settings/commission', 'backstage.marketplaces.settings.commission')->name('backstage.marketplaces.settings.commission');
+    Volt::route('/settings/search', 'backstage.marketplaces.settings.search')->name('backstage.marketplaces.settings.search');
+    Volt::route('/settings/transaction', 'backstage.marketplaces.settings.transaction')->name('backstage.marketplaces.settings.transaction');
+    Volt::route('/settings/commission', 'backstage.marketplaces.settings.commission')->name('backstage.marketplaces.settings.commission');
 
-Volt::route('/backstage/settings/paymenents', 'backstage.marketplaces.settings.payments')->name('backstage.marketplaces.settings.payments');
-Volt::route('/backstage/settings/maps', 'backstage.marketplaces.settings.maps')->name('backstage.marketplaces.settings.maps');
-Volt::route('/backstage/settings/analytics', 'backstage.marketplaces.settings.analytics')->name('backstage.marketplaces.settings.analytics');
-Volt::route('/backstage/settings/google', 'backstage.marketplaces.settings.google')->name('backstage.marketplaces.settings.google');
-Volt::route('/backstage/settings/zapier', 'backstage.marketplaces.settings.zapier')->name('backstage.marketplaces.settings.zapier');
+    Volt::route('/settings/paymenents', 'backstage.marketplaces.settings.payments')->name('backstage.marketplaces.settings.payments');
+    Volt::route('/settings/maps', 'backstage.marketplaces.settings.maps')->name('backstage.marketplaces.settings.maps');
+    Volt::route('/settings/analytics', 'backstage.marketplaces.settings.analytics')->name('backstage.marketplaces.settings.analytics');
+    Volt::route('/settings/google', 'backstage.marketplaces.settings.google')->name('backstage.marketplaces.settings.google');
+    Volt::route('/settings/zapier', 'backstage.marketplaces.settings.zapier')->name('backstage.marketplaces.settings.zapier');
+});

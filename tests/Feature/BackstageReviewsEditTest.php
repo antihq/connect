@@ -53,7 +53,7 @@ it('redirects guests to login', function () {
     $review = Review::factory()->create(['transaction_id' => $transaction->id]);
 
     $this->get(route('backstage.reviews.edit', $review))
-        ->assertForbidden();
+        ->assertRedirect(route('login'));
 });
 
 it('allows the marketplace owner to update the review via Livewire action', function () {

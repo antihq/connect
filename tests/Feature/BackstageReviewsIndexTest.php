@@ -69,5 +69,5 @@ test('it paginates reviews', function () {
         ->assertStatus(200)
         ->assertSee((string) $reviews[0]->id)
         ->assertSee((string) $reviews[19]->id)
-        ->assertDontSee((string) $reviews[20]->id);
+        ->assertDontSeeText($reviews[20]->comment);
 });
