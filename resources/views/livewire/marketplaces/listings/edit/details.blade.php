@@ -77,6 +77,6 @@ new class extends Component
             <flux:error name="description" />
         </flux:field>
 
-        <flux:button type="submit" variant="primary">Continue</flux:button>
+        <flux:button type="submit" variant="primary">Next</flux:button>
     </form>
 </div>
