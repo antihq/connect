@@ -125,74 +125,81 @@ new class extends Component
         ]);
     }
 }; ?>
-
-<div>
-    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
-
-    <flux:card>
-        <flux:heading size="lg" class="mb-2">{{ $listing->title }}</flux:heading>
-        <flux:text class="mb-4">{{ $listing->description }}</flux:text>
-        @if ($listing->price)
-            <flux:text class="mb-2">
-                <strong>Price:</strong>
-                ${{ number_format($listing->price, 2) }}
-            </flux:text>
-        @endif
-
-        @if ($listing->address)
-            <flux:text class="mb-2">
-                <strong>Address:</strong>
-                {{ $listing->address }}{{ $listing->apt_suite ? ', '.$listing->apt_suite : '' }}
-            </flux:text>
-        @endif
-
-        <flux:text class="mb-2">Posted {{ $listing->created_at->diffForHumans() }}</flux:text>
+<flux:container class="[:where(&)]:max-w-5xl!">
+    <flux:main>
         @if (is_array($listing->photos) && count($listing->photos) > 0)
-            <div class="mt-4 grid grid-cols-2 gap-4">
+            <img src="/{{ $listing->photos[0] }}" class="w-full rounded object-fill aspect-3/2 shadow" />
+
+            <flux:spacer class="my-6" />
+
+            <div class="grid grid-cols-6 gap-4">
                 @foreach ($listing->photos as $photo)
-                    <img src="/{{ $photo }}" class="h-40 w-full rounded object-cover shadow" />
+                    <img src="/{{ $photo }}" class="w-full rounded object-fill aspect-3/2 shadow" />
                 @endforeach
             </div>
         @endif
 
-        <div class="mt-8">
-            <flux:card>
-                <form wire:submit="requestToBook">
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="flex-1">
-                            <flux:input type="date" label="Start Date" wire:model.live="startDate" />
-                        </div>
-                        <div class="flex-1">
-                            <flux:input type="date" label="End Date" wire:model.live="endDate" />
-                        </div>
-                    </div>
-                    @if ($bookingBreakdown)
-                        <flux:card class="mt-4">
-                            <flux:text>
-                                <strong>Nights:</strong>
-                                {{ $bookingBreakdown['nights'] }}
-                            </flux:text>
-                            <flux:text>
-                                <strong>Price per night:</strong>
-                                ${{ number_format($bookingBreakdown['price_per_night'], 2) }}
-                            </flux:text>
-                            <flux:text>
-                                <strong>Total:</strong>
-                                ${{ number_format($bookingBreakdown['total'], 2) }}
-                            </flux:text>
-                        </flux:card>
-                        <flux:button type="submit" color="primary" class="mt-4 w-full">Request to Book</flux:button>
-                    @endif
+        <flux:spacer class="my-10" />
 
-                    @if ($bookingMessage)
-                        <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
-                    @endif
+        <flux:text variant="strong" class="text-base">{{ $listing->description }}</flux:text>
 
-                    @if ($bookingError)
-                        <flux:text class="mt-4 text-red-600">{{ $bookingError }}</flux:text>
-                    @endif
-                </form>
-            </flux:card>
+        <flux:spacer class="my-10" />
+
+        <flux:text class="text-base">
+            {{ $listing->address }}{{ $listing->apt_suite ? ', '.$listing->apt_suite : '' }}
+        </flux:text>
+    </flux:main>
+
+    <flux:aside class="py-12 lg:pl-20 w-96 hidden lg:block" sticky>
+        <flux:heading level="1" size="lg" class="mb-2">{{ $listing->title }}</flux:heading>
+
+        <flux:spacer class="my-2" />
+
+        <flux:heading size="xl" level="2">
+            ${{ number_format($listing->price, 2) }} per day
+        </flux:heading>
+
+        <flux:spacer class="my-6" />
+
+        <div class="flex items-center gap-2">
+            <flux:avatar :src="'https://unavatar.io/'. $listing->user->email" />
+            <flux:heading>{{ $listing->user->name }}</flux:heading>
         </div>
-    </flux:card>
-</div>
+
+        <flux:spacer class="my-12" />
+
+        <form wire:submit="requestToBook">
+            <div class="flex flex-col gap-4 md:flex-row">
+                <div class="flex-1">
+                    <flux:input type="date" label="Start Date" wire:model.live="startDate" />
+                </div>
+                <div class="flex-1">
+                    <flux:input type="date" label="End Date" wire:model.live="endDate" />
+                </div>
+            </div>
+            @if ($bookingBreakdown)
+                <flux:card class="mt-4">
+                    <flux:text>
+                        <strong>Nights:</strong>
+                        {{ $bookingBreakdown['nights'] }}
+                    </flux:text>
+                    <flux:text>
+                        <strong>Price per night:</strong>
+                        ${{ number_format($bookingBreakdown['price_per_night'], 2) }}
+                    </flux:text>
+                    <flux:text>
+                        <strong>Total:</strong>
+                        ${{ number_format($bookingBreakdown['total'], 2) }}
+                    </flux:text>
+                </flux:card>
+                <flux:button type="submit" color="primary" class="mt-4 w-full">Request to Book</flux:button>
+            @endif
+         @if ($bookingMessage)
+                <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
+            @endif
+         @if ($bookingError)
+                <flux:text class="mt-4 text-red-600">{{ $bookingError }}</flux:text>
+            @endif
+        </form>
+    </flux:aside>
+</flux:container>
