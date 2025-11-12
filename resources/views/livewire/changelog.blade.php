@@ -42,7 +42,9 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 
         <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.22.06@2x.png" />
 
-        <p>After that, configure the listing's availability. Since this is for a rental property, select a time zone, set a default weekly schedule by choosing available days from Monday to Sunday, and optionally configure availability exceptions to specify date ranges when the listing is either available or unavailable.</p>
+        <p>After that, configure the listing's availability.</p>
+
+        <p>Since this is for a rental property, select a time zone, set a default weekly schedule by choosing available days from Monday to Sunday, and optionally configure availability exceptions to specify date ranges when the listing is either available or unavailable.</p>
 
         <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.22.56@2x.png" />
 
