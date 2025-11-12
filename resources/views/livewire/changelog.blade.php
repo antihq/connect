@@ -13,6 +13,46 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 }; ?>
 
 <div class="space-y-20 sm:space-y-32">
+    <x-changelog.entry date="2025-11-12">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.18.12@2x.png" />
+
+        <h2><a href="#changelog-2025-11-12">Multistep listing submission</a></h2>
+
+        <p>Made the publishing process smoother by splitting the submission into five steps.</p>
+
+        <h3>Details</h3>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.19.35@2x.png" />
+
+        <p>First, enter the listing's general details, such as the title and description, with clear indications that both fields are required.</p>
+
+        <h3>Location</h3>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.20.26@2x.png" />
+
+        <p>Next, provide the listing location by entering the address and, optionally, the apartment, suite, or building number.</p>
+
+        <h3>Pricing</h3>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.21.02@2x.png" />
+
+        <p>Then, set the pricing for the listing.</p>
+
+        <h3>Availability</h3>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.22.06@2x.png" />
+
+        <p>After that, configure the listing's availability. Since this is for a rental property, select a time zone, set a default weekly schedule by choosing available days from Monday to Sunday, and optionally configure availability exceptions to specify date ranges when the listing is either available or unavailable.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.22.56@2x.png" />
+
+        <h3>Photos</h3>
+
+        <p>Finally, add photos to the listing to capture visitors' attention.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.25.27@2x.png" />
+    </x-changelog.entry>
+
     <x-changelog.entry date="2025-11-11">
         <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 10.19.56@2x.png" />
         <h2><a href="#changelog-2025-11-11">Magic Auth</a></h2>
