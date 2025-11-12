@@ -26,15 +26,20 @@ Route::domain(config('connect.on_url'))->group(function () {
     Volt::route('/{marketplace:slug}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
 
     Volt::route('/{marketplace:slug}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
-    Volt::route('/{marketplace:slug}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
+
+    Route::middleware('auth')->group(function () {
+        Volt::route('/{marketplace:slug}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
+
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
+    });
+
     Volt::route('/{marketplace:slug}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
 
     Volt::route('/{marketplace:slug}/account/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
-    Volt::route('/{marketplace:slug}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
-    Volt::route('/{marketplace:slug}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
-    Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
-    Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
-    Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
 
     Volt::route('/{marketplace:slug}/account/profile', 'marketplaces.profile')->name('marketplaces.profile');
 
@@ -45,7 +50,7 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Volt::route('/{marketplace:slug}/users/1', 'marketplaces.users.show')->name('marketplaces.users.show');
 
-    Volt::route('/{marketplace:slug}/sign-in', 'on-marketplace.sign-in')->name('on-marketplace.sign-in');
+    Volt::route('/{marketplace:slug}/sign-in', 'on-marketplace.sign-in')->name('on-marketplace.sign-in')->middleware('guest');
 
     Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
     Volt::route('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');

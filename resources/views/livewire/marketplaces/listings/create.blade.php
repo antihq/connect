@@ -23,26 +23,55 @@ new class extends Component {
     {
         $this->validate();
 
-        Listing::create([
+        $listing = Listing::create([
             'marketplace_id' => $this->marketplace->id,
             'user_id' => Auth::id(),
             'title' => $this->title,
             'description' => $this->description,
             'status' => 'draft',
         ]);
-        // Optionally, reset fields or redirect/emit event
+
+        return $this->redirectRoute('marketplaces.listings.edit.location', [
+            'marketplace' => $this->marketplace,
+            'listing' => $listing->id,
+        ], navigate: true);
     }
 }; ?>
 
-<div>
-    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
+<div class="mx-auto max-w-3xl">
+    <flux:navbar class="-mb-px">
+        <flux:navbar.item current :accent="false">
+            Details
+        </flux:navbar.item>
+        <flux:navbar.item disabled>
+            Location
+        </flux:navbar.item>
+        <flux:navbar.item disabled>
+            Pricing
+        </flux:navbar.item>
+        <flux:navbar.item disabled>
+            Availability
+        </flux:navbar.item>
+        <flux:navbar.item disabled>
+            Photos
+        </flux:navbar.item>
+    </flux:navbar>
 
     <flux:separator class="mb-6" />
 
     <form class="space-y-6" wire:submit="create">
-        <flux:input label='title' wire:model="title" />
-        <flux:textarea label='description' wire:model="description"></flux:textarea>
-        <flux:text>custom fields...</flux:text>
-        <flux:button type="submit">next</flux:button>
+        <flux:field>
+            <flux:label badge="Required">Title</flux:label>
+            <flux:input wire:model="title" />
+            <flux:error name="title" />
+        </flux:field>
+
+        <flux:field>
+            <flux:label badge="Required">Description</flux:label>
+            <flux:textarea wire:model="description"></flux:textarea>
+            <flux:error name="description" />
+        </flux:field>
+
+        <flux:button type="submit" variant="primary">Continue</flux:button>
     </form>
 </div>
