@@ -12,10 +12,44 @@
     --font-sans: Inter, sans-serif;
 }
 
+@theme {
+    --color-zinc-25: #FDFDFD;
+    --color-zinc-50: #FAFAFA;
+    --color-zinc-100: #F5F5F5;
+    --color-zinc-200: #E9EAEB;
+    --color-zinc-300: #D5D7DA;
+    --color-zinc-400: #A4A7AE;
+    --color-zinc-500: #717680;
+    --color-zinc-600: #535862;
+    --color-zinc-700: #414651;
+    --color-zinc-800: #252B37;
+    --color-zinc-900: #181D27;
+    --color-zinc-950: #0A0D12;
+
+    --color-blue-25: #F5F8FF;
+    --color-blue-50: #EFF4FF;
+    --color-blue-100: #D1E0FF;
+    --color-blue-200: #B2CCFF;
+    --color-blue-300: #84ADFF;
+    --color-blue-400: #5288FF;
+    --color-blue-500: #2970FF;
+    --color-blue-600: #155EEF;
+    --color-blue-700: #004EEB;
+    --color-blue-800: #0040C1;
+    --color-blue-900: #00359E;
+    --color-blue-950: #002266;
+}
+
+@theme {
+    --color-accent: var(--color-blue-600);
+    --color-accent-content: var(--color-blue-700);
+    --color-accent-foreground: var(--color-white);
+}
+
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-blue-500);
+        --color-accent-content: var(--color-blue-400);
+        --color-accent-foreground: var(--color-white);
     }
 }

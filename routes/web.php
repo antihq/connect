@@ -9,6 +9,7 @@ use Livewire\Volt\Volt;
 
 Volt::route('/', 'welcome')->name('home');
 Volt::route('/updates', 'updates')->name('updates');
+Volt::route('/changelog', 'changelog')->name('changelog');
 
 Volt::route('/vote', 'vote');
 
