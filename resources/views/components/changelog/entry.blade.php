@@ -25,7 +25,7 @@
                             <a class="inline-flex" href="#{{ $id }}">
                                 <time
                                     datetime="{{ \Illuminate\Support\Carbon::parse($date)->toIso8601String() }}"
-                                    class="text-2xs/4 font-medium text-zinc-500 xl:hidden dark:text-white/50"
+                                    class="text-[0.6875rem]/4 font-medium text-zinc-500 xl:hidden dark:text-white/50"
                                 >
                                     {{ \Illuminate\Support\Carbon::parse($date)->format('M j, Y') }}
                                 </time>
