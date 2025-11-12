@@ -53,8 +53,8 @@
                             </flux:text>
                             <div class="mt-8">
                                 <flux:navbar>
-                                    <flux:navbar.item href="#">Home</flux:navbar.item>
-                                    <flux:navbar.item href="/changelog" :accent="false" current>
+                                    <flux:navbar.item href="/" wire:navigate>Home</flux:navbar.item>
+                                    <flux:navbar.item href="/changelog" :accent="false" current wire:navigate>
                                         Changelog
                                     </flux:navbar.item>
                                 </flux:navbar>

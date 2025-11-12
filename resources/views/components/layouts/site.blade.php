@@ -7,7 +7,7 @@
         <flux:header container class="border-b border-zinc-200">
             <flux:navbar class="-mb-px">
                 <flux:navbar.item :href="route('home')">Home</flux:navbar.item>
-                <flux:navbar.item :href="route('updates')">Updates</flux:navbar.item>
+                <flux:navbar.item :href="route('changelog')">Changelog</flux:navbar.item>
             </flux:navbar>
         </flux:header>
 
