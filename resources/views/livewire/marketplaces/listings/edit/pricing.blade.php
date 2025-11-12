@@ -41,19 +41,19 @@ new class extends Component
 
 <div class="mx-auto max-w-3xl">
     <flux:navbar class="-mb-px">
-        <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])" wire:navigate>
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])" wire:navigate>
             Location
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.pricing', [$marketplace, $listing])" current>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.pricing', [$marketplace, $listing])" current wire:navigate>
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.availability', [$marketplace, $listing])">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.availability', [$marketplace, $listing])" wire:navigate>
             Availability
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.photos', [$marketplace, $listing])">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.photos', [$marketplace, $listing])" wire:navigate>
             Photos
         </flux:navbar.item>
     </flux:navbar>

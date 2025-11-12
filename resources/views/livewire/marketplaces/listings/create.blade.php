@@ -42,11 +42,11 @@ new class extends Component
 
 <div class="mx-auto max-w-3xl">
     <flux:navbar class="-mb-px">
-        <flux:navbar.item current>Details</flux:navbar.item>
-        <flux:navbar.item disabled>Location</flux:navbar.item>
-        <flux:navbar.item disabled>Pricing</flux:navbar.item>
-        <flux:navbar.item disabled>Availability</flux:navbar.item>
-        <flux:navbar.item disabled>Photos</flux:navbar.item>
+        <flux:navbar.item current wire:navigate>Details</flux:navbar.item>
+        <flux:navbar.item disabled wire:navigate>Location</flux:navbar.item>
+        <flux:navbar.item disabled wire:navigate>Pricing</flux:navbar.item>
+        <flux:navbar.item disabled wire:navigate>Availability</flux:navbar.item>
+        <flux:navbar.item disabled wire:navigate>Photos</flux:navbar.item>
     </flux:navbar>
 
     <flux:separator class="mb-6" />
