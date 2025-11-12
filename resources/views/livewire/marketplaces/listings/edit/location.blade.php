@@ -1,15 +1,17 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Marketplace;
 use App\Models\Listing;
+use App\Models\Marketplace;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Marketplace $marketplace;
 
     public Listing $listing;
 
     public string $address = '';
+
     public string $apt_suite = '';
 
     public function mount()
@@ -63,9 +65,7 @@ new class extends Component {
 
     <flux:separator class="mb-6" />
 
-    <flux:heading level="1" size="xl">
-        Location
-    </flux:heading>
+    <flux:heading level="1" size="xl">Location</flux:heading>
 
     <flux:spacer class="my-6" />
 

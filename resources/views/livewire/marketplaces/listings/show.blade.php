@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Models\Listing;
@@ -53,6 +52,7 @@ new class extends Component
     }
 
     public ?string $bookingMessage = null;
+
     public ?string $bookingError = null;
 
     public function requestToBook()
@@ -60,29 +60,33 @@ new class extends Component
         $this->bookingMessage = null;
         $this->bookingError = null;
 
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             $this->bookingError = 'You must be logged in to book.';
+
             return;
         }
-        if (!$this->startDate || !$this->endDate) {
+        if (! $this->startDate || ! $this->endDate) {
             $this->bookingError = 'Please select both start and end dates.';
+
             return;
         }
         $start = \Carbon\Carbon::parse($this->startDate);
         $end = \Carbon\Carbon::parse($this->endDate);
         if ($end->lessThanOrEqualTo($start)) {
             $this->bookingError = 'End date must be after start date.';
+
             return;
         }
         $nights = $start->diffInDays($end);
         if ($nights < 1) {
             $this->bookingError = 'Booking must be at least one night.';
+
             return;
         }
         // Check for overlapping transactions
         $overlap = $this->listing->transactions()
-            ->where(function($q) use ($start, $end) {
-                $q->where(function($q2) use ($start, $end) {
+            ->where(function ($q) use ($start, $end) {
+                $q->where(function ($q2) use ($start, $end) {
                     $q2->where('start_date', '<', $end)
                         ->where('end_date', '>', $start);
                 });
@@ -90,6 +94,7 @@ new class extends Component
             ->exists();
         if ($overlap) {
             $this->bookingError = 'Selected dates are not available.';
+
             return;
         }
         $pricePerNight = $this->listing->price ?? 0;
@@ -113,6 +118,7 @@ new class extends Component
             ],
         ]);
         $marketplace = $this->listing->marketplace;
+
         return $this->redirectRoute('marketplaces.transactions.pay', [
             'marketplace' => $marketplace->id,
             'transaction' => $transaction->id,
@@ -177,9 +183,11 @@ new class extends Component
                         </flux:card>
                         <flux:button type="submit" color="primary" class="mt-4 w-full">Request to Book</flux:button>
                     @endif
+
                     @if ($bookingMessage)
                         <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
                     @endif
+
                     @if ($bookingError)
                         <flux:text class="mt-4 text-red-600">{{ $bookingError }}</flux:text>
                     @endif

@@ -1,16 +1,21 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Marketplace;
 use App\Models\Listing;
+use App\Models\Marketplace;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Marketplace $marketplace;
+
     public Listing $listing;
+
     public string $timezone = '';
+
     public array $weekly_schedule = [];
 
     public array $availability_exceptions = [];
+
     public array $new_exception = [
         'available' => true,
         'start_date' => '',
@@ -110,9 +115,7 @@ new class extends Component {
 
     <flux:separator class="mb-6" />
 
-    <flux:heading level="1" size="xl">
-        Availability
-    </flux:heading>
+    <flux:heading level="1" size="xl">Availability</flux:heading>
 
     <flux:spacer class="my-6" />
 
@@ -131,7 +134,7 @@ new class extends Component {
         <flux:field>
             <flux:label badge="Required">Weekly default schedule</flux:label>
             <div class="grid grid-cols-2 gap-2">
-                @foreach (["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as $day)
+                @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
                     <flux:checkbox wire:model="weekly_schedule.{{ $day }}" label="{{ ucfirst($day) }}" />
                 @endforeach
             </div>
@@ -141,30 +144,39 @@ new class extends Component {
         <flux:field>
             <flux:label badge="Optional">Availability exceptions</flux:label>
 
-            @unless(empty($availability_exceptions))
-            <flux:separator variant="subtle" />
+            @unless (empty($availability_exceptions))
+                <flux:separator variant="subtle" />
 
-            <flux:table>
-                <flux:table.rows>
-                    @foreach ($availability_exceptions as $i => $exception)
-                        <flux:table.row :key="$i">
-                            <flux:table.cell variant="strong" class="w-full tabular-nums">
-                                {{ $exception['start_date'] }} → {{ $exception['end_date'] }}
-                            </flux:table.cell>
-                            <flux:table.cell>
-                                <flux:badge color="{{ $exception['available'] ? 'green' : 'red' }}" size="sm" inset="top bottom">
-                                    {{ $exception['available'] ? 'Available' : 'Not available' }}
-                                </flux:badge>
-                            </flux:table.cell>
-                            <flux:table.cell align="end">
-                                <flux:button type="button" size="sm" variant="subtle" wire:click="removeException({{ $i }})">
-                                    Remove
-                                </flux:button>
-                            </flux:table.cell>
-                        </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
+                <flux:table>
+                    <flux:table.rows>
+                        @foreach ($availability_exceptions as $i => $exception)
+                            <flux:table.row :key="$i">
+                                <flux:table.cell variant="strong" class="w-full tabular-nums">
+                                    {{ $exception['start_date'] }} → {{ $exception['end_date'] }}
+                                </flux:table.cell>
+                                <flux:table.cell>
+                                    <flux:badge
+                                        color="{{ $exception['available'] ? 'green' : 'red' }}"
+                                        size="sm"
+                                        inset="top bottom"
+                                    >
+                                        {{ $exception['available'] ? 'Available' : 'Not available' }}
+                                    </flux:badge>
+                                </flux:table.cell>
+                                <flux:table.cell align="end">
+                                    <flux:button
+                                        type="button"
+                                        size="sm"
+                                        variant="subtle"
+                                        wire:click="removeException({{ $i }})"
+                                    >
+                                        Remove
+                                    </flux:button>
+                                </flux:table.cell>
+                            </flux:table.row>
+                        @endforeach
+                    </flux:table.rows>
+                </flux:table>
             @endunless
 
             <flux:spacer class="mb-3" />

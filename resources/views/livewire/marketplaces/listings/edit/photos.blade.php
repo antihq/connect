@@ -76,33 +76,27 @@ new class extends Component
 
     <flux:separator class="mb-6" />
 
-    <flux:heading level="1" size="xl">
-        Photos
-    </flux:heading>
+    <flux:heading level="1" size="xl">Photos</flux:heading>
 
     <flux:spacer class="my-6" />
 
     <form class="space-y-6" wire:submit="savePhotos">
-        @unless(empty($listing->photos))
-        <flux:field>
-            <flux:label>Current Photos</flux:label>
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                @foreach (($listing->photos ?? []) as $idx => $photo)
-                    <div class="group relative">
-                        <img src="/{{ $photo }}" class="h-32 w-full rounded object-cover shadow" />
-                        <div class="flex absolute top-2 right-2">
-                            <flux:button
-                                type="button"
-                                wire:click="removePhoto({{ $idx }})"
-                                size="xs"
-                            >
-                                Remove
-                            </flux:button>
+        @unless (empty($listing->photos))
+            <flux:field>
+                <flux:label>Current Photos</flux:label>
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    @foreach (($listing->photos ?? []) as $idx => $photo)
+                        <div class="group relative">
+                            <img src="/{{ $photo }}" class="h-32 w-full rounded object-cover shadow" />
+                            <div class="absolute top-2 right-2 flex">
+                                <flux:button type="button" wire:click="removePhoto({{ $idx }})" size="xs">
+                                    Remove
+                                </flux:button>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        </flux:field>
+                    @endforeach
+                </div>
+            </flux:field>
         @endunless
 
         <flux:field>
@@ -112,7 +106,10 @@ new class extends Component
                     <x-slot name="badge">
                         <flux:badge color="gray">Optional</flux:badge>
                     </x-slot>
-                    <flux:file-upload.dropzone heading="Drop photos here or click to browse" text="JPG, PNG, GIF up to 2MB" />
+                    <flux:file-upload.dropzone
+                        heading="Drop photos here or click to browse"
+                        text="JPG, PNG, GIF up to 2MB"
+                    />
                 </flux:file-upload>
                 <div class="flex flex-col gap-2">
                     @foreach ($newPhotos as $idx => $photo)
@@ -122,7 +119,12 @@ new class extends Component
                                 $imageUrl = $photo->temporaryUrl();
                             }
                         @endphp
-                        <flux:file-item :heading="$photo->getClientOriginalName()" :size="$photo->getSize()" :image="$imageUrl">
+
+                        <flux:file-item
+                            :heading="$photo->getClientOriginalName()"
+                            :size="$photo->getSize()"
+                            :image="$imageUrl"
+                        >
                             <x-slot name="actions">
                                 <flux:file-item.remove
                                     wire:click="removePhoto({{ $idx }})"

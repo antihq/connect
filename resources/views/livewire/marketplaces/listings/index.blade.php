@@ -1,11 +1,13 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Marketplace;
 use App\Models\Listing;
+use App\Models\Marketplace;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Marketplace $marketplace;
+
     public $listings;
 
     public function mount()

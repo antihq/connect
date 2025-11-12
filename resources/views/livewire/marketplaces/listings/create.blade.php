@@ -1,14 +1,16 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Marketplace;
-
 use App\Models\Listing;
+use App\Models\Marketplace;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Marketplace $marketplace;
+
     public string $title = '';
+
     public string $description = '';
 
     public function rules(): array
@@ -40,28 +42,16 @@ new class extends Component {
 
 <div class="mx-auto max-w-3xl">
     <flux:navbar class="-mb-px">
-        <flux:navbar.item current>
-            Details
-        </flux:navbar.item>
-        <flux:navbar.item disabled>
-            Location
-        </flux:navbar.item>
-        <flux:navbar.item disabled>
-            Pricing
-        </flux:navbar.item>
-        <flux:navbar.item disabled>
-            Availability
-        </flux:navbar.item>
-        <flux:navbar.item disabled>
-            Photos
-        </flux:navbar.item>
+        <flux:navbar.item current>Details</flux:navbar.item>
+        <flux:navbar.item disabled>Location</flux:navbar.item>
+        <flux:navbar.item disabled>Pricing</flux:navbar.item>
+        <flux:navbar.item disabled>Availability</flux:navbar.item>
+        <flux:navbar.item disabled>Photos</flux:navbar.item>
     </flux:navbar>
 
     <flux:separator class="mb-6" />
 
-    <flux:heading level="1" size="xl">
-        Details
-    </flux:heading>
+    <flux:heading level="1" size="xl">Details</flux:heading>
 
     <flux:spacer class="my-6" />
 
