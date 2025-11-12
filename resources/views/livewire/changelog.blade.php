@@ -13,6 +13,20 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 }; ?>
 
 <div class="space-y-20 sm:space-y-32">
+    <x-changelog.entry date="2025-11-11">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 10.19.56@2x.png" />
+        <h2><a href="#changelog-2025-11-11">Magic Auth</a></h2>
+        <p>
+            To make user sign-in to the marketplace easier and more accessible, I have implemented authentication via Magic Auth.
+        </p>
+        <p>
+            Users no longer need to create or enter a password to register or log in. Instead, they only enter their email and receive a confirmation code to complete the registration or login process.
+        </p>
+        <p>
+            I hope this authentication system increases the conversion rate from visitors to marketplace members.
+        </p>
+    </x-changelog.entry>
+
     <x-changelog.entry date="2025-11-08">
         <h2><a href="#changelog-2025-11-08">Publishing listings</a></h2>
         <p>
@@ -61,8 +75,8 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
         </p>
     </x-changelog.entry>
 
-    <x-changelog.entry date="2025-11-01">
-        <x-changelog.img src="/" />
+{{--     <x-changelog.entry date="2025-11-01">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 10.16.41@2x.png" />
         <h2><a href="#changelog-2025-11-01">Culpa voluptate ea laborum nisi in est nulla.</a></h2>
         <p>Deserunt pariatur veniam velit elit voluptate.</p>
         <p>Ullamco magna magna incididunt voluptate quis eu sit proident.</p>
@@ -78,5 +92,5 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
             <li>Sunt eu id cupidatat dolor ad dolore elit deserunt occaecat Lorem eiusmod aute.</li>
             <li>Dolor aliqua ut id ullamco duis duis cupidatat mollit commodo pariatur.</li>
         </ul>
-    </x-changelog.entry>
+    </x-changelog.entry> --}}
 </div>
