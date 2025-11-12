@@ -35,13 +35,9 @@ new class extends Component {
     }
 }; ?>
 
-<div>
-    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
-
-    <flux:separator class="mb-6" />
-
-    <flux:navbar class="mb-6">
-        <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])" active>
+<div class="mx-auto max-w-3xl">
+    <flux:navbar class="-mb-px">
+        <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])" current>
             Details
         </flux:navbar.item>
         <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])">
@@ -58,10 +54,27 @@ new class extends Component {
         </flux:navbar.item>
     </flux:navbar>
 
+    <flux:separator class="mb-6" />
+
+    <flux:heading level="1" size="xl">
+        Details
+    </flux:heading>
+
+    <flux:spacer class="my-6" />
+
     <form class="space-y-6" wire:submit="update">
-        <flux:input label='title' wire:model="title" />
-        <flux:textarea label='description' wire:model="description"></flux:textarea>
-        <flux:text>custom fields...</flux:text>
-        <flux:button type="submit">save</flux:button>
+        <flux:field>
+            <flux:label badge="Required">Title</flux:label>
+            <flux:input wire:model="title" />
+            <flux:error name="title" />
+        </flux:field>
+
+        <flux:field>
+            <flux:label badge="Required">Description</flux:label>
+            <flux:textarea wire:model="description"></flux:textarea>
+            <flux:error name="description" />
+        </flux:field>
+
+        <flux:button type="submit" variant="primary">Continue</flux:button>
     </form>
 </div>

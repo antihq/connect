@@ -6,7 +6,9 @@ use App\Models\Listing;
 
 new class extends Component {
     public Marketplace $marketplace;
+
     public Listing $listing;
+
     public string $address = '';
     public string $apt_suite = '';
 
@@ -27,24 +29,25 @@ new class extends Component {
     public function update()
     {
         $this->validate();
+
         $this->listing->update([
             'address' => $this->address,
             'apt_suite' => $this->apt_suite,
         ]);
-        // Optionally, emit event or redirect
+
+        return $this->redirectRoute('marketplaces.listings.edit.pricing', [
+            'marketplace' => $this->marketplace,
+            'listing' => $this->listing,
+        ], navigate: true);
     }
 }; ?>
 
-<div>
-    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
-
-    <flux:separator class="mb-6" />
-
-    <flux:navbar class="mb-6">
+<div class="mx-auto max-w-3xl">
+    <flux:navbar class="-mb-px">
         <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])">
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])" active>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.location', [$marketplace, $listing])" current>
             Location
         </flux:navbar.item>
         <flux:navbar.item :href="route('marketplaces.listings.edit.pricing', [$marketplace, $listing])">
@@ -58,9 +61,27 @@ new class extends Component {
         </flux:navbar.item>
     </flux:navbar>
 
+    <flux:separator class="mb-6" />
+
+    <flux:heading level="1" size="xl">
+        Location
+    </flux:heading>
+
+    <flux:spacer class="my-6" />
+
     <form class="space-y-6" wire:submit="update">
-        <flux:input label='address' wire:model="address" />
-        <flux:input label='apt, suite, building #' wire:model="apt_suite" />
-        <flux:button type="submit">save</flux:button>
+        <flux:field>
+            <flux:label badge="Required">Address</flux:label>
+            <flux:input wire:model="address" />
+            <flux:error name="address" />
+        </flux:field>
+
+        <flux:field>
+            <flux:label badge="Optional">Apt, suite, building #</flux:label>
+            <flux:input wire:model="apt_suite" />
+            <flux:error name="apt_suite" />
+        </flux:field>
+
+        <flux:button type="submit" variant="primary">Next</flux:button>
     </form>
 </div>

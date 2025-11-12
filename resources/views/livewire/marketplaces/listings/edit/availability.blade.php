@@ -70,12 +70,17 @@ new class extends Component {
     public function update()
     {
         $this->validate();
+
         $this->listing->update([
             'timezone' => $this->timezone,
             'weekly_schedule' => $this->weekly_schedule,
             'availability_exceptions' => $this->availability_exceptions,
         ]);
-        // Optionally, emit event or redirect
+
+        return $this->redirectRoute('marketplaces.listings.edit.photos', [
+            'marketplace' => $this->marketplace,
+            'listing' => $this->listing,
+        ], navigate: true);
     }
 
     public function getTimezonesProperty(): array
@@ -84,12 +89,8 @@ new class extends Component {
     }
 }; ?>
 
-<div>
-    @include('partials.marketplace-navbar', ['marketplace' => $marketplace])
-
-    <flux:separator class="mb-6" />
-
-    <flux:navbar class="mb-6">
+<div class="mx-auto max-w-3xl">
+    <flux:navbar class="-mb-px">
         <flux:navbar.item :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])">
             Details
         </flux:navbar.item>
@@ -99,7 +100,7 @@ new class extends Component {
         <flux:navbar.item :href="route('marketplaces.listings.edit.pricing', [$marketplace, $listing])">
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('marketplaces.listings.edit.availability', [$marketplace, $listing])" active>
+        <flux:navbar.item :href="route('marketplaces.listings.edit.availability', [$marketplace, $listing])" current>
             Availability
         </flux:navbar.item>
         <flux:navbar.item :href="route('marketplaces.listings.edit.photos', [$marketplace, $listing])">
@@ -107,41 +108,89 @@ new class extends Component {
         </flux:navbar.item>
     </flux:navbar>
 
+    <flux:separator class="mb-6" />
+
+    <flux:heading level="1" size="xl">
+        Availability
+    </flux:heading>
+
+    <flux:spacer class="my-6" />
+
     <form class="space-y-6" wire:submit="update">
-        <flux:select label="Time zone" wire:model="timezone">
-            <option value="">Select a time zone</option>
-            @foreach ($this->timezones as $tz)
-                <option value="{{ $tz }}">{{ $tz }}</option>
-            @endforeach
-        </flux:select>
-        <flux:text>Weekly default schedule:</flux:text>
-        <div class="grid grid-cols-2 gap-2">
-            @foreach (['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] as $day)
-                <label>
-                    <input type="checkbox" wire:model="weekly_schedule.{{ $day }}">
-                    {{ ucfirst($day) }}
-                </label>
-            @endforeach
-        </div>
-        <flux:text class="mt-8">Availability exceptions:</flux:text>
-        <div class="space-y-2">
-            @foreach ($availability_exceptions as $i => $exception)
-                <div class="flex items-center gap-2">
-                    <span>{{ $exception['available'] ? 'Available' : 'Not available' }}</span>
-                    <span>{{ $exception['start_date'] }} → {{ $exception['end_date'] }}</span>
-                    <button type="button" wire:click="removeException({{ $i }})">Remove</button>
+        <flux:field>
+            <flux:label badge="Required">Time zone</flux:label>
+            <flux:select wire:model="timezone">
+                <option value="">Select a time zone</option>
+                @foreach ($this->timezones as $tz)
+                    <option value="{{ $tz }}">{{ $tz }}</option>
+                @endforeach
+            </flux:select>
+            <flux:error name="timezone" />
+        </flux:field>
+
+        <flux:field>
+            <flux:label badge="Required">Weekly default schedule</flux:label>
+            <div class="grid grid-cols-2 gap-2">
+                @foreach (["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as $day)
+                    <flux:checkbox wire:model="weekly_schedule.{{ $day }}" label="{{ ucfirst($day) }}" />
+                @endforeach
+            </div>
+            <flux:error name="weekly_schedule" />
+        </flux:field>
+
+        <flux:field>
+            <flux:label badge="Optional">Availability exceptions</flux:label>
+
+            @unless(empty($availability_exceptions))
+            <flux:separator variant="subtle" />
+
+            <flux:table>
+                <flux:table.rows>
+                    @foreach ($availability_exceptions as $i => $exception)
+                        <flux:table.row :key="$i">
+                            <flux:table.cell variant="strong" class="w-full tabular-nums">
+                                {{ $exception['start_date'] }} → {{ $exception['end_date'] }}
+                            </flux:table.cell>
+                            <flux:table.cell>
+                                <flux:badge color="{{ $exception['available'] ? 'green' : 'red' }}" size="sm" inset="top bottom">
+                                    {{ $exception['available'] ? 'Available' : 'Not available' }}
+                                </flux:badge>
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
+                                <flux:button type="button" size="sm" variant="subtle" wire:click="removeException({{ $i }})">
+                                    Remove
+                                </flux:button>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endforeach
+                </flux:table.rows>
+            </flux:table>
+            @endunless
+
+            <flux:spacer class="mb-3" />
+
+            <flux:card class="space-y-6">
+                <flux:select wire:model="new_exception.available" label="Availability status">
+                    <option value="1">Available</option>
+                    <option value="0">Not available</option>
+                </flux:select>
+                <div class="grid grid-cols-2 gap-4">
+                    <flux:date-picker wire:model="new_exception.start_date" label="Start date">
+                        <x-slot name="badge">
+                            <flux:badge color="red">Required</flux:badge>
+                        </x-slot>
+                    </flux:date-picker>
+                    <flux:date-picker wire:model="new_exception.end_date" label="End date">
+                        <x-slot name="badge">
+                            <flux:badge color="red">Required</flux:badge>
+                        </x-slot>
+                    </flux:date-picker>
                 </div>
-            @endforeach
-        </div>
-        <div class="flex items-center gap-2 mt-4">
-<flux:select wire:model="new_exception.available" label="Available?">
-    <option value="1">Available</option>
-    <option value="0">Not available</option>
-</flux:select>
-            <flux:input type="date" wire:model="new_exception.start_date" label="Start date" />
-            <flux:input type="date" wire:model="new_exception.end_date" label="End date" />
-            <flux:button type="button" wire:click="addException">Add exception</flux:button>
-        </div>
-        <flux:button type="submit">save</flux:button>
+                <flux:button type="button" wire:click="addException">Add exception</flux:button>
+            </flux:card>
+            <flux:error name="availability_exceptions" />
+        </flux:field>
+
+        <flux:button type="submit" variant="primary">Next</flux:button>
     </form>
 </div>

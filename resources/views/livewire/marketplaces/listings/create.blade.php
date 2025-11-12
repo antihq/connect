@@ -33,14 +33,14 @@ new class extends Component {
 
         return $this->redirectRoute('marketplaces.listings.edit.location', [
             'marketplace' => $this->marketplace,
-            'listing' => $listing->id,
+            'listing' => $listing,
         ], navigate: true);
     }
 }; ?>
 
 <div class="mx-auto max-w-3xl">
     <flux:navbar class="-mb-px">
-        <flux:navbar.item current :accent="false">
+        <flux:navbar.item current>
             Details
         </flux:navbar.item>
         <flux:navbar.item disabled>
@@ -58,6 +58,12 @@ new class extends Component {
     </flux:navbar>
 
     <flux:separator class="mb-6" />
+
+    <flux:heading level="1" size="xl">
+        Details
+    </flux:heading>
+
+    <flux:spacer class="my-6" />
 
     <form class="space-y-6" wire:submit="create">
         <flux:field>
