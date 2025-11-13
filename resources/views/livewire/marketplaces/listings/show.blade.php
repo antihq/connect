@@ -114,7 +114,7 @@ new class extends Component
             'type' => 'created',
             'description' => 'Transaction created by user',
             'meta' => [
-'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
                 'ip' => request()->ip(),
             ],
         ]);
@@ -126,16 +126,17 @@ new class extends Component
         ]);
     }
 }; ?>
+
 <flux:container class="[:where(&)]:max-w-5xl!">
     <flux:main>
         @if (is_array($listing->photos) && count($listing->photos) > 0)
-            <img src="/{{ $listing->photos[0] }}" class="w-full rounded object-fill aspect-3/2 shadow" />
+            <img src="/{{ $listing->photos[0] }}" class="aspect-3/2 w-full rounded object-fill shadow" />
 
             <flux:spacer class="my-6" />
 
             <div class="grid grid-cols-6 gap-4">
                 @foreach ($listing->photos as $photo)
-                    <img src="/{{ $photo }}" class="w-full rounded object-fill aspect-3/2 shadow" />
+                    <img src="/{{ $photo }}" class="aspect-3/2 w-full rounded object-fill shadow" />
                 @endforeach
             </div>
         @endif
@@ -151,14 +152,12 @@ new class extends Component
         </flux:text>
     </flux:main>
 
-    <flux:aside class="py-12 lg:pl-20 w-96 hidden lg:block" sticky>
+    <flux:aside class="hidden w-96 py-12 lg:block lg:pl-20" sticky>
         <flux:heading level="1" size="lg" class="mb-2">{{ $listing->title }}</flux:heading>
 
         <flux:spacer class="my-2" />
 
-        <flux:heading size="xl" level="2">
-            ${{ number_format($listing->price, 2) }} per day
-        </flux:heading>
+        <flux:heading size="xl" level="2">${{ number_format($listing->price, 2) }} per day</flux:heading>
 
         <flux:spacer class="my-6" />
 
@@ -173,56 +172,74 @@ new class extends Component
             <div class="flex flex-col gap-4 md:flex-row">
                 <flux:date-picker mode="range" wire:model.live="range">
                     <x-slot name="trigger">
-                        <div class="flex flex-col sm:flex-row gap-6 sm:gap-4">
-                            <flux:date-picker.input label="Start" />
-                            <flux:date-picker.input label="End" />
+                        <div class="flex flex-col gap-6 sm:flex-row sm:gap-4">
+                            <flux:date-picker.input label="Start date" />
+                            <flux:date-picker.input label="End date" />
                         </div>
                     </x-slot>
                 </flux:date-picker>
             </div>
             @if ($bookingBreakdown)
                 <flux:card class="mt-4 p-0">
-                    <div class="px-6 pt-6 pb-2">
-                        <flux:text variant="strong" class="uppercase text-xs tracking-wide mb-2">Booking Breakdown</flux:text>
+                    <div class="px-4 py-4">
+                        <flux:heading class="text-xs tracking-wide uppercase">Booking Breakdown</flux:heading>
                     </div>
-                    <hr class="border-t" />
-                    <div class="grid grid-cols-2 gap-6 px-6 py-4">
+                    <flux:separator variant="subtle" class="-mt-px" />
+                    <div class="grid grid-cols-2 gap-6 px-4 py-4">
                         <div>
-                            <flux:text class="text-xs mb-1">Booking start</flux:text>
-                            <flux:text variant="strong" class="text-lg">{{ \Carbon\Carbon::parse($range['start'])->format('l') }}</flux:text>
-                            <flux:text class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($range['start'])->format('M d') }}</flux:text>
+                            <flux:text class="text-xs">Booking start</flux:text>
+                            <flux:text variant="strong" class="text-base font-medium">
+                                {{ \Carbon\Carbon::parse($range['start'])->format('l') }}
+                            </flux:text>
+                            <flux:text variant="strong" class="text-sm">
+                                {{ \Carbon\Carbon::parse($range['start'])->format('M d') }}
+                            </flux:text>
                         </div>
                         <div class="text-right">
-                            <flux:text class="text-xs mb-1">Booking end</flux:text>
-                            <flux:text variant="strong" class="text-lg">{{ \Carbon\Carbon::parse($range['end'])->format('l') }}</flux:text>
-                            <flux:text class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($range['end'])->format('M d') }}</flux:text>
+                            <flux:text class="text-xs">Booking end</flux:text>
+                            <flux:text variant="strong" class="text-base font-medium">
+                                {{ \Carbon\Carbon::parse($range['end'])->format('l') }}
+                            </flux:text>
+                            <flux:text variant="strong" class="text-sm">
+                                {{ \Carbon\Carbon::parse($range['end'])->format('M d') }}
+                            </flux:text>
                         </div>
                     </div>
-                    <hr class="border-t" />
-                    <div class="grid grid-cols-2 gap-6 px-6 py-4 items-center">
+                    <flux:separator variant="subtle" />
+                    <div class="grid grid-cols-2 items-center gap-6 px-4 py-4">
                         <div>
-                            <flux:text class="text-base">${{ number_format($bookingBreakdown['price_per_night'], 2) }} x {{ $bookingBreakdown['nights'] }} days</flux:text>
+                            <flux:text variant="strong">
+                                ${{ number_format($bookingBreakdown['price_per_night'], 2) }} x
+                                {{ $bookingBreakdown['nights'] }} days
+                            </flux:text>
                         </div>
                         <div class="text-right">
-                            <flux:text class="text-base">${{ number_format($bookingBreakdown['total'], 2) }}</flux:text>
+                            <flux:text variant="strong">
+                                ${{ number_format($bookingBreakdown['total'], 2) }}
+                            </flux:text>
                         </div>
                     </div>
-                    <hr class="border-t" />
-                    <div class="grid grid-cols-2 gap-6 px-6 py-4 items-center">
+                    <flux:separator variant="subtle" />
+                    <div class="grid grid-cols-2 items-center gap-6 px-4 py-4">
                         <div>
-                            <flux:text class="text-base">Total price</flux:text>
+                            <flux:text>Total price</flux:text>
                         </div>
                         <div class="text-right">
-                            <flux:text variant="strong" class="text-lg">${{ number_format($bookingBreakdown['total'], 2) }}</flux:text>
+                            <flux:text variant="strong" class="text-base font-medium">
+                                ${{ number_format($bookingBreakdown['total'], 2) }}
+                            </flux:text>
                         </div>
                     </div>
                 </flux:card>
-                <flux:button type="submit" variant="primary" class="mt-4 w-full">Request to Book</flux:button>
             @endif
-         @if ($bookingMessage)
+
+            <flux:button type="submit" variant="primary" class="mt-4 w-full" :disabled="! $bookingBreakdown">Request to Book</flux:button>
+
+            @if ($bookingMessage)
                 <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
             @endif
-         @if ($bookingError)
+
+            @if ($bookingError)
                 <flux:text class="mt-4 text-red-600">{{ $bookingError }}</flux:text>
             @endif
         </form>
