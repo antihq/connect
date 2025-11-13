@@ -58,7 +58,7 @@ new class extends Component {
                 'password' => bcrypt(Str::random(32)),
             ]
         );
-        Auth::login($user);
+        Auth::login($user, true);
         $record->delete();
         return redirect('/dashboard');
     }
