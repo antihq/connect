@@ -2,7 +2,7 @@
     $id = 'changelog-'.\Illuminate\Support\Str::slug($date);
 @endphp
 
-<article id="{{ $id }}" class="scroll-mt-16" style="padding-bottom: 0px">
+<article id="{{ $id }}" class="scroll-mt-16">
     <div>
         <header class="relative mb-10 xl:mb-0">
             <div
