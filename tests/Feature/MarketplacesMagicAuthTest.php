@@ -51,6 +51,12 @@ it('logs in existing user with correct code', function () {
 
     $this->assertAuthenticatedAs($user);
     expect(MagicAuthCode::where('code', '123456')->exists())->toBeFalse();
+    $this->assertDatabaseHas('organization_user', [
+        'organization_id' => $marketplace->organization->id,
+        'user_id' => $user->id,
+        'role' => 'member',
+    ]);
+
 });
 
 it('registers and logs in new user with correct code', function () {
@@ -70,6 +76,12 @@ it('registers and logs in new user with correct code', function () {
 
     $this->assertDatabaseHas('users', ['email' => 'newuser@example.com']);
     $this->assertAuthenticated();
+    $user = User::where('email', 'newuser@example.com')->first();
+    $this->assertDatabaseHas('organization_user', [
+        'organization_id' => $marketplace->organization->id,
+        'user_id' => $user->id,
+        'role' => 'member',
+    ]);
 });
 
 it('shows error for invalid or expired code', function () {
