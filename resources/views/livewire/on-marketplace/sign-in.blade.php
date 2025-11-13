@@ -59,6 +59,12 @@ new class extends Component {
             ]
         );
         Auth::login($user, true);
+
+        $organization = $this->marketplace->organization;
+        if ($organization && !$organization->isMember($user)) {
+            $organization->addMember($user);
+        }
+
         $record->delete();
         return redirect('/dashboard');
     }
