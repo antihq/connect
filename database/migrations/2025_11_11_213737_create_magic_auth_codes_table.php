@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('magic_auth_codes', function (Blueprint $table) {
             $table->id();
             $table->string('email')->index();
-                $table->string('code', 6);
-                $table->timestamp('expires_at');
-                $table->timestamps();
+            $table->string('code', 6);
+            $table->timestamp('expires_at');
+            $table->timestamps();
         });
     }
 

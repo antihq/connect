@@ -1,9 +1,10 @@
 <?php
 
-use App\Models\User;
 use App\Models\Listing;
 use App\Models\Transaction;
+use App\Models\User;
 use Livewire\Volt\Volt;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 it('only allows the transaction owner to access the payment page', function () {
@@ -21,7 +22,6 @@ it('only allows the transaction owner to access the payment page', function () {
         'price_per_night' => 100,
         'total' => 300,
     ]);
-
 
     Volt::actingAs($user)
         ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
@@ -47,7 +47,6 @@ it('marks the transaction as paid and redirects to confirmation', function () {
         'price_per_night' => 100,
         'total' => 300,
     ]);
-
 
     Volt::actingAs($user)
         ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])

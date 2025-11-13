@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
 use App\Models\MagicAuthCode;
 use App\Models\Marketplace;
-use Illuminate\Support\Facades\Notification;
+use App\Models\User;
 use App\Notifications\MagicAuthCodeNotification;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Volt\Volt;
 
 it('sends a magic code to any email', function () {

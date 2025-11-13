@@ -1,10 +1,12 @@
 <?php
-use App\Models\User;
-use App\Models\Marketplace;
+
 use App\Models\Listing;
+use App\Models\Marketplace;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
+use App\Models\User;
 use Livewire\Volt\Volt;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 it('provider can review the customer after transaction is completed', function () {
@@ -72,8 +74,6 @@ it('provider cannot review the customer unless transaction is completed', functi
         ->call('submitReview')
         ->assertStatus(403);
 });
-
-
 
 it('provider can mark an accepted transaction as complete', function () {
     $provider = User::factory()->create();
@@ -148,7 +148,6 @@ it('provider cannot mark as complete unless status is accepted', function () {
         ->call('markAsComplete')
         ->assertStatus(403);
 });
-
 
 it('shows only the user\'s sales in the inbox', function () {
     $provider = User::factory()->create();

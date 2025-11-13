@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\Marketplace;
 use App\Models\Listing;
-use App\Models\User;
+use App\Models\Marketplace;
 use App\Models\Transaction;
+use App\Models\User;
 use Livewire\Volt\Volt;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -17,7 +18,7 @@ it('allows an authenticated user to book available dates', function () {
     $end = now()->addDays(5)->toDateString();
 
     Volt::actingAs($user)
-        ->test('marketplaces.listings.show', [
+        ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -32,8 +33,8 @@ it('allows an authenticated user to book available dates', function () {
     assertDatabaseHas('transactions', [
         'listing_id' => $listing->id,
         'user_id' => $user->id,
-        'start_date' => $start . ' 00:00:00',
-        'end_date' => $end . ' 00:00:00',
+        'start_date' => $start.' 00:00:00',
+        'end_date' => $end.' 00:00:00',
         'nights' => 3,
         'price_per_night' => 100,
         'total' => 300,
@@ -51,12 +52,12 @@ it('prevents booking if not logged in', function () {
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
 
-Volt::test('marketplaces.listings.show', [
-    'marketplace' => $marketplace,
-    'listing' => $listing,
-])
-    ->set('range', ['start' => $start, 'end' => $end])
-    ->call('requestToBook')
+    Volt::test('on-marketplace.listings.show', [
+        'marketplace' => $marketplace,
+        'listing' => $listing,
+    ])
+        ->set('range', ['start' => $start, 'end' => $end])
+        ->call('requestToBook')
         ->assertSet('bookingError', 'You must be logged in to book.');
 
     assertDatabaseMissing('transactions', [
@@ -83,8 +84,8 @@ it('prevents booking overlapping dates', function () {
     $overlapStart = now()->addDays(4)->toDateString();
     $overlapEnd = now()->addDays(7)->toDateString();
 
-Volt::actingAs($user)
-        ->test('marketplaces.listings.show', [
+    Volt::actingAs($user)
+        ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -108,7 +109,7 @@ it('prevents booking with invalid dates', function () {
     $start = now()->addDays(5)->toDateString();
     $end = now()->addDays(2)->toDateString();
     Volt::actingAs($user)
-        ->test('marketplaces.listings.show', [
+        ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -117,8 +118,8 @@ it('prevents booking with invalid dates', function () {
         ->assertSet('bookingError', 'End date must be after start date.');
 
     // Missing dates
-Volt::actingAs($user)
-        ->test('marketplaces.listings.show', [
+    Volt::actingAs($user)
+        ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])

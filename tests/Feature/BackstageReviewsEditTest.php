@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
-use App\Models\Organization;
 use App\Models\Marketplace;
-use App\Models\Transaction;
+use App\Models\Organization;
 use App\Models\Review;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
 
@@ -127,7 +127,7 @@ it('forbids non-owners from updating the review via Livewire action', function (
             ->call('updateReview');
         expect()->fail('Expected forbidden/authorization exception was not thrown.');
     } catch (\Throwable $e) {
-        fwrite(STDERR, 'Exception class: ' . get_class($e) . "\nException message: " . $e->getMessage() . "\n");
+        fwrite(STDERR, 'Exception class: '.get_class($e)."\nException message: ".$e->getMessage()."\n");
         expect($e)->toBeInstanceOf(\ErrorException::class);
         expect($e->getMessage())->toBe('Trying to access array offset on null');
     }

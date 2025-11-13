@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
-use App\Models\Organization;
 use App\Models\Marketplace;
+use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
 
@@ -161,7 +161,6 @@ it('prevents users from accessing the sender email name settings for marketplace
         ->assertForbidden();
 });
 
-
 it('allows organization user to set a custom domain for their marketplace', function () {
     $user = User::factory()->create();
     $org = Organization::factory()->for($user)->create();
@@ -221,7 +220,7 @@ it('validates that the domain is not too long', function () {
     $user = User::factory()->create();
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
-    $longDomain = str_repeat('a', 256) . '.com';
+    $longDomain = str_repeat('a', 256).'.com';
 
     Volt::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')

@@ -32,7 +32,7 @@ new class extends Component
             @foreach ($listings as $listing)
                 <flux:table.row :key="$listing->id">
                     <flux:table.cell>
-                        <flux:link :href="route('marketplaces.listings.show', [$marketplace, $listing])">
+                        <flux:link :href="route('on-marketplace.listings.show', [$marketplace, $listing])">
                             {{ $listing->title }}
                         </flux:link>
                     </flux:table.cell>

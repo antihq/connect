@@ -1,13 +1,14 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Marketplace;
-
 use App\Models\Listing;
+use App\Models\Marketplace;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Marketplace $marketplace;
+
     public $listings;
 
     public function mount()
@@ -24,6 +25,7 @@ new class extends Component {
 
         if (! $listing->isPublishable()) {
             $this->addError('openToPublic', 'Listing is missing required fields.');
+
             return;
         }
 
@@ -66,19 +68,30 @@ new class extends Component {
             @foreach ($listings as $listing)
                 <flux:table.row :key="$listing->id">
                     <flux:table.cell>
-                        <flux:link :href="route('marketplaces.listings.edit.details', [$marketplace, $listing])">
-    {{ $listing->title }}
-</flux:link>
+                        <flux:link :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])">
+                            {{ $listing->title }}
+                        </flux:link>
                     </flux:table.cell>
                     <flux:table.cell>{{ $listing->description }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" color="zinc" inset="top bottom">{{ $listing->status }}</flux:badge>
+
                         @if ($listing->status === 'public')
-                            <flux:button size="xs" color="warning" wire:click="closeToPublic({{ $listing->id }})" class="ml-2">
+                            <flux:button
+                                size="xs"
+                                color="warning"
+                                wire:click="closeToPublic({{ $listing->id }})"
+                                class="ml-2"
+                            >
                                 Close to Public
                             </flux:button>
                         @elseif ($listing->isPublishable())
-                            <flux:button size="xs" color="primary" wire:click="openToPublic({{ $listing->id }})" class="ml-2">
+                            <flux:button
+                                size="xs"
+                                color="primary"
+                                wire:click="openToPublic({{ $listing->id }})"
+                                class="ml-2"
+                            >
                                 Open to Public
                             </flux:button>
                         @endif

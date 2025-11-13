@@ -19,6 +19,7 @@ class TransactionFactory extends Factory
         $start = $this->faker->dateTimeBetween('-1 month', 'now');
         $nights = $this->faker->numberBetween(1, 14);
         $price = $this->faker->randomFloat(2, 50, 500);
+
         return [
             'marketplace_id' => \App\Models\Marketplace::factory(),
             'listing_id' => \App\Models\Listing::factory(),

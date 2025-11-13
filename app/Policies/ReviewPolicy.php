@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Review;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ReviewPolicy
 {
@@ -39,6 +38,7 @@ class ReviewPolicy
     {
         $currentOrgId = $user->current_organization_id;
         $marketplaceOrgId = $review->transaction?->marketplace?->organization_id;
+
         return $currentOrgId && $marketplaceOrgId && $currentOrgId === $marketplaceOrgId;
     }
 

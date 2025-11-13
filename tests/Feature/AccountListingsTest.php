@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
-use App\Models\Marketplace;
 use App\Models\Listing;
+use App\Models\Marketplace;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
 
@@ -28,7 +28,7 @@ it('can open a listing to the public', function () {
     Volt::test('marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('openToPublic', $listing->id)
-      ->assertOk();
+        ->assertOk();
 
     $listing->refresh();
     expect($listing->status)->toBe('public');
@@ -54,7 +54,7 @@ it('cannot open a listing to the public if required fields are missing', functio
     Volt::test('marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('openToPublic', $listing->id)
-      ->assertHasErrors(['openToPublic']);
+        ->assertHasErrors(['openToPublic']);
 
     $listing->refresh();
     expect($listing->status)->not()->toBe('public');
@@ -74,7 +74,7 @@ it('can close a listing to the public', function () {
     Volt::test('marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('closeToPublic', $listing->id)
-      ->assertOk();
+        ->assertOk();
 
     $listing->refresh();
     expect($listing->status)->toBe('draft');

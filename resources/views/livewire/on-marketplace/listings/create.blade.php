@@ -33,7 +33,7 @@ new class extends Component
             'status' => 'draft',
         ]);
 
-        return $this->redirectRoute('marketplaces.listings.edit.location', [
+        return $this->redirectRoute('on-marketplace.listings.edit.location', [
             'marketplace' => $this->marketplace,
             'listing' => $listing,
         ], navigate: true);

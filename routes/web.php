@@ -29,7 +29,7 @@ Route::get('subscribe/confirm/{subscription}', function (UpdateSubscription $sub
     return redirect()->to(route('home', ['status' => 'Your email has been confirmed!']).'#subscribe');
 })->middleware('signed')->name('subscribe.confirm');
 
-if (!app()->isProduction()) {
+if (! app()->isProduction()) {
     require __DIR__.'/outline.php';
 
     require __DIR__.'/develop.php';

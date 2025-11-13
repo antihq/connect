@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
-use App\Models\Review;
 use App\Models\Marketplace;
 use App\Models\Organization;
+use App\Models\Review;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -50,4 +50,3 @@ test('non-owner cannot see review details', function () {
         ->get(route('backstage.reviews.show', $review))
         ->assertForbidden();
 });
-

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::domain(config('connect.on_url'))->group(function () {
-    Route::get('/', function() {
+    Route::get('/', function () {
         return 'On Connect';
     })->name('marketplaces.index');
 
@@ -25,19 +25,19 @@ Route::domain(config('connect.on_url'))->group(function () {
     Volt::route('/{marketplace:slug}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
     Volt::route('/{marketplace:slug}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
 
-    Volt::route('/{marketplace:slug}/listings', 'marketplaces.listings.index')->name('marketplaces.listings.index');
+    Volt::route('/{marketplace:slug}/listings', 'on-marketplace.listings.index')->name('on-marketplace.listings.index');
 
     Route::middleware('auth')->group(function () {
-        Volt::route('/{marketplace:slug}/listings/create', 'marketplaces.listings.create')->name('marketplaces.listings.create');
+        Volt::route('/{marketplace:slug}/listings/create', 'on-marketplace.listings.create')->name('on-marketplace.listings.create');
 
-        Volt::route('/{marketplace:slug}/listings/{listing}/edit/details', 'marketplaces.listings.edit.details')->name('marketplaces.listings.edit.details');
-        Volt::route('/{marketplace:slug}/listings/{listing}/edit/location', 'marketplaces.listings.edit.location')->name('marketplaces.listings.edit.location');
-        Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'marketplaces.listings.edit.pricing')->name('marketplaces.listings.edit.pricing');
-        Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'marketplaces.listings.edit.availability')->name('marketplaces.listings.edit.availability');
-        Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'marketplaces.listings.edit.photos')->name('marketplaces.listings.edit.photos');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/details', 'on-marketplace.listings.edit.details')->name('on-marketplace.listings.edit.details');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/location', 'on-marketplace.listings.edit.location')->name('on-marketplace.listings.edit.location');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'on-marketplace.listings.edit.pricing')->name('on-marketplace.listings.edit.pricing');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'on-marketplace.listings.edit.availability')->name('on-marketplace.listings.edit.availability');
+        Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'on-marketplace.listings.edit.photos')->name('on-marketplace.listings.edit.photos');
     });
 
-    Volt::route('/{marketplace:slug}/listings/{listing}', 'marketplaces.listings.show')->name('marketplaces.listings.show');
+    Volt::route('/{marketplace:slug}/listings/{listing}', 'on-marketplace.listings.show')->name('on-marketplace.listings.show');
 
     Volt::route('/{marketplace:slug}/account/listings', 'marketplaces.account.listings')->name('marketplaces.account.listings');
 

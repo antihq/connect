@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
-use App\Models\Organization;
-use App\Models\Marketplace;
 use App\Models\Listing;
+use App\Models\Marketplace;
+use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;

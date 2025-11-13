@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
-use App\Models\Organization;
 use App\Models\Marketplace;
-use App\Models\Transaction;
+use App\Models\Organization;
 use App\Models\Review;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

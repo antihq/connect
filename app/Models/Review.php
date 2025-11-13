@@ -20,7 +20,6 @@ class Review extends Model
         return $this->belongsTo(Transaction::class);
     }
 
-
     public function user()
     {
         // The reviewer is the user who wrote the review

@@ -1,10 +1,8 @@
 <?php
 
 use App\Models\Marketplace;
-use App\Models\Listing;
-use Livewire\Volt\Volt;
-
 use App\Models\User;
+use Livewire\Volt\Volt;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -14,7 +12,7 @@ it('creates a new listing with draft status, stores creator, and requires title 
 
     // Validation: both fields required
     Volt::actingAs($user)
-        ->test('marketplaces.listings.create', ['marketplace' => $marketplace])
+        ->test('on-marketplace.listings.create', ['marketplace' => $marketplace])
         ->set('title', '')
         ->set('description', '')
         ->call('create')
@@ -22,7 +20,7 @@ it('creates a new listing with draft status, stores creator, and requires title 
 
     // Success: valid data
     Volt::actingAs($user)
-        ->test('marketplaces.listings.create', ['marketplace' => $marketplace])
+        ->test('on-marketplace.listings.create', ['marketplace' => $marketplace])
         ->set('title', 'Test Listing')
         ->set('description', 'Test description')
         ->call('create')
@@ -36,4 +34,3 @@ it('creates a new listing with draft status, stores creator, and requires title 
         'user_id' => $user->id,
     ]);
 });
-
