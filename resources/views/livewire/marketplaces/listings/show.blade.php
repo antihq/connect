@@ -181,19 +181,41 @@ new class extends Component
                 </flux:date-picker>
             </div>
             @if ($bookingBreakdown)
-                <flux:card class="mt-4">
-                    <flux:text>
-                        <strong>Nights:</strong>
-                        {{ $bookingBreakdown['nights'] }}
-                    </flux:text>
-                    <flux:text>
-                        <strong>Price per night:</strong>
-                        ${{ number_format($bookingBreakdown['price_per_night'], 2) }}
-                    </flux:text>
-                    <flux:text>
-                        <strong>Total:</strong>
-                        ${{ number_format($bookingBreakdown['total'], 2) }}
-                    </flux:text>
+                <flux:card class="mt-4 p-0">
+                    <div class="px-6 pt-6 pb-2">
+                        <flux:text variant="strong" class="uppercase text-xs tracking-wide mb-2">Booking Breakdown</flux:text>
+                    </div>
+                    <hr class="border-t" />
+                    <div class="grid grid-cols-2 gap-6 px-6 py-4">
+                        <div>
+                            <flux:text class="text-xs mb-1">Booking start</flux:text>
+                            <flux:text variant="strong" class="text-lg">{{ \Carbon\Carbon::parse($range['start'])->format('l') }}</flux:text>
+                            <flux:text class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($range['start'])->format('M d') }}</flux:text>
+                        </div>
+                        <div class="text-right">
+                            <flux:text class="text-xs mb-1">Booking end</flux:text>
+                            <flux:text variant="strong" class="text-lg">{{ \Carbon\Carbon::parse($range['end'])->format('l') }}</flux:text>
+                            <flux:text class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($range['end'])->format('M d') }}</flux:text>
+                        </div>
+                    </div>
+                    <hr class="border-t" />
+                    <div class="grid grid-cols-2 gap-6 px-6 py-4 items-center">
+                        <div>
+                            <flux:text class="text-base">${{ number_format($bookingBreakdown['price_per_night'], 2) }} x {{ $bookingBreakdown['nights'] }} days</flux:text>
+                        </div>
+                        <div class="text-right">
+                            <flux:text class="text-base">${{ number_format($bookingBreakdown['total'], 2) }}</flux:text>
+                        </div>
+                    </div>
+                    <hr class="border-t" />
+                    <div class="grid grid-cols-2 gap-6 px-6 py-4 items-center">
+                        <div>
+                            <flux:text class="text-base">Total price</flux:text>
+                        </div>
+                        <div class="text-right">
+                            <flux:text variant="strong" class="text-lg">${{ number_format($bookingBreakdown['total'], 2) }}</flux:text>
+                        </div>
+                    </div>
                 </flux:card>
                 <flux:button type="submit" variant="primary" class="mt-4 w-full">Request to Book</flux:button>
             @endif
