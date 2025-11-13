@@ -30,9 +30,9 @@ class Organization extends Model
         return $this->belongsToMany(User::class, 'organization_user');
     }
 
-    public function addMember(User $user): void
+    public function addMember(User $user, string $role = 'member'): void
     {
-        $this->members()->attach($user->id);
+        $this->members()->attach($user->id, ['role' => $role]);
     }
 
     public function removeMember(User $user): void

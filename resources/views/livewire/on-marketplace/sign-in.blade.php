@@ -62,7 +62,7 @@ new class extends Component {
 
         $organization = $this->marketplace->organization;
         if (!$organization->isMember($user)) {
-            $organization->addMember($user);
+            $organization->addMember($user, 'member');
         }
 
         $record->delete();
