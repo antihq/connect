@@ -14,9 +14,27 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 
 <div class="space-y-20 sm:space-y-32">
     <x-changelog.entry date="2025-11-12">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 18.34.39@2x.png" />
+
+        <h2><a href="#changelog-2025-11-12">Requesting a book</a></h2>
+
+        <p>I completed the design for requesting a book.</p>
+
+        <p>The process begins with users selecting a date range. First, they choose the start date, then the end date. The "Request to Book" button remains disabled until users finish selecting both dates.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 18.37.15@2x.png" />
+
+        <p>Next, users see a breakdown of their booking, including the start and end dates with the corresponding day of the week and calendar view, helping them confirm their choices.</p>
+        
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 18.38.22@2x.png" />
+
+        <p>Finally, users receive a summary of the amount to pay, calculated by the number of selected days and the total booking price. Once users review this, the "Request to Book" button becomes active, allowing them to continue to the payment process.</p>
+
+        <hr id="changelog-2025-11-12-2">
+
         <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 13.18.12@2x.png" />
 
-        <h2><a href="#changelog-2025-11-12">Multistep listing submission</a></h2>
+        <h2><a href="#changelog-2025-11-12-2">Multistep listing submission</a></h2>
 
         <p>Made the publishing process smoother by splitting the submission into five steps.</p>
 
