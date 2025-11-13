@@ -10,15 +10,16 @@ new class extends Component
 
     public Listing $listing;
 
-    public ?string $startDate = null;
-
-    public ?string $endDate = null;
+    public array $range = [
+        'start' => null,
+        'end' => null,
+    ];
 
     public ?array $bookingBreakdown = null;
 
     public function updated($property)
     {
-        if (in_array($property, ['startDate', 'endDate'])) {
+        if (in_array($property, ['range.start', 'range.end'])) {
             $this->calculateBookingBreakdown();
         }
     }
@@ -26,11 +27,11 @@ new class extends Component
     protected function calculateBookingBreakdown(): void
     {
         $this->bookingBreakdown = null;
-        if (! $this->startDate || ! $this->endDate) {
+        if (! $this->range['start'] || ! $this->range['end']) {
             return;
         }
-        $start = \Carbon\Carbon::parse($this->startDate);
-        $end = \Carbon\Carbon::parse($this->endDate);
+        $start = \Carbon\Carbon::parse($this->range['start']);
+        $end = \Carbon\Carbon::parse($this->range['end']);
         if ($end->lessThanOrEqualTo($start)) {
             return;
         }
@@ -60,18 +61,18 @@ new class extends Component
         $this->bookingMessage = null;
         $this->bookingError = null;
 
-        if (! auth()->check()) {
+        if (! \Illuminate\Support\Facades\Auth::check()) {
             $this->bookingError = 'You must be logged in to book.';
 
             return;
         }
-        if (! $this->startDate || ! $this->endDate) {
+        if (! $this->range['start'] || ! $this->range['end']) {
             $this->bookingError = 'Please select both start and end dates.';
 
             return;
         }
-        $start = \Carbon\Carbon::parse($this->startDate);
-        $end = \Carbon\Carbon::parse($this->endDate);
+        $start = \Carbon\Carbon::parse($this->range['start']);
+        $end = \Carbon\Carbon::parse($this->range['end']);
         if ($end->lessThanOrEqualTo($start)) {
             $this->bookingError = 'End date must be after start date.';
 
@@ -101,7 +102,7 @@ new class extends Component
         $total = $nights * $pricePerNight;
         $transaction = $this->listing->transactions()->create([
             'marketplace_id' => $this->marketplace->id,
-            'user_id' => auth()->id(),
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'start_date' => $start,
             'end_date' => $end,
             'nights' => $nights,
@@ -113,7 +114,7 @@ new class extends Component
             'type' => 'created',
             'description' => 'Transaction created by user',
             'meta' => [
-                'user_id' => auth()->id(),
+'user_id' => \Illuminate\Support\Facades\Auth::id(),
                 'ip' => request()->ip(),
             ],
         ]);
@@ -170,12 +171,14 @@ new class extends Component
 
         <form wire:submit="requestToBook">
             <div class="flex flex-col gap-4 md:flex-row">
-                <div class="flex-1">
-                    <flux:input type="date" label="Start Date" wire:model.live="startDate" />
-                </div>
-                <div class="flex-1">
-                    <flux:input type="date" label="End Date" wire:model.live="endDate" />
-                </div>
+                <flux:date-picker mode="range" wire:model.live="range">
+                    <x-slot name="trigger">
+                        <div class="flex flex-col sm:flex-row gap-6 sm:gap-4">
+                            <flux:date-picker.input label="Start" />
+                            <flux:date-picker.input label="End" />
+                        </div>
+                    </x-slot>
+                </flux:date-picker>
             </div>
             @if ($bookingBreakdown)
                 <flux:card class="mt-4">
@@ -192,7 +195,7 @@ new class extends Component
                         ${{ number_format($bookingBreakdown['total'], 2) }}
                     </flux:text>
                 </flux:card>
-                <flux:button type="submit" color="primary" class="mt-4 w-full">Request to Book</flux:button>
+                <flux:button type="submit" variant="primary" class="mt-4 w-full">Request to Book</flux:button>
             @endif
          @if ($bookingMessage)
                 <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
