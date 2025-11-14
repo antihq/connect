@@ -62,3 +62,38 @@ it('persists payout settings for the correct user and marketplace', function () 
         'country' => 'US',
     ])->exists())->toBeTrue();
 });
+
+it('cannot change account type or country after they are set', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Set initial values
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'individual')
+        ->set('country', 'US')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    // Attempt to change values
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'company')
+        ->set('country', 'GB')
+        ->call('save')
+        ->assertHasNoErrors(); // No error, but values should not change
+
+    // Assert the values did not change
+    $row = \Illuminate\Support\Facades\DB::table('marketplace_payout_settings')->where([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+    ])->first();
+    expect($row->account_type)->toBe('individual');
+    expect($row->country)->toBe('US');
+});
