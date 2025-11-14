@@ -80,7 +80,7 @@ new class extends Component
             $this->addError('payout_settings', 'required');
             return;
         }
-        $payoutUrl = route('marketplaces.account.settings.payout', ['marketplace' => $this->marketplace->id]);
+        $payoutUrl = route('marketplaces.account.settings.payout', ['marketplace' => $this->marketplace]);
         $accountLink = app(\App\Services\StripeConnectService::class)
             ->createAccountLink(
                 $setting->stripe_account_id,
