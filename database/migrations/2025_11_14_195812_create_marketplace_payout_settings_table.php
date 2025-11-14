@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('marketplace_id')->constrained()->cascadeOnDelete();
             $table->string('account_type');
             $table->string('country', 2);
+            $table->string('stripe_account_id')->nullable();
             $table->timestamps();
             $table->unique(['user_id', 'marketplace_id']);
         });
