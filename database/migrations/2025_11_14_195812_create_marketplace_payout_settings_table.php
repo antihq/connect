@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('account_type');
             $table->string('country', 2);
             $table->string('stripe_account_id')->nullable();
+            $table->string('onboarding_status')->nullable();
             $table->timestamps();
             $table->unique(['user_id', 'marketplace_id']);
         });

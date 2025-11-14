@@ -117,3 +117,178 @@ it('cannot change account type or country after they are set', function () {
     expect($row->country)->toBe('US');
     expect($row->stripe_account_id)->toBe('acct_fake123');
 });
+
+// --- Onboarding TDD tests ---
+
+it('cannot start onboarding without payout settings', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertHasErrors(['payout_settings' => 'required']);
+});
+
+it('can start onboarding when payout settings are configured', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Mock Stripe\Account::create
+    $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
+    Mockery::mock('overload:\\Stripe\\Account')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeStripeAccount);
+
+    // Save payout settings
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'individual')
+        ->set('country', 'US')
+        ->call('save')
+        ->assertHasNoErrors();
+    Mockery::close();
+
+    // Start onboarding
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertSet('onboarding_status', 'in_progress');
+});
+
+it('tracks onboarding state per user and marketplace', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user1 = \App\Models\User::factory()->create();
+    $user2 = \App\Models\User::factory()->create();
+    $organization->addMember($user1);
+    $organization->addMember($user2);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Mock Stripe\Account::create for both users
+    $fakeStripeAccount1 = (object) ['id' => 'acct_fake1'];
+    $fakeStripeAccount2 = (object) ['id' => 'acct_fake2'];
+    $mock = Mockery::mock('overload:\\Stripe\\Account');
+    $mock->shouldReceive('create')->andReturn($fakeStripeAccount1, $fakeStripeAccount2);
+
+    // User 1 saves payout settings and starts onboarding
+    Volt::actingAs($user1)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'individual')
+        ->set('country', 'US')
+        ->call('save')
+        ->assertHasNoErrors();
+    Volt::actingAs($user1)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertSet('onboarding_status', 'in_progress');
+
+    // User 2 saves payout settings and starts onboarding
+    Volt::actingAs($user2)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'company')
+        ->set('country', 'GB')
+        ->call('save')
+        ->assertHasNoErrors();
+    Volt::actingAs($user2)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertSet('onboarding_status', 'in_progress');
+    Mockery::close();
+});
+
+it('can mark onboarding as completed', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Mock Stripe\Account::create
+    $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
+    Mockery::mock('overload:\\Stripe\\Account')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeStripeAccount);
+
+    // Save payout settings
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'individual')
+        ->set('country', 'US')
+        ->call('save')
+        ->assertHasNoErrors();
+    Mockery::close();
+
+    // Start onboarding
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertSet('onboarding_status', 'in_progress')
+        ->call('completeOnboarding')
+        ->assertSet('onboarding_status', 'completed');
+});
+
+it('redirects to Stripe onboarding after account creation', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Mock Stripe\Account::create
+    $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
+    Mockery::mock('overload:\\Stripe\\Account')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeStripeAccount);
+
+    // Mock Stripe\AccountLink::create
+    $fakeOnboardingUrl = 'https://connect.stripe.com/onboarding/test';
+    $fakeAccountLink = (object) ['url' => $fakeOnboardingUrl];
+    Mockery::mock('overload:\\Stripe\\AccountLink')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeAccountLink);
+
+    // Save payout settings
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->set('accountType', 'individual')
+        ->set('country', 'US')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    // Start onboarding, expect redirect
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('startOnboarding')
+        ->assertRedirect($fakeOnboardingUrl);
+
+    Mockery::close();
+});
+
