@@ -122,7 +122,7 @@ new class extends Component
 
         <flux:spacer class="my-10" />
 
-        <flux:heading size="md">Activity Log</flux:heading>
+        <flux:heading size="lg">Activity</flux:heading>
 
         <flux:spacer class="my-10" />
 
@@ -155,6 +155,21 @@ new class extends Component
                                             <div class="mt-2">
                                                 <flux:text variant="strong">{{ $activity->description }}</flux:text>
                                             </div>
+                                        </div>
+                                    @elseif ($activity->type === 'created')
+                                        <div class="relative px-1">
+                                            <div class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white">
+                                                <flux:icon.calendar-days class="size-5 text-zinc-500" variant="mini" />
+                                            </div>
+                                        </div>
+                                        <div class="min-w-0 flex-1 py-1.5">
+                                            <flux:text>
+                                                <flux:text variant="strong" class="font-medium" inline>
+                                                    {{ $activity->user->name }}
+                                                </flux:text>
+                                                <span class="mr-0.5">requested a booking (awaiting payment)</span>
+                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
+                                            </flux:text>
                                         </div>
                                     @elseif ($activity->type === 'review')
                                         @php $review = $reviews[$activity->user_id] ?? null; @endphp
@@ -344,5 +359,18 @@ new class extends Component
                 </div>
             </div>
         </flux:card>
+
+        @if ($transaction->status === 'pending')
+            <div class="mt-6">
+                <flux:button
+                    as="a"
+                    href="{{ route('marketplaces.transactions.pay', [$marketplace->id, $transaction->id]) }}"
+                    variant="primary"
+                    class="w-full text-center"
+                >
+                    Proceed to Checkout
+                </flux:button>
+            </div>
+        @endif
     </flux:aside>
 </flux:container>

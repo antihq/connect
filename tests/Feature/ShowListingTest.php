@@ -30,6 +30,7 @@ it('allows an authenticated user to book available dates', function () {
         ]));
 
     $transaction = Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first();
+    // When a transaction is created, it means the user has requested a booking and it is awaiting payment (status: 'pending').
     assertDatabaseHas('transactions', [
         'listing_id' => $listing->id,
         'user_id' => $user->id,
@@ -40,6 +41,8 @@ it('allows an authenticated user to book available dates', function () {
         'total' => 300,
         'status' => 'pending',
     ]);
+    // When a transaction is created (booking requested, awaiting payment),
+    // a transaction activity of type 'created' is recorded to mark this event.
     assertDatabaseHas('transaction_activities', [
         'transaction_id' => $transaction->id,
         'type' => 'created',
