@@ -45,6 +45,13 @@ it('persists payout settings for the correct user and marketplace', function () 
     $organization->addMember($user);
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
+    // Mock Stripe\Account::create
+    $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
+    Mockery::mock('overload:\\Stripe\\Account')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeStripeAccount);
+
     Volt::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
@@ -60,7 +67,10 @@ it('persists payout settings for the correct user and marketplace', function () 
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
         'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
     ])->exists())->toBeTrue();
+
+    Mockery::close();
 });
 
 it('cannot change account type or country after they are set', function () {
@@ -68,6 +78,13 @@ it('cannot change account type or country after they are set', function () {
     $user = \App\Models\User::factory()->create();
     $organization->addMember($user);
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // First call: mock Stripe
+    $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
+    Mockery::mock('overload:\\Stripe\\Account')
+        ->shouldReceive('create')
+        ->once()
+        ->andReturn($fakeStripeAccount);
 
     // Set initial values
     Volt::actingAs($user)
@@ -79,7 +96,9 @@ it('cannot change account type or country after they are set', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    // Attempt to change values
+    Mockery::close(); // Clean up the mock
+
+    // Second call: do NOT mock Stripe, should not be called
     Volt::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
@@ -96,4 +115,5 @@ it('cannot change account type or country after they are set', function () {
     ])->first();
     expect($row->account_type)->toBe('individual');
     expect($row->country)->toBe('US');
+    expect($row->stripe_account_id)->toBe('acct_fake123');
 });

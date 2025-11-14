@@ -40,27 +40,28 @@ new class extends Component
             'country' => ['required', 'in:AU,AT,BE,BR,BG,CA,HR,CY,CZ,DK,EE,FI,FR,DE,GI,GR,HK,HU,IN,IE,IT,JP,LV,LI,LT,LU,MY,MT,MX,NL,NZ,NO,PL,PT,RO,SG,SK,SI,ES,SE,CH,TH,AE,GB,US'], // Stripe supported countries
         ]);
 
-        // Create Stripe account if not already set
         $user = Auth::user();
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-        $stripeAccount = \Stripe\Account::create([
-            'type' => 'express',
-            'country' => $this->country,
-            'email' => $user->email,
-            'business_type' => $this->accountType,
-        ]);
-
-        MarketplacePayoutSetting::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'marketplace_id' => $this->marketplace->id,
-            ],
-            [
-                'account_type' => $this->accountType,
+        // Only create Stripe account if not already set
+        if (!$setting || !$setting->stripe_account_id) {
+            \Stripe\Stripe::setApiKey(config('cashier.secret'));
+            $stripeAccount = \Stripe\Account::create([
+                'type' => 'express',
                 'country' => $this->country,
-                'stripe_account_id' => $stripeAccount->id,
-            ]
-        );
+                'email' => $user->email,
+                'business_type' => $this->accountType,
+            ]);
+            MarketplacePayoutSetting::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'marketplace_id' => $this->marketplace->id,
+                ],
+                [
+                    'account_type' => $this->accountType,
+                    'country' => $this->country,
+                    'stripe_account_id' => $stripeAccount->id,
+                ]
+            );
+        }
     }
 }; ?>
 
