@@ -2,6 +2,7 @@
 
 use App\Models\Marketplace;
 use App\Models\MarketplacePayoutSetting;
+use App\Services\StripeConnectService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -46,8 +47,7 @@ new class extends Component
         $user = Auth::user();
         // Only create Stripe account if not already set
         if (! $setting || ! $setting->stripe_account_id) {
-            \Stripe\Stripe::setApiKey(config('cashier.secret'));
-            $stripeAccount = \Stripe\Account::create([
+            $stripeAccount = app(\App\Services\StripeConnectService::class)->createAccount([
                 'type' => 'express',
                 'country' => $this->country,
                 'email' => $user->email,
@@ -80,13 +80,12 @@ new class extends Component
             $this->addError('payout_settings', 'required');
             return;
         }
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-        $accountLink = \Stripe\AccountLink::create([
-            'account' => $setting->stripe_account_id,
-            'refresh_url' => url()->current(),
-            'return_url' => url()->current(),
-            'type' => 'account_onboarding',
-        ]);
+        $accountLink = app(\App\Services\StripeConnectService::class)
+            ->createAccountLink(
+                $setting->stripe_account_id,
+                url()->current(),
+                url()->current()
+            );
         $setting->onboarding_status = 'in_progress';
         $setting->save();
         $this->onboarding_status = 'in_progress';
