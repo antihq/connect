@@ -43,6 +43,7 @@ it('allows an authenticated user to book available dates', function () {
     assertDatabaseHas('transaction_activities', [
         'transaction_id' => $transaction->id,
         'type' => 'created',
+        'user_id' => $user->id,
     ]);
 });
 

@@ -140,10 +140,9 @@ new class extends Component
                                 <div class="relative flex items-start space-x-3">
                                     @if ($activity->type === 'message')
                                         <div class="relative">
-                                            <img class="flex size-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-gray-900 outline -outline-offset-1 outline-white/10" src="https://unavatar.io/{{ $activity->user->email ?? 'unknown' }}" alt="" />
-                                            <span class="absolute -right-1 -bottom-0.5 rounded-tl bg-gray-900 px-0.5 py-px">
-                                                <!-- ChatBubbleLeftEllipsisIcon placeholder -->
-                                                <svg class="size-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 0 1-4-.8L3 20l.8-3.2A7.96 7.96 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z"/></svg>
+                                            <img class="flex size-10 items-center justify-center rounded-full bg-zinc-400 ring-8 ring-white outline -outline-offset-1 outline-white/10" src="https://unavatar.io/{{ $activity->user->email ?? 'unknown' }}" alt="" />
+                                            <span class="absolute -right-1 -bottom-0.5 rounded-tl bg-white px-0.5 py-px">
+                                                <flux:icon.chat-bubble-left-ellipsis class="size-5 text-zinc-500" />
                                             </span>
                                         </div>
                                         <div class="min-w-0 flex-1">
@@ -151,7 +150,7 @@ new class extends Component
                                                 <flux:text variant="strong" class="font-medium">
                                                     {{ $activity->user->name ?? 'User #'.$activity->user_id }}
                                                 </flux:text>
-                                                <flux:text class="mt-0.5">Messaged {{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</flux:text>
+                                                <flux:text class="mt-0.5">Messaged {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</flux:text>
                                             </div>
                                             <div class="mt-2">
                                                 <flux:text variant="strong">{{ $activity->description }}</flux:text>
@@ -161,14 +160,14 @@ new class extends Component
                                         @php $review = $reviews[$activity->user_id] ?? null; @endphp
                                         <div>
                                             <div class="relative px-1">
-                                                <div class="flex size-8 items-center justify-center rounded-full bg-yellow-800 ring-8 ring-gray-900">
+                                                <div class="flex size-8 items-center justify-center rounded-full bg-yellow-800 ring-8 ring-zinc-900">
                                                     <!-- Star icon -->
                                                     <svg class="size-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 0 0 .95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 0 0-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 0 0-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 0 0-.364-1.118l-3.388-2.46c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 0 0 .95-.69l1.286-3.967z"/></svg>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="min-w-0 flex-1 py-1.5">
-                                            <div class="text-sm text-gray-400">
+                                            <div class="text-sm text-zinc-400">
                                                 <span class="font-medium text-white">{{ $activity->user->name ?? 'User #'.$activity->user_id }}</span>
                                                 reviewed
                                                 <span class="font-medium text-white">
@@ -178,10 +177,10 @@ new class extends Component
                                                         Unknown
                                                     @endif
                                                 </span>
-                                                <span class="whitespace-nowrap">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</span>
+                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
                                             </div>
                                             @if ($review)
-                                                <div class="mt-2 text-sm text-gray-200">
+                                                <div class="mt-2 text-sm text-zinc-200">
                                                     <p>Rating: {{ $review->rating }}★<br>{{ $review->comment }}</p>
                                                 </div>
                                             @else
@@ -191,21 +190,19 @@ new class extends Component
                                     @else
                                         <div>
                                             <div class="relative px-1">
-                                                <div class="flex size-8 items-center justify-center rounded-full bg-gray-800 ring-8 ring-gray-900">
-                                                    <!-- Tag icon -->
-                                                    <svg class="size-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 7l5-5 5 5M5 17l5 5 5-5"/></svg>
+                                                <div class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white">
+                                                    <flux:icon.exclamation-triangle class="size-5 text-zinc-500" variant="mini" />
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="min-w-0 flex-1 py-0">
-                                            <div class="text-sm/8">
-                                                <span class="font-medium">{{ $activity->user->name ?? 'User #'.$activity->user_id }}</span>
+                                            <flux:text class="text-sm/8">
+                                                <flux:text variant="strong" class="font-medium" inline>
+                                                    {{ $activity->user->name ?? 'User #'.$activity->user_id }}
+                                                </flux:text>
                                                 <span class="mr-0.5">did {{ ucfirst($activity->type) }}</span>
-                                                <span class="whitespace-nowrap">{{ $activity->created_at?->format('M d, Y H:i') ?? '-' }}</span>
-                                            </div>
-                                            <div class="mt-2 text-sm text-gray-200">
-                                                <p>{{ $activity->description }}</p>
-                                            </div>
+                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
+                                            </flux:text>
                                         </div>
                                     @endif
                                 </div>

@@ -113,6 +113,7 @@ new class extends Component
         $transaction->activities()->create([
             'type' => 'created',
             'description' => 'Transaction created by user',
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'meta' => [
                 'user_id' => \Illuminate\Support\Facades\Auth::id(),
                 'ip' => request()->ip(),
