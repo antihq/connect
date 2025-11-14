@@ -13,6 +13,13 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 }; ?>
 
 <div class="space-y-20 sm:space-y-32">
+    <x-changelog.entry date="2025-11-4">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-14 at 12.38.50@2x.png" />
+        
+        <h2>Pending booking payments</h2>
+
+        <p>Worked on displaying booking transactions that are still pending payment so the customer and provider can communicate, allowing the customer to proceed with the payment and complete their booking request.</p>
+    </x-changelog.entry>
     <x-changelog.entry date="2025-11-12">
         <x-changelog.img src="/assets/images/CleanShot 2025-11-12 at 18.34.39@2x.png" />
 
