@@ -80,11 +80,12 @@ new class extends Component
             $this->addError('payout_settings', 'required');
             return;
         }
+        $payoutUrl = route('marketplaces.account.settings.payout', ['marketplace' => $this->marketplace->id]);
         $accountLink = app(\App\Services\StripeConnectService::class)
             ->createAccountLink(
                 $setting->stripe_account_id,
-                url()->current(),
-                url()->current()
+                $payoutUrl,
+                $payoutUrl
             );
         $setting->onboarding_status = 'in_progress';
         $setting->save();
