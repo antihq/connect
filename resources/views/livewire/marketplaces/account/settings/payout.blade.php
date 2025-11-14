@@ -189,4 +189,10 @@ new class extends Component
 
         <flux:button type="submit" variant="primary">Save</flux:button>
     </form>
+
+    @if ($accountType !== '' && $country !== '' && $onboarding_status !== 'completed')
+        <flux:button class="mt-6" variant="primary" wire:click="startOnboarding">
+            Start Stripe Onboarding
+        </flux:button>
+    @endif
 </div>
