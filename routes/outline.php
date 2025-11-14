@@ -35,6 +35,8 @@ Route::domain(config('connect.on_url'))->group(function () {
         Volt::route('/{marketplace:slug}/listings/{listing}/edit/pricing', 'on-marketplace.listings.edit.pricing')->name('on-marketplace.listings.edit.pricing');
         Volt::route('/{marketplace:slug}/listings/{listing}/edit/availability', 'on-marketplace.listings.edit.availability')->name('on-marketplace.listings.edit.availability');
         Volt::route('/{marketplace:slug}/listings/{listing}/edit/photos', 'on-marketplace.listings.edit.photos')->name('on-marketplace.listings.edit.photos');
+
+        Volt::route('/{marketplace:slug}/account/settings/payout', 'marketplaces.account.settings.payout')->name('marketplaces.account.settings.payout');
     });
 
     Volt::route('/{marketplace:slug}/listings/{listing}', 'on-marketplace.listings.show')->name('on-marketplace.listings.show');
@@ -45,7 +47,6 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Volt::route('/{marketplace:slug}/account/settings/contact', 'marketplaces.account.settings.contact')->name('marketplaces.account.settings.contact');
     Volt::route('/{marketplace:slug}/account/settings/password', 'marketplaces.account.settings.password')->name('marketplaces.account.settings.password');
-    Volt::route('/{marketplace:slug}/account/settings/payout', 'marketplaces.account.settings.payout')->name('marketplaces.account.settings.payout');
     Volt::route('/{marketplace:slug}/account/settings/payment', 'marketplaces.account.settings.payment')->name('marketplaces.account.settings.payment');
 
     Volt::route('/{marketplace:slug}/users/1', 'marketplaces.users.show')->name('marketplaces.users.show');
