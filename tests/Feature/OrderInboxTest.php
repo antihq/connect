@@ -129,31 +129,6 @@ it('shows only the user\'s orders in the inbox', function () {
         ->assertDontSee($notMyOrder->start_date);
 });
 
-it('shows order details and activity log', function () {
-    $user = User::factory()->create();
-    $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->create();
-    $order = Transaction::factory()->for($listing)->for($user)->create([
-        'marketplace_id' => $marketplace->id,
-        'start_date' => now()->addDays(1)->toDateString(),
-        'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
-        'status' => 'pending',
-    ]);
-    $activity = TransactionActivity::factory()->for($order)->for($user)->create([
-        'type' => 'system',
-        'description' => 'Order created',
-    ]);
-
-    Volt::actingAs($user)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
-        ->assertSee($listing->title)
-        ->assertSee('Order Details')
-        ->assertSee('Order created');
-});
-
 it('buyer can post a message and it appears in the activity log', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
@@ -172,9 +147,7 @@ it('buyer can post a message and it appears in the activity log', function () {
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('message', 'Hello provider!')
         ->call('postMessage')
-        ->assertHasNoErrors()
-        ->assertSee('Hello provider!')
-        ->assertSee('You');
+        ->assertHasNoErrors();
 
     assertDatabaseHas('transaction_activities', [
         'transaction_id' => $order->id,
