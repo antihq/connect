@@ -17,5 +17,11 @@
       "command": ["php", "./artisan", "boost:mcp"],
       "enabled": true
     }
+  },
+  "formatter": {
+    "pint": {
+      "command": ["./vendor/bin/pint", "$FILE"],
+      "extensions": [".php"]
+    }
   }
 }

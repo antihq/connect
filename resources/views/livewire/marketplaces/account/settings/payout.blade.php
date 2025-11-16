@@ -24,7 +24,17 @@ new class extends Component
         if ($setting) {
             $this->accountType = $setting->account_type;
             $this->country = $setting->country;
-            $this->onboarding_status = $setting->onboarding_status;
+            // Always check latest onboarding status from Stripe if account exists
+            if ($setting->stripe_account_id) {
+                $stripeAccount = app(StripeConnectService::class)->getAccount($setting->stripe_account_id);
+                if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
+                    $this->onboarding_status = 'completed';
+                } else {
+                    $this->onboarding_status = 'in_progress';
+                }
+            } else {
+                $this->onboarding_status = $setting->onboarding_status;
+            }
         }
     }
 

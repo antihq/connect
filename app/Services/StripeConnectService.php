@@ -20,4 +20,10 @@ class StripeConnectService
             'type' => 'account_onboarding',
         ]);
     }
+
+    public function getAccount(string $accountId)
+    {
+        \Stripe\Stripe::setApiKey(config('cashier.secret'));
+        return \Stripe\Account::retrieve($accountId);
+    }
 }
