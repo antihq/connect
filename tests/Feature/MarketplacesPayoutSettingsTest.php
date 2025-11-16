@@ -324,6 +324,45 @@ it('redirects to Stripe onboarding after account creation', function () {
 });
 
 // --- Stripe onboarding status and URL TDD ---
+
+it('redirects to Stripe Express dashboard after onboarding is complete', function () {
+    $organization = \App\Models\Organization::factory()->create();
+    $user = \App\Models\User::factory()->create();
+    $organization->addMember($user);
+    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+
+    // Save payout settings with a Stripe account id and completed onboarding
+    $setting = \App\Models\MarketplacePayoutSetting::create([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_test123',
+        'onboarding_status' => 'completed',
+    ]);
+
+    // Mock StripeConnectService::getAccount and createExpressDashboardLink
+    $fakeStripeAccount = (object) [
+        'id' => 'acct_test123',
+        'charges_enabled' => true,
+        'details_submitted' => true,
+    ];
+    $dashboardUrl = 'https://connect.stripe.com/express/test-dashboard';
+    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
+    $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
+    $mock->shouldReceive('createExpressDashboardLink')->with('acct_test123')->andReturn($dashboardUrl);
+    app()->instance(\App\Services\StripeConnectService::class, $mock);
+
+    Volt::actingAs($user)
+        ->test('marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ])
+        ->call('redirectToStripeDashboard')
+        ->assertRedirect($dashboardUrl);
+
+    Mockery::close();
+});
+
 it('fetches latest onboarding status from Stripe on mount and sets completed if charges_enabled and details_submitted are true', function () {
     $organization = \App\Models\Organization::factory()->create();
     $user = \App\Models\User::factory()->create();

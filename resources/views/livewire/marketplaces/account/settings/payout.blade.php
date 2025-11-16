@@ -114,6 +114,17 @@ new class extends Component
             $this->onboarding_status = 'completed';
         }
     }
+
+    public function redirectToStripeDashboard()
+    {
+        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+            ->where('marketplace_id', $this->marketplace->id)
+            ->first();
+        if ($setting && $setting->stripe_account_id) {
+            $url = app(StripeConnectService::class)->createExpressDashboardLink($setting->stripe_account_id);
+            return redirect()->away($url);
+        }
+    }
 }
 ?>
 
@@ -123,6 +134,9 @@ new class extends Component
 
     @if ($onboarding_status === 'completed')
         <div class="mb-4 rounded bg-green-100 p-3 text-green-800">Onboarding completed</div>
+        <flux:button class="mt-4" variant="outline" wire:click="redirectToStripeDashboard">
+            Edit payout details in Stripe
+        </flux:button>
     @endif
 
     <form class="space-y-6" wire:submit="save">
