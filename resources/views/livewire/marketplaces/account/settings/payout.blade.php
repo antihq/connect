@@ -84,10 +84,12 @@ new class extends Component
             ->first();
         if (! $setting) {
             $this->addError('payout_settings', 'required');
+
             return;
         }
         if (! $setting->stripe_account_id) {
             $this->addError('payout_settings', 'required');
+
             return;
         }
         $payoutUrl = route('marketplaces.account.settings.payout', ['marketplace' => $this->marketplace]);
@@ -100,6 +102,7 @@ new class extends Component
         $setting->onboarding_status = 'in_progress';
         $setting->save();
         $this->onboarding_status = 'in_progress';
+
         return redirect($accountLink->url);
     }
 
@@ -122,6 +125,7 @@ new class extends Component
             ->first();
         if ($setting && $setting->stripe_account_id) {
             $url = app(StripeConnectService::class)->createExpressDashboardLink($setting->stripe_account_id);
+
             return redirect()->away($url);
         }
     }
@@ -132,91 +136,165 @@ new class extends Component
     <flux:heading level="1" size="xl">Payout Settings</flux:heading>
     <flux:spacer class="my-6" />
 
-    @if ($onboarding_status === 'completed')
-        <div class="mb-4 rounded bg-green-100 p-3 text-green-800">Onboarding completed</div>
-        <flux:button class="mt-4" variant="outline" wire:click="redirectToStripeDashboard">
-            Edit payout details in Stripe
-        </flux:button>
+    @if ($accountType !== '' && $country !== '')
+        @if ($onboarding_status === 'completed')
+            <flux:callout variant="secondary" icon="check-circle" class="mb-6">
+                <flux:callout.heading>Stripe onboarding completed</flux:callout.heading>
+                <flux:callout.text>
+                    Your payout account is ready. You can manage your payout details in Stripe.
+                </flux:callout.text>
+                <x-slot name="actions">
+                    <flux:button variant="primary" wire:click="redirectToStripeDashboard">
+                        Go to Stripe Dashboard
+                    </flux:button>
+                </x-slot>
+            </flux:callout>
+        @elseif ($onboarding_status === 'in_progress')
+            <flux:callout variant="secondary" icon="clock" class="mb-6">
+                <flux:callout.heading>Stripe onboarding in progress</flux:callout.heading>
+                <flux:callout.text>
+                    Your payout account setup is not yet complete. Please finish onboarding to receive payouts.
+                </flux:callout.text>
+                <x-slot name="actions">
+                    <flux:button variant="primary" wire:click="startOnboarding">Continue Stripe Onboarding</flux:button>
+                </x-slot>
+            </flux:callout>
+        @else
+            <flux:callout variant="secondary" icon="information-circle" class="mb-6">
+                <flux:callout.heading>Stripe onboarding not started</flux:callout.heading>
+                <flux:callout.text>To receive payouts, you need to complete Stripe onboarding.</flux:callout.text>
+                <x-slot name="actions">
+                    <flux:button variant="primary" wire:click="startOnboarding">Start Stripe Onboarding</flux:button>
+                </x-slot>
+            </flux:callout>
+        @endif
     @endif
 
     <form class="space-y-6" wire:submit="save">
+        {{-- Stripe onboarding callout is shown above when accountType and country are set --}}
         <flux:field>
-            <flux:label badge="Required">Account Type</flux:label>
-            <flux:select wire:model="accountType" :disabled="$accountType !== ''">
-                <flux:select.option value="">Select account type</flux:select.option>
-                <flux:select.option value="individual">Individual</flux:select.option>
-                <flux:select.option value="company">Company</flux:select.option>
-            </flux:select>
             @if ($accountType !== '')
-                <div class="mt-1 text-xs text-zinc-500">Account type cannot be changed after it is set.</div>
+                <flux:input label="Account Type" readonly variant="filled" :value="$accountType === 'individual' ? 'Individual' : 'Company'" />
+            @else
+                <flux:label badge="Required">Account Type</flux:label>
+                <flux:select wire:model="accountType">
+                    <flux:select.option value="">Select account type</flux:select.option>
+                    <flux:select.option value="individual">Individual</flux:select.option>
+                    <flux:select.option value="company">Company</flux:select.option>
+                </flux:select>
             @endif
 
             <flux:error name="accountType" />
         </flux:field>
 
         <flux:field>
-            <flux:label badge="Required">Country</flux:label>
-            <flux:select wire:model="country" :disabled="$country !== ''">
-                <flux:select.option value="">Select country</flux:select.option>
-                <flux:select.option value="AU">Australia</flux:select.option>
-                <flux:select.option value="AT">Austria</flux:select.option>
-                <flux:select.option value="BE">Belgium</flux:select.option>
-                <flux:select.option value="BR">Brazil</flux:select.option>
-                <flux:select.option value="BG">Bulgaria</flux:select.option>
-                <flux:select.option value="CA">Canada</flux:select.option>
-                <flux:select.option value="HR">Croatia</flux:select.option>
-                <flux:select.option value="CY">Cyprus</flux:select.option>
-                <flux:select.option value="CZ">Czech Republic</flux:select.option>
-                <flux:select.option value="DK">Denmark</flux:select.option>
-                <flux:select.option value="EE">Estonia</flux:select.option>
-                <flux:select.option value="FI">Finland</flux:select.option>
-                <flux:select.option value="FR">France</flux:select.option>
-                <flux:select.option value="DE">Germany</flux:select.option>
-                <flux:select.option value="GI">Gibraltar</flux:select.option>
-                <flux:select.option value="GR">Greece</flux:select.option>
-                <flux:select.option value="HK">Hong Kong</flux:select.option>
-                <flux:select.option value="HU">Hungary</flux:select.option>
-                <flux:select.option value="IN">India</flux:select.option>
-                <flux:select.option value="IE">Ireland</flux:select.option>
-                <flux:select.option value="IT">Italy</flux:select.option>
-                <flux:select.option value="JP">Japan</flux:select.option>
-                <flux:select.option value="LV">Latvia</flux:select.option>
-                <flux:select.option value="LI">Liechtenstein</flux:select.option>
-                <flux:select.option value="LT">Lithuania</flux:select.option>
-                <flux:select.option value="LU">Luxembourg</flux:select.option>
-                <flux:select.option value="MY">Malaysia</flux:select.option>
-                <flux:select.option value="MT">Malta</flux:select.option>
-                <flux:select.option value="MX">Mexico</flux:select.option>
-                <flux:select.option value="NL">Netherlands</flux:select.option>
-                <flux:select.option value="NZ">New Zealand</flux:select.option>
-                <flux:select.option value="NO">Norway</flux:select.option>
-                <flux:select.option value="PL">Poland</flux:select.option>
-                <flux:select.option value="PT">Portugal</flux:select.option>
-                <flux:select.option value="RO">Romania</flux:select.option>
-                <flux:select.option value="SG">Singapore</flux:select.option>
-                <flux:select.option value="SK">Slovakia</flux:select.option>
-                <flux:select.option value="SI">Slovenia</flux:select.option>
-                <flux:select.option value="ES">Spain</flux:select.option>
-                <flux:select.option value="SE">Sweden</flux:select.option>
-                <flux:select.option value="CH">Switzerland</flux:select.option>
-                <flux:select.option value="TH">Thailand</flux:select.option>
-                <flux:select.option value="AE">United Arab Emirates</flux:select.option>
-                <flux:select.option value="GB">United Kingdom</flux:select.option>
-                <flux:select.option value="US">United States</flux:select.option>
-            </flux:select>
             @if ($country !== '')
-                <div class="mt-1 text-xs text-zinc-500">Country cannot be changed after it is set.</div>
+                <flux:input label="Country" readonly variant="filled" :value="
+                    match($country) {
+                        'AU' => 'Australia',
+                        'AT' => 'Austria',
+                        'BE' => 'Belgium',
+                        'BR' => 'Brazil',
+                        'BG' => 'Bulgaria',
+                        'CA' => 'Canada',
+                        'HR' => 'Croatia',
+                        'CY' => 'Cyprus',
+                        'CZ' => 'Czech Republic',
+                        'DK' => 'Denmark',
+                        'EE' => 'Estonia',
+                        'FI' => 'Finland',
+                        'FR' => 'France',
+                        'DE' => 'Germany',
+                        'GI' => 'Gibraltar',
+                        'GR' => 'Greece',
+                        'HK' => 'Hong Kong',
+                        'HU' => 'Hungary',
+                        'IN' => 'India',
+                        'IE' => 'Ireland',
+                        'IT' => 'Italy',
+                        'JP' => 'Japan',
+                        'LV' => 'Latvia',
+                        'LI' => 'Liechtenstein',
+                        'LT' => 'Lithuania',
+                        'LU' => 'Luxembourg',
+                        'MY' => 'Malaysia',
+                        'MT' => 'Malta',
+                        'MX' => 'Mexico',
+                        'NL' => 'Netherlands',
+                        'NZ' => 'New Zealand',
+                        'NO' => 'Norway',
+                        'PL' => 'Poland',
+                        'PT' => 'Portugal',
+                        'RO' => 'Romania',
+                        'SG' => 'Singapore',
+                        'SK' => 'Slovakia',
+                        'SI' => 'Slovenia',
+                        'ES' => 'Spain',
+                        'SE' => 'Sweden',
+                        'CH' => 'Switzerland',
+                        'TH' => 'Thailand',
+                        'AE' => 'United Arab Emirates',
+                        'GB' => 'United Kingdom',
+                        'US' => 'United States',
+                        default => $country
+                    }" />
+            @else
+                <flux:label badge="Required">Country</flux:label>
+                <flux:select wire:model="country">
+                    <flux:select.option value="">Select country</flux:select.option>
+                    <flux:select.option value="AU">Australia</flux:select.option>
+                    <flux:select.option value="AT">Austria</flux:select.option>
+                    <flux:select.option value="BE">Belgium</flux:select.option>
+                    <flux:select.option value="BR">Brazil</flux:select.option>
+                    <flux:select.option value="BG">Bulgaria</flux:select.option>
+                    <flux:select.option value="CA">Canada</flux:select.option>
+                    <flux:select.option value="HR">Croatia</flux:select.option>
+                    <flux:select.option value="CY">Cyprus</flux:select.option>
+                    <flux:select.option value="CZ">Czech Republic</flux:select.option>
+                    <flux:select.option value="DK">Denmark</flux:select.option>
+                    <flux:select.option value="EE">Estonia</flux:select.option>
+                    <flux:select.option value="FI">Finland</flux:select.option>
+                    <flux:select.option value="FR">France</flux:select.option>
+                    <flux:select.option value="DE">Germany</flux:select.option>
+                    <flux:select.option value="GI">Gibraltar</flux:select.option>
+                    <flux:select.option value="GR">Greece</flux:select.option>
+                    <flux:select.option value="HK">Hong Kong</flux:select.option>
+                    <flux:select.option value="HU">Hungary</flux:select.option>
+                    <flux:select.option value="IN">India</flux:select.option>
+                    <flux:select.option value="IE">Ireland</flux:select.option>
+                    <flux:select.option value="IT">Italy</flux:select.option>
+                    <flux:select.option value="JP">Japan</flux:select.option>
+                    <flux:select.option value="LV">Latvia</flux:select.option>
+                    <flux:select.option value="LI">Liechtenstein</flux:select.option>
+                    <flux:select.option value="LT">Lithuania</flux:select.option>
+                    <flux:select.option value="LU">Luxembourg</flux:select.option>
+                    <flux:select.option value="MY">Malaysia</flux:select.option>
+                    <flux:select.option value="MT">Malta</flux:select.option>
+                    <flux:select.option value="MX">Mexico</flux:select.option>
+                    <flux:select.option value="NL">Netherlands</flux:select.option>
+                    <flux:select.option value="NZ">New Zealand</flux:select.option>
+                    <flux:select.option value="NO">Norway</flux:select.option>
+                    <flux:select.option value="PL">Poland</flux:select.option>
+                    <flux:select.option value="PT">Portugal</flux:select.option>
+                    <flux:select.option value="RO">Romania</flux:select.option>
+                    <flux:select.option value="SG">Singapore</flux:select.option>
+                    <flux:select.option value="SK">Slovakia</flux:select.option>
+                    <flux:select.option value="SI">Slovenia</flux:select.option>
+                    <flux:select.option value="ES">Spain</flux:select.option>
+                    <flux:select.option value="SE">Sweden</flux:select.option>
+                    <flux:select.option value="CH">Switzerland</flux:select.option>
+                    <flux:select.option value="TH">Thailand</flux:select.option>
+                    <flux:select.option value="AE">United Arab Emirates</flux:select.option>
+                    <flux:select.option value="GB">United Kingdom</flux:select.option>
+                    <flux:select.option value="US">United States</flux:select.option>
+                </flux:select>
             @endif
 
             <flux:error name="country" />
         </flux:field>
 
-        <flux:button type="submit" variant="primary">Save</flux:button>
+        @if ($accountType === '' || $country === '')
+            <flux:button type="submit" variant="primary">Save</flux:button>
+        @endif
     </form>
-
-    @if ($accountType !== '' && $country !== '' && $onboarding_status !== 'completed')
-        <flux:button class="mt-6" variant="primary" wire:click="startOnboarding">
-            Start Stripe Onboarding
-        </flux:button>
-    @endif
 </div>
