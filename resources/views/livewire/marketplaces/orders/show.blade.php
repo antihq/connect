@@ -4,6 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
+use App\Models\MarketplacePayoutSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -27,10 +28,61 @@ new class extends Component
     {
         $this->transaction->load(['listing', 'user', 'activities.user']);
         $this->review_submitted = $this->hasReviewed();
-        // Eager load all reviews for this transaction, keyed by reviewer_id
         $this->reviews = Review::where('transaction_id', $this->transaction->id)
             ->get()
             ->keyBy('reviewer_id');
+    }
+
+    public function payForOrder()
+    {
+        $user = Auth::user();
+        $transaction = $this->transaction;
+        $listing = $transaction->listing;
+        $provider = $listing->user;
+        $marketplace = $this->marketplace;
+
+        if ($user->id !== $transaction->user_id) {
+            abort(403);
+        }
+        if ($transaction->status !== 'pending') {
+            abort(403);
+        }
+        $payout = MarketplacePayoutSetting::where('user_id', $provider->id)
+            ->where('marketplace_id', $marketplace->id)
+            ->first();
+        if (! $payout || ! $payout->stripe_account_id) {
+            $this->addError('payout_settings', 'required');
+            return;
+        }
+        try {
+            \Stripe\Stripe::setApiKey(config('stripe.secret', config('cashier.secret')));
+            $session = \Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => $listing->title,
+                        ],
+                        'unit_amount' => (int) ($transaction->total * 100),
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'payment_intent_data' => [
+                    'transfer_data' => [
+                        'destination' => $payout->stripe_account_id,
+                    ],
+                ],
+                'success_url' => route('marketplaces.transactions.pay', [$marketplace, $transaction]) . '?success=1',
+                'cancel_url' => route('marketplaces.orders.show', [$marketplace, $transaction]),
+                'customer_email' => $user->email,
+            ]);
+            return redirect()->away($session->url);
+        } catch (\Throwable $e) {
+            $this->addError('stripe', 'error');
+            return;
+        }
     }
 
     public function postMessage()
@@ -38,21 +90,17 @@ new class extends Component
         $this->validate([
             'message' => 'required|string|max:1000',
         ]);
-
-        // Only buyer or provider can post
         $user = Auth::user();
         $isBuyer = $user->id === $this->transaction->user_id;
         $isProvider = $user->id === $this->transaction->listing->user_id;
         if (! ($isBuyer || $isProvider)) {
             abort(403);
         }
-
         $this->transaction->activities()->create([
             'type' => 'message',
             'description' => $this->message,
             'user_id' => $user->id,
         ]);
-
         $this->message = '';
         $this->transaction->load(['activities.user']);
     }
@@ -62,7 +110,6 @@ new class extends Component
         $user = Auth::user();
         $providerId = $this->transaction->listing->user_id;
         $customerId = $this->transaction->user_id;
-        // Only customer can review provider in orders
         if ($user->id !== $customerId) {
             abort(403);
         }
@@ -76,7 +123,6 @@ new class extends Component
             'review_rating' => 'required|integer|min:1|max:5',
             'review_comment' => 'required|string|max:1000',
         ]);
-        // Save review
         Review::create([
             'transaction_id' => $this->transaction->id,
             'reviewer_id' => $customerId,
@@ -84,7 +130,6 @@ new class extends Component
             'rating' => $this->review_rating,
             'comment' => $this->review_comment,
         ]);
-        // Log activity
         $this->transaction->activities()->create([
             'type' => 'review',
             'description' => 'Customer reviewed the provider: '.$this->review_comment,
@@ -98,7 +143,6 @@ new class extends Component
     private function hasReviewed(): bool
     {
         $customerId = $this->transaction->user_id;
-
         return TransactionActivity::where('transaction_id', $this->transaction->id)
             ->where('type', 'review')
             ->where('user_id', $customerId)
@@ -363,8 +407,7 @@ new class extends Component
         @if ($transaction->status === 'pending')
             <div class="mt-6">
                 <flux:button
-                    as="a"
-                    href="{{ route('marketplaces.transactions.pay', [$marketplace->id, $transaction->id]) }}"
+                    wire:click="payForOrder"
                     variant="primary"
                     class="w-full text-center"
                 >
@@ -374,3 +417,4 @@ new class extends Component
         @endif
     </flux:aside>
 </flux:container>
+

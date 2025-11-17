@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use App\Models\MarketplacePayoutSetting;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use App\Models\User;
@@ -176,4 +177,157 @@ it('non-buyer cannot post a message', function () {
         ->set('message', 'I should not be able to post')
         ->call('postMessage')
         ->assertStatus(403);
+});
+
+// --- Stripe Checkout payment flow tests ---
+it('customer can initiate payment for a pending order and is redirected to Stripe Checkout', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $order = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'pending',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    // Provider payout settings
+    MarketplacePayoutSetting::create([
+        'user_id' => $provider->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => 'completed',
+    ]);
+
+    // Mock Stripe Checkout Session
+    $fakeSession = (object) ['url' => 'https://checkout.stripe.com/test-session'];
+    $stripeMock = Mockery::mock('overload:Stripe\\Checkout\\Session');
+    $stripeMock->shouldReceive('create')->andReturn($fakeSession);
+
+    Volt::actingAs($buyer)
+        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->call('payForOrder')
+        ->assertRedirect($fakeSession->url);
+
+    Mockery::close();
+});
+
+it('customer cannot pay if the order is not pending', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $order = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'paid',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    MarketplacePayoutSetting::create([
+        'user_id' => $provider->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => 'completed',
+    ]);
+
+    Volt::actingAs($buyer)
+        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->call('payForOrder')
+        ->assertStatus(403);
+});
+
+it('customer cannot pay if they are not the buyer', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $order = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'pending',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    MarketplacePayoutSetting::create([
+        'user_id' => $provider->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => 'completed',
+    ]);
+
+    Volt::actingAs($otherUser)
+        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->call('payForOrder')
+        ->assertStatus(403);
+});
+
+it('customer cannot pay if the provider has not set up payout settings', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $order = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'pending',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    // No payout settings for provider
+
+    Volt::actingAs($buyer)
+        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->call('payForOrder')
+        ->assertHasErrors(['payout_settings' => 'required']);
+});
+
+it('handles Stripe errors gracefully when creating checkout session', function () {
+    $provider = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($provider)->create();
+    $buyer = User::factory()->create();
+    $order = Transaction::factory()->for($listing)->for($buyer)->create([
+        'marketplace_id' => $marketplace->id,
+        'status' => 'pending',
+        'start_date' => now()->addDays(1)->toDateString(),
+        'end_date' => now()->addDays(2)->toDateString(),
+        'nights' => 1,
+        'price_per_night' => 100,
+        'total' => 100,
+    ]);
+    MarketplacePayoutSetting::create([
+        'user_id' => $provider->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => 'completed',
+    ]);
+
+    $stripeMock = Mockery::mock('overload:Stripe\\Checkout\\Session');
+    $stripeMock->shouldReceive('create')->andThrow(new Exception('Stripe error'));
+
+    Volt::actingAs($buyer)
+        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->call('payForOrder')
+        ->assertHasErrors(['stripe' => 'error']);
+
+    Mockery::close();
 });
