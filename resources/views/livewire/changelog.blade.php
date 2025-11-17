@@ -13,6 +13,29 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 }; ?>
 
 <div class="space-y-20 sm:space-y-32">
+    <x-changelog.entry date="2025-11-17">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.27.47@2x.png" />
+
+        <h2><a href="#changelog-2025-11-17">Stripe Connect Onboarding</a></h2>
+
+        <p>To enable providers to receive direct payments from customers in the marketplace, I'm using Stripe Connect features. This approach streamlines the process of accepting and receiving payments.</p>
+
+        <p>The process begins when the provider selects their account type—either individual or company—and chooses their country of operation. Stripe requires this information to create a Stripe Account.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.28.44@2x.png" />
+
+        <p>Next, the provider must complete the Stripe onboarding process to set up their account before they can accept payments.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.29.26@2x.png" />
+        
+        <p>The onboarding process includes several steps and may take more than a few minutes to finish. However, the system tracks the provider's progress, allowing them to resume the onboarding process from where they left off.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.29.52@2x.png" />
+
+        <p>Once onboarding is complete, the provider can access their Stripe dashboard to monitor payment activity.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.30.32@2x.png" />
+    </x-changelog.entry>
     <x-changelog.entry date="2025-11-14">
         <x-changelog.img src="/assets/images/CleanShot 2025-11-14 at 12.38.50@2x.png" />
 
