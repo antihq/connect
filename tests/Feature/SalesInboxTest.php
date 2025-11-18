@@ -31,7 +31,7 @@ it('provider can review the customer after transaction is completed', function (
         ->call('submitReview')
         ->assertHasNoErrors()
         ->assertSee('Review submitted')
-        ->assertSee('Great customer!');
+        ->assertSee('Great customer!'); // Review card shows submitted message and comment
 
     assertDatabaseHas('reviews', [
         'transaction_id' => $sale->id,
@@ -94,7 +94,7 @@ it('provider can mark an accepted transaction as complete', function () {
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertHasNoErrors()
-        ->assertSee('completed')
+        ->assertSee('Sale Completed')
         ->assertSee('Provider marked the transaction as completed.');
 
     expect($sale->fresh()->status)->toBe('completed');
@@ -196,15 +196,15 @@ it('shows sale details and activity log', function () {
         'status' => 'pending',
     ]);
     $activity = TransactionActivity::factory()->for($sale)->for($provider)->create([
-        'type' => 'system',
-        'description' => 'Sale created',
+        'type' => 'created',
+        'description' => 'created the sale (awaiting payment)',
     ]);
 
     Volt::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->assertSee($listing->title)
-        ->assertSee('Sale Details')
-        ->assertSee('Sale created');
+        ->assertSee('Sale Pending')
+        ->assertSee('created the sale (awaiting payment)');
 });
 
 it('provider can post a message and it appears in the activity log', function () {
@@ -228,7 +228,7 @@ it('provider can post a message and it appears in the activity log', function ()
         ->call('postMessage')
         ->assertHasNoErrors()
         ->assertSee('Hello buyer!')
-        ->assertSee('You');
+        ->assertSee($provider->name);
 
     assertDatabaseHas('transaction_activities', [
         'transaction_id' => $sale->id,
@@ -280,7 +280,7 @@ it('provider can accept a paid transaction', function () {
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertHasNoErrors()
-        ->assertSee('accepted')
+        ->assertSee('Sale Accepted')
         ->assertSee('Provider accepted the request.');
 
     expect($sale->fresh()->status)->toBe('accepted');
@@ -311,7 +311,7 @@ it('provider can reject a paid transaction', function () {
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertHasNoErrors()
-        ->assertSee('rejected')
+        ->assertSee('Sale Rejected')
         ->assertSee('Provider rejected the request.');
 
     expect($sale->fresh()->status)->toBe('rejected');

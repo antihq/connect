@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\Marketplace;
+use App\Models\MarketplacePayoutSetting;
 use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
-use App\Models\MarketplacePayoutSetting;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -52,6 +52,7 @@ new class extends Component
             ->first();
         if (! $payout || ! $payout->stripe_account_id) {
             $this->addError('payout_settings', 'required');
+
             return;
         }
         try {
@@ -75,13 +76,15 @@ new class extends Component
                         'destination' => $payout->stripe_account_id,
                     ],
                 ],
-                'success_url' => route('marketplaces.orders.success', [$marketplace, $transaction]) . '?session_id={CHECKOUT_SESSION_ID}',
+                'success_url' => route('marketplaces.orders.success', [$marketplace, $transaction]).'?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('marketplaces.orders.show', [$marketplace, $transaction]),
                 'customer_email' => $user->email,
             ]);
+
             return redirect()->away($session->url);
         } catch (\Throwable $e) {
             $this->addError('stripe', 'error');
+
             return;
         }
     }
@@ -144,6 +147,7 @@ new class extends Component
     private function hasReviewed(): bool
     {
         $customerId = $this->transaction->user_id;
+
         return TransactionActivity::where('transaction_id', $this->transaction->id)
             ->where('type', 'review')
             ->where('user_id', $customerId)
@@ -179,14 +183,24 @@ new class extends Component
                     @foreach ($transaction->activities as $activity)
                         <li>
                             <div class="relative pb-8">
-                                @if (!$loop->last)
-                                    <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-zinc-200" aria-hidden="true"></span>
+                                @if (! $loop->last)
+                                    <span
+                                        class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-zinc-200"
+                                        aria-hidden="true"
+                                    ></span>
                                 @endif
+
                                 <div class="relative flex items-start space-x-3">
                                     @if ($activity->type === 'message')
                                         <div class="relative">
-                                            <img class="flex size-10 items-center justify-center rounded-full bg-zinc-400 ring-8 ring-white outline -outline-offset-1 outline-white/10" src="https://unavatar.io/{{ $activity->user->email ?? 'unknown' }}" alt="" />
-                                            <span class="absolute -right-1 -bottom-0.5 rounded-tl bg-white px-0.5 py-px">
+                                            <img
+                                                class="flex size-10 items-center justify-center rounded-full bg-zinc-400 ring-8 ring-white outline -outline-offset-1 outline-white/10"
+                                                src="https://unavatar.io/{{ $activity->user->email ?? 'unknown' }}"
+                                                alt=""
+                                            />
+                                            <span
+                                                class="absolute -right-1 -bottom-0.5 rounded-tl bg-white px-0.5 py-px"
+                                            >
                                                 <flux:icon.chat-bubble-left-ellipsis class="size-5 text-zinc-500" />
                                             </span>
                                         </div>
@@ -195,7 +209,10 @@ new class extends Component
                                                 <flux:text variant="strong" class="font-medium">
                                                     {{ $activity->user->name ?? 'User #'.$activity->user_id }}
                                                 </flux:text>
-                                                <flux:text class="mt-0.5">Messaged {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</flux:text>
+                                                <flux:text class="mt-0.5">
+                                                    Messaged
+                                                    {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}
+                                                </flux:text>
                                             </div>
                                             <div class="mt-2">
                                                 <flux:text variant="strong">{{ $activity->description }}</flux:text>
@@ -203,7 +220,9 @@ new class extends Component
                                         </div>
                                     @elseif ($activity->type === 'created')
                                         <div class="relative px-1">
-                                            <div class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white">
+                                            <div
+                                                class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white"
+                                            >
                                                 <flux:icon.calendar-days class="size-5 text-zinc-500" variant="mini" />
                                             </div>
                                         </div>
@@ -213,22 +232,58 @@ new class extends Component
                                                     {{ $activity->user->name }}
                                                 </flux:text>
                                                 <span class="mr-0.5">requested a booking (awaiting payment)</span>
-                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
+                                                <span class="whitespace-nowrap">
+                                                    {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}
+                                                </span>
+                                            </flux:text>
+                                        </div>
+                                    @elseif ($activity->type === 'paid')
+                                        <div class="relative px-1">
+                                            <div
+                                                class="flex size-8 items-center justify-center rounded-full bg-green-100 ring-8 ring-white"
+                                            >
+                                                <flux:icon.check-circle class="size-5 text-green-600" variant="mini" />
+                                            </div>
+                                        </div>
+                                        <div class="min-w-0 flex-1 py-1.5">
+                                            <flux:text>
+                                                <flux:text variant="strong" class="font-medium" inline>
+                                                    {{ $activity->user->name ?? 'User #'.$activity->user_id }}
+                                                </flux:text>
+                                                <span class="mr-0.5">paid for the order</span>
+                                                <span class="whitespace-nowrap">
+                                                    {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}
+                                                </span>
                                             </flux:text>
                                         </div>
                                     @elseif ($activity->type === 'review')
-                                        @php $review = $reviews[$activity->user_id] ?? null; @endphp
+                                        @php
+                                            $review = $reviews[$activity->user_id] ?? null;
+                                        @endphp
+
                                         <div>
                                             <div class="relative px-1">
-                                                <div class="flex size-8 items-center justify-center rounded-full bg-yellow-800 ring-8 ring-zinc-900">
+                                                <div
+                                                    class="flex size-8 items-center justify-center rounded-full bg-yellow-800 ring-8 ring-zinc-900"
+                                                >
                                                     <!-- Star icon -->
-                                                    <svg class="size-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 0 0 .95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 0 0-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 0 0-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 0 0-.364-1.118l-3.388-2.46c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 0 0 .95-.69l1.286-3.967z"/></svg>
+                                                    <svg
+                                                        class="size-5 text-yellow-400"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 0 0 .95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 0 0-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 0 0-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 0 0-.364-1.118l-3.388-2.46c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 0 0 .95-.69l1.286-3.967z"
+                                                        />
+                                                    </svg>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="min-w-0 flex-1 py-1.5">
                                             <div class="text-sm text-zinc-400">
-                                                <span class="font-medium text-white">{{ $activity->user->name ?? 'User #'.$activity->user_id }}</span>
+                                                <span class="font-medium text-white">
+                                                    {{ $activity->user->name ?? 'User #'.$activity->user_id }}
+                                                </span>
                                                 reviewed
                                                 <span class="font-medium text-white">
                                                     @if ($review)
@@ -237,11 +292,18 @@ new class extends Component
                                                         Unknown
                                                     @endif
                                                 </span>
-                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
+                                                <span class="whitespace-nowrap">
+                                                    {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}
+                                                </span>
                                             </div>
+
                                             @if ($review)
                                                 <div class="mt-2 text-sm text-zinc-200">
-                                                    <p>Rating: {{ $review->rating }}★<br>{{ $review->comment }}</p>
+                                                    <p>
+                                                        Rating: {{ $review->rating }}★
+                                                        <br />
+                                                        {{ $review->comment }}
+                                                    </p>
                                                 </div>
                                             @else
                                                 <div class="mt-2 text-sm text-red-400">Review data missing.</div>
@@ -250,8 +312,13 @@ new class extends Component
                                     @else
                                         <div>
                                             <div class="relative px-1">
-                                                <div class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white">
-                                                    <flux:icon.exclamation-triangle class="size-5 text-zinc-500" variant="mini" />
+                                                <div
+                                                    class="flex size-8 items-center justify-center rounded-full bg-zinc-100 ring-8 ring-white"
+                                                >
+                                                    <flux:icon.exclamation-triangle
+                                                        class="size-5 text-zinc-500"
+                                                        variant="mini"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -261,7 +328,9 @@ new class extends Component
                                                     {{ $activity->user->name ?? 'User #'.$activity->user_id }}
                                                 </flux:text>
                                                 <span class="mr-0.5">did {{ ucfirst($activity->type) }}</span>
-                                                <span class="whitespace-nowrap">{{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}</span>
+                                                <span class="whitespace-nowrap">
+                                                    {{ $activity->created_at?->diffForHumans(['parts' => 1, 'short' => true]) ?? '-' }}
+                                                </span>
                                             </flux:text>
                                         </div>
                                     @endif
@@ -403,21 +472,14 @@ new class extends Component
                     </flux:text>
                 </div>
             </div>
-
-
         </flux:card>
 
         @if ($transaction->status === 'pending')
             <div class="mt-6">
-                <flux:button
-                    wire:click="payForOrder"
-                    variant="primary"
-                    class="w-full text-center"
-                >
+                <flux:button wire:click="payForOrder" variant="primary" class="w-full text-center">
                     Proceed to Checkout
                 </flux:button>
             </div>
         @endif
     </flux:aside>
 </flux:container>
-
