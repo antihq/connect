@@ -14,9 +14,23 @@ new #[Layout('components.layouts.changelog'), Title('Changelog')] class extends 
 
 <div class="space-y-20 sm:space-y-32">
     <x-changelog.entry date="2025-11-17">
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 19.48.54@2x.png" />
+
+        <h2><a href="#changelog-2025-11-17">Booking payments</a></h2>
+
+        <p>Now that providers can enable payments with Stripe and its Connect features, customers can make payments for their booking requests.</p>
+
+        <p>The platform uses Stripe Checkout, so when customers proceed to pay, they are redirected to Stripe Checkout to complete their booking payment. Once the payment is successful, the order is updated to reflect that the payment has been received.</p>
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 19.49.50@2x.png" />
+
+        <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 19.49.43@2x.png" />
+
+        <hr id="changelog-2025-11-17-2">
+
         <x-changelog.img src="/assets/images/CleanShot 2025-11-17 at 12.27.47@2x.png" />
 
-        <h2><a href="#changelog-2025-11-17">Stripe Connect Onboarding</a></h2>
+        <h2><a href="#changelog-2025-11-17-2">Stripe Connect Onboarding</a></h2>
 
         <p>To enable providers to receive direct payments from customers in the marketplace, I'm using Stripe Connect features. This approach streamlines the process of accepting and receiving payments.</p>
 
