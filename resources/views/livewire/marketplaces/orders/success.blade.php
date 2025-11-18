@@ -42,6 +42,11 @@ new class extends Component
             if ($session && $session->payment_status === 'paid') {
                 $this->transaction->status = 'paid';
                 $this->transaction->save();
+                $this->transaction->activities()->create([
+                    'type' => 'paid',
+                    'description' => 'Order paid via Stripe Checkout',
+                    'user_id' => $this->transaction->user_id,
+                ]);
                 $this->verified = true;
             } else {
                 $this->error = true;
