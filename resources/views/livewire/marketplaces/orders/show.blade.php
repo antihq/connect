@@ -75,7 +75,7 @@ new class extends Component
                         'destination' => $payout->stripe_account_id,
                     ],
                 ],
-                'success_url' => route('marketplaces.transactions.pay', [$marketplace, $transaction]) . '?success=1',
+                'success_url' => route('marketplaces.orders.success', [$marketplace, $transaction]) . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('marketplaces.orders.show', [$marketplace, $transaction]),
                 'customer_email' => $user->email,
             ]);

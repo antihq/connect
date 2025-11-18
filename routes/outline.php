@@ -24,6 +24,7 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Volt::route('/{marketplace:slug}/orders', 'marketplaces.orders.index')->name('marketplaces.orders.index');
     Volt::route('/{marketplace:slug}/orders/{transaction}', 'marketplaces.orders.show')->name('marketplaces.orders.show');
+    Volt::route('/{marketplace:slug}/orders/{transaction}/success', 'marketplaces.orders.success')->name('marketplaces.orders.success');
 
     Volt::route('/{marketplace:slug}/listings', 'on-marketplace.listings.index')->name('on-marketplace.listings.index');
 
