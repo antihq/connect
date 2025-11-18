@@ -70,6 +70,7 @@ new class extends Component
                 ]],
                 'mode' => 'payment',
                 'payment_intent_data' => [
+                    'application_fee_amount' => (int) round($transaction->total * 0.10 * 100),
                     'transfer_data' => [
                         'destination' => $payout->stripe_account_id,
                     ],
@@ -402,6 +403,8 @@ new class extends Component
                     </flux:text>
                 </div>
             </div>
+
+
         </flux:card>
 
         @if ($transaction->status === 'pending')
