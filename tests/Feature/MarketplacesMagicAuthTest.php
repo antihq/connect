@@ -54,7 +54,7 @@ it('logs in existing user with correct code', function () {
 
     assertAuthenticatedAs($user);
     expect(MagicAuthCode::where('code', '123456')->exists())->toBeFalse();
-    expect($marketplace->organization->isMember($user))->toBeTrue();
+    expect($marketplace->isMember($user))->toBeTrue();
 });
 
 it('registers and logs in new user with correct code', function () {
@@ -75,7 +75,7 @@ it('registers and logs in new user with correct code', function () {
     expect(User::where('email', 'newuser@example.com')->exists())->toBeTrue();
     assertAuthenticated();
     $user = User::where('email', 'newuser@example.com')->first();
-    expect($marketplace->organization->isMember($user))->toBeTrue();
+    expect($marketplace->isMember($user))->toBeTrue();
 });
 
 it('shows error for invalid or expired code', function () {

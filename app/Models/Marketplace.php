@@ -75,4 +75,28 @@ class Marketplace extends Model
     }
 
     // Add casts() if you have attributes to cast in the future
+
+    /**
+     * Users who are members of this marketplace.
+     */
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'marketplace_user')->withTimestamps();
+    }
+
+    /**
+     * Check if a user is a member of this marketplace.
+     */
+    public function isMember(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * Add a user as a member of this marketplace.
+     */
+    public function addMember(User $user): void
+    {
+        $this->members()->syncWithoutDetaching([$user->id]);
+    }
 }

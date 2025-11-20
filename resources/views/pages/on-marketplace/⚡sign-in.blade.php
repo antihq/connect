@@ -73,10 +73,8 @@ new class extends Component
 
         Auth::login($user, true);
 
-        $organization = $this->marketplace->organization;
-
-        if (! $organization->isMember($user)) {
-            $organization->addMember($user, 'member');
+        if (! $this->marketplace->isMember($user)) {
+            $this->marketplace->addMember($user);
         }
 
         $authCode->delete();

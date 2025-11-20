@@ -129,4 +129,12 @@ class User extends Authenticatable
 
         $this->save();
     }
+
+    /**
+     * Marketplaces where the user is a member.
+     */
+    public function marketplaces()
+    {
+        return $this->belongsToMany(Marketplace::class, 'marketplace_user')->withTimestamps();
+    }
 }
