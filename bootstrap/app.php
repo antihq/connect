@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\Marketplace;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,7 +13,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->routeIs('on-marketplace.*')) {
+                $marketplace = Marketplace::where('slug', $request->marketplace)->firstOrFail();
+
+                return route('on-marketplace.sign-in', $marketplace);
+            }
+
+            return route('login');
+        });
+
+        $middleware->redirectUsersTo(function (Request $request) {
+            if ($request->routeIs('on-marketplace.*')) {
+                $marketplace = Marketplace::where('slug', $request->marketplace)->firstOrFail();
+
+                return route('marketplaces.show', $marketplace);
+            }
+
+            return route('dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

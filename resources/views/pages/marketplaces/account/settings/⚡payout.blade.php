@@ -92,7 +92,7 @@ new class extends Component
 
             return;
         }
-        $payoutUrl = route('marketplaces.account.settings.payout', ['marketplace' => $this->marketplace]);
+        $payoutUrl = route('on-marketplace.account.settings.payout', ['marketplace' => $this->marketplace]);
         $accountLink = app(\App\Services\StripeConnectService::class)
             ->createAccountLink(
                 $setting->stripe_account_id,

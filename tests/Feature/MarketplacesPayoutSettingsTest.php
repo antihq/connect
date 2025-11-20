@@ -458,8 +458,8 @@ it('uses payout settings route as refresh and return URLs without query strings'
     $mock->shouldReceive('createAccountLink')
         ->withArgs(function ($accountId, $refreshUrl, $returnUrl) use ($marketplace) {
             // The URLs should not contain a query string
-            expect($refreshUrl)->toBe(route('marketplaces.account.settings.payout', ['marketplace' => $marketplace]));
-            expect($returnUrl)->toBe(route('marketplaces.account.settings.payout', ['marketplace' => $marketplace]));
+            expect($refreshUrl)->toBe(route('on-marketplace.account.settings.payout', ['marketplace' => $marketplace]));
+            expect($returnUrl)->toBe(route('on-marketplace.account.settings.payout', ['marketplace' => $marketplace]));
             expect(str_contains($refreshUrl, '?'))->toBeFalse();
             expect(str_contains($returnUrl, '?'))->toBeFalse();
 
