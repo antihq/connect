@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Notifications\MagicAuthCodeNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 new class extends Component
@@ -25,6 +27,8 @@ new class extends Component
             'email' => 'required|email',
         ]);
 
+        $this->ensureIsNotRateLimited();
+
         $code = Str::padLeft((string) random_int(0, 999999), 6, '0');
 
         $expiresAt = now()->addMinutes(10);
@@ -42,6 +46,27 @@ new class extends Component
         $user->notify(new MagicAuthCodeNotification($code));
 
         $this->step = 'code';
+    }
+
+    protected function ensureIsNotRateLimited(): void
+    {
+        if (RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            $seconds = RateLimiter::availableIn($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ]),
+            ]);
+        }
+
+        RateLimiter::hit($this->throttleKey(), 60);
+    }
+
+    protected function throttleKey(): string
+    {
+        return strtolower($this->email).'|'.request()->ip();
     }
 
     public function verifyCode()
