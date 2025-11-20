@@ -4,7 +4,7 @@ use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 it('shows all listings for the user\'s current organization marketplace', function () {
     $user = User::factory()->create();
@@ -19,7 +19,7 @@ it('shows all listings for the user\'s current organization marketplace', functi
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.index')
         ->assertSee($listings->pluck('title')->all())
         ->assertDontSee('Other Listing');
@@ -33,7 +33,7 @@ it('shows empty state if no listings exist', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.index')
         ->assertSee('No listings found'); // Adjust message to match your UI
 });
@@ -50,7 +50,7 @@ it('shows only listings for the current organization when user has multiple orgs
     $user->current_organization_id = $org2->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.index')
         ->assertSee('Org2 Listing')
         ->assertDontSee('Org1 Listing');

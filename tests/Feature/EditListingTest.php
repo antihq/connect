@@ -3,7 +3,7 @@
 use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -16,7 +16,7 @@ it('edits a listing, requires title and description, and updates the record', fu
     ]);
 
     // Validation: both fields required
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.details', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -27,7 +27,7 @@ it('edits a listing, requires title and description, and updates the record', fu
         ->assertHasErrors(['title' => 'required', 'description' => 'required']);
 
     // Success: valid data
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.details', [
             'marketplace' => $marketplace,
             'listing' => $listing,

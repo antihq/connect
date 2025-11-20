@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -14,7 +14,7 @@ it('shows the edit form with current user data', function () {
         'bio' => 'Hello world!',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.users.edit', ['user' => $user])
         ->assertSet('first_name', 'Jane')
         ->assertSet('last_name', 'Doe')
@@ -25,7 +25,7 @@ it('shows the edit form with current user data', function () {
 it('updates the user with valid data', function () {
     $user = User::factory()->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.users.edit', ['user' => $user])
         ->set('first_name', 'John')
         ->set('last_name', 'Smith')
@@ -44,7 +44,7 @@ it('updates the user with valid data', function () {
 it('shows validation errors for invalid data', function () {
     $user = User::factory()->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.users.edit', ['user' => $user])
         ->set('first_name', '')
         ->set('last_name', '')

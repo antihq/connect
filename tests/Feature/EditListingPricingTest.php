@@ -3,7 +3,7 @@
 use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -15,7 +15,7 @@ it('edits a listing price, requires price, must be numeric, and updates the reco
     ]);
 
     // Validation: price required
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.pricing', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -25,7 +25,7 @@ it('edits a listing price, requires price, must be numeric, and updates the reco
         ->assertHasErrors(['price' => 'required']);
 
     // Validation: price must be numeric
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.pricing', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -35,7 +35,7 @@ it('edits a listing price, requires price, must be numeric, and updates the reco
         ->assertHasErrors(['price' => 'numeric']);
 
     // Validation: price must be >= 0
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.pricing', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -45,7 +45,7 @@ it('edits a listing price, requires price, must be numeric, and updates the reco
         ->assertHasErrors(['price' => 'min']);
 
     // Success: valid data
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.pricing', [
             'marketplace' => $marketplace,
             'listing' => $listing,

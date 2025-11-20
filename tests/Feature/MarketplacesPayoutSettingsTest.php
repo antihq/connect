@@ -3,7 +3,7 @@
 use App\Models\Marketplace;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +13,7 @@ it('requires account type and country', function () {
     $organization->addMember($user);
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -29,7 +29,7 @@ it('rejects invalid account type and country', function () {
     $organization->addMember($user);
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -56,7 +56,7 @@ it('persists payout settings for the correct user and marketplace', function () 
     ]);
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -95,7 +95,7 @@ it('cannot change account type or country after they are set', function () {
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // Set initial values
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -107,7 +107,7 @@ it('cannot change account type or country after they are set', function () {
     Mockery::close(); // Clean up the mock
 
     // Second call: do NOT mock Stripe, should not be called
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -134,7 +134,7 @@ it('cannot start onboarding without payout settings', function () {
     $organization->addMember($user);
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -162,7 +162,7 @@ it('can start onboarding when payout settings are configured', function () {
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // Save payout settings
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -172,7 +172,7 @@ it('can start onboarding when payout settings are configured', function () {
         ->assertHasNoErrors();
 
     // Start onboarding
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -210,7 +210,7 @@ it('tracks onboarding state per user and marketplace', function () {
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // User 1 saves payout settings and starts onboarding
-    Volt::actingAs($user1)
+    Livewire::actingAs($user1)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -218,7 +218,7 @@ it('tracks onboarding state per user and marketplace', function () {
         ->set('country', 'US')
         ->call('save')
         ->assertHasNoErrors();
-    Volt::actingAs($user1)
+    Livewire::actingAs($user1)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -226,7 +226,7 @@ it('tracks onboarding state per user and marketplace', function () {
         ->assertSet('onboarding_status', 'in_progress');
 
     // User 2 saves payout settings and starts onboarding
-    Volt::actingAs($user2)
+    Livewire::actingAs($user2)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -234,7 +234,7 @@ it('tracks onboarding state per user and marketplace', function () {
         ->set('country', 'GB')
         ->call('save')
         ->assertHasNoErrors();
-    Volt::actingAs($user2)
+    Livewire::actingAs($user2)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -262,7 +262,7 @@ it('can mark onboarding as completed', function () {
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // Save payout settings
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -272,7 +272,7 @@ it('can mark onboarding as completed', function () {
         ->assertHasNoErrors();
 
     // Start onboarding
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -303,7 +303,7 @@ it('redirects to Stripe onboarding after account creation', function () {
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // Save payout settings
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -313,7 +313,7 @@ it('redirects to Stripe onboarding after account creation', function () {
         ->assertHasNoErrors();
 
     // Start onboarding, expect redirect
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -353,7 +353,7 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
     $mock->shouldReceive('createExpressDashboardLink')->with('acct_test123')->andReturn($dashboardUrl);
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -389,7 +389,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
     $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -424,7 +424,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
     $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
@@ -468,7 +468,7 @@ it('uses payout settings route as refresh and return URLs without query strings'
         ->andReturn((object) ['url' => 'https://connect.stripe.com/onboarding/test']);
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])

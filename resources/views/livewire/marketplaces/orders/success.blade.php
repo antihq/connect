@@ -3,7 +3,7 @@
 use App\Models\Marketplace;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Request;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {

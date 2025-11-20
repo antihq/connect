@@ -2,7 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {

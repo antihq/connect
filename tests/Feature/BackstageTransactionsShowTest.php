@@ -6,7 +6,7 @@ use App\Models\Organization;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 
@@ -27,7 +27,7 @@ it('shows transaction details for authorized user', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.transactions.show', ['transaction' => $transaction])
         ->assertSee('Test Listing')
         ->assertSee('123.45')
@@ -52,7 +52,7 @@ it('returns 404 for transaction from another marketplace', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.transactions.show', ['transaction' => $otherTransaction])
         ->assertNotFound();
 });
@@ -86,7 +86,7 @@ it('handles missing related data gracefully', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.transactions.show', ['transaction' => $transaction])
         ->assertSee('N/A');
 });

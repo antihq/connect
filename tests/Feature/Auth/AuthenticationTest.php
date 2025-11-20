@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use Livewire\Volt\Volt as LivewireVolt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 
@@ -14,7 +14,7 @@ it('renders the login screen', function () {
 it('authenticates users with valid credentials', function () {
     $user = User::factory()->create();
 
-    $response = LivewireVolt::test('auth.login')
+    $response = Livewire::test('auth.login')
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('login');
@@ -29,7 +29,7 @@ it('authenticates users with valid credentials', function () {
 it('rejects authentication with an invalid password', function () {
     $user = User::factory()->create();
 
-    $response = LivewireVolt::test('auth.login')
+    $response = Livewire::test('auth.login')
         ->set('email', $user->email)
         ->set('password', 'wrong-password')
         ->call('login');

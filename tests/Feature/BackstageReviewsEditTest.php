@@ -6,7 +6,7 @@ use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -70,7 +70,7 @@ it('allows the marketplace owner to update the review via Livewire action', func
     $owner->current_organization_id = $org->id;
     $owner->save();
 
-    Volt::actingAs($owner)
+    Livewire::actingAs($owner)
         ->test('backstage.reviews.edit', ['review' => $review])
         ->set('rating', 5)
         ->set('comment', 'Updated comment')
@@ -95,7 +95,7 @@ it('shows validation errors when updating with invalid data', function () {
     $owner->current_organization_id = $org->id;
     $owner->save();
 
-    Volt::actingAs($owner)
+    Livewire::actingAs($owner)
         ->test('backstage.reviews.edit', ['review' => $review])
         ->set('rating', 10) // invalid rating
         ->set('comment', '') // empty comment
@@ -120,7 +120,7 @@ it('forbids non-owners from updating the review via Livewire action', function (
     $nonOwner->save();
 
     try {
-        Volt::actingAs($nonOwner)
+        Livewire::actingAs($nonOwner)
             ->test('backstage.reviews.edit', ['review' => $review])
             ->set('rating', 4)
             ->set('comment', 'Hacker update')

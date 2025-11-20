@@ -2,7 +2,7 @@
 
 use App\Models\Organization;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 it('an authenticated user can edit their organization name', function () {
     $user = User::factory()->create();
@@ -12,7 +12,7 @@ it('an authenticated user can edit their organization name', function () {
             'name' => 'Old Name',
         ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('organizations.settings.general', ['organization' => $organization])
         ->set('name', 'New Name')
         ->call('edit')
@@ -29,7 +29,7 @@ it('cannot update organization name to empty', function () {
             'name' => 'Old Name',
         ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('organizations.settings.general', ['organization' => $organization])
         ->set('name', '')
         ->call('edit')
@@ -45,7 +45,7 @@ it('forbids non-owners from editing the organization name', function () {
             'name' => 'Old Name',
         ]);
 
-    Volt::actingAs($nonOwner)
+    Livewire::actingAs($nonOwner)
         ->test('organizations.settings.general', ['organization' => $organization])
         ->assertForbidden();
 
@@ -56,7 +56,7 @@ it('returns a successful response for the organization details page', function (
     $user = User::factory()->create();
     $organization = Organization::factory()->for($user)->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('organizations.settings.general', ['organization' => $organization])
         ->assertOk();
 });
@@ -68,7 +68,7 @@ it('forbids organization members (non-owners) from accessing the organization de
     $organization->addMember($member);
     $member->switchOrganization($organization);
 
-    Volt::actingAs($member)
+    Livewire::actingAs($member)
         ->test('organizations.settings.general', ['organization' => $organization])
         ->assertForbidden();
 });

@@ -5,7 +5,7 @@ use App\Notifications\NewUpdateSubscriberNotification;
 use App\Notifications\UpdateSubscriptionConfirmationNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
@@ -13,7 +13,7 @@ use function Pest\Laravel\get;
 it('subscribes with valid email and sends confirmation', function () {
     Notification::fake();
 
-    Volt::test('welcome')
+    Livewire::test('welcome')
         ->set('email', 'test@example.com')
         ->call('subscribe')
         ->assertSee(__('Confirmation email sent! Please check your inbox.'));
@@ -51,7 +51,7 @@ it('confirms subscription via signed url', function () {
 });
 
 it('shows error for invalid email', function () {
-    Volt::test('welcome')
+    Livewire::test('welcome')
         ->set('email', 'not-an-email')
         ->call('subscribe')
         ->assertHasErrors(['email']);
@@ -62,7 +62,7 @@ it('re-subscribes with same email if not confirmed', function () {
 
     $subscription = UpdateSubscription::create(['email' => 'resend@example.com']);
 
-    Volt::test('welcome')
+    Livewire::test('welcome')
         ->set('email', 'resend@example.com')
         ->call('subscribe')
         ->assertSee(__('Confirmation email sent! Please check your inbox.'));

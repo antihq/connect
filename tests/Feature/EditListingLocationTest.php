@@ -3,7 +3,7 @@
 use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -16,7 +16,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
     ]);
 
     // Validation: address required
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -27,7 +27,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
         ->assertHasErrors(['address' => 'required']);
 
     // Success: valid data (with apt_suite)
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -44,7 +44,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
     ]);
 
     // Success: valid data (no apt_suite)
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing->fresh(),

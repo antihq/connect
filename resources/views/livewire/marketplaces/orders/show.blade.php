@@ -6,7 +6,7 @@ use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {

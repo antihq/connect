@@ -5,7 +5,7 @@ use App\Models\Marketplace;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 it('uploads, validates, and removes listing photos', function () {
     Storage::fake('public');
@@ -16,7 +16,7 @@ it('uploads, validates, and removes listing photos', function () {
     ]);
 
     // Validation: must be image
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -26,7 +26,7 @@ it('uploads, validates, and removes listing photos', function () {
         ->assertHasErrors(['newPhotos.0' => 'image']);
 
     // Validation: max size (2MB)
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -38,7 +38,7 @@ it('uploads, validates, and removes listing photos', function () {
     // Success: upload valid images
     $photo1 = UploadedFile::fake()->image('photo1.jpg');
     $photo2 = UploadedFile::fake()->image('photo2.png');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -56,7 +56,7 @@ it('uploads, validates, and removes listing photos', function () {
     }
 
     // Remove a photo
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,

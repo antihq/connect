@@ -6,7 +6,7 @@ use App\Models\MarketplacePayoutSetting;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -25,7 +25,7 @@ it('customer can review the provider after transaction is completed', function (
         'total' => 100,
     ]);
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 4)
         ->set('review_comment', 'Great provider!')
@@ -64,7 +64,7 @@ it('customer cannot review the provider unless transaction is completed', functi
         'total' => 100,
     ]);
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 3)
         ->set('review_comment', 'Not yet complete')
@@ -91,7 +91,7 @@ it('customer cannot review the provider more than once', function () {
         'type' => 'review',
     ]);
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 5)
         ->set('review_comment', 'Trying again')
@@ -123,7 +123,7 @@ it('shows only the user\'s orders in the inbox', function () {
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.inbox.orders', ['marketplace' => $marketplace])
         ->assertSee($order->id)
         ->assertSee($listing->title)
@@ -144,7 +144,7 @@ it('buyer can post a message and it appears in the activity log', function () {
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('message', 'Hello provider!')
         ->call('postMessage')
@@ -172,7 +172,7 @@ it('non-buyer cannot post a message', function () {
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('message', 'I should not be able to post')
         ->call('postMessage')
@@ -209,7 +209,7 @@ it('customer can initiate payment for a pending order and is redirected to Strip
     $stripeMock = Mockery::mock('overload:Stripe\\Checkout\\Session');
     $stripeMock->shouldReceive('create')->andReturn($fakeSession);
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertRedirect($fakeSession->url);
@@ -240,7 +240,7 @@ it('customer cannot pay if the order is not pending', function () {
         'onboarding_status' => 'completed',
     ]);
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertStatus(403);
@@ -270,7 +270,7 @@ it('customer cannot pay if they are not the buyer', function () {
         'onboarding_status' => 'completed',
     ]);
 
-    Volt::actingAs($otherUser)
+    Livewire::actingAs($otherUser)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertStatus(403);
@@ -292,7 +292,7 @@ it('customer cannot pay if the provider has not set up payout settings', functio
     ]);
     // No payout settings for provider
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertHasErrors(['payout_settings' => 'required']);
@@ -324,7 +324,7 @@ it('handles Stripe errors gracefully when creating checkout session', function (
     $stripeMock = Mockery::mock('overload:Stripe\\Checkout\\Session');
     $stripeMock->shouldReceive('create')->andThrow(new Exception('Stripe error'));
 
-    Volt::actingAs($buyer)
+    Livewire::actingAs($buyer)
         ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertHasErrors(['stripe' => 'error']);

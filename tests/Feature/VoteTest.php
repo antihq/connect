@@ -2,7 +2,7 @@
 
 use App\Models\Vote;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -11,7 +11,7 @@ describe('Voting', function () {
         $email = 'test1@example.com';
         $option = 3;
 
-        Volt::test('vote')
+        Livewire::test('vote')
             ->set('email', $email)
             ->set('option', $option)
             ->call('vote');
@@ -32,7 +32,7 @@ describe('Voting', function () {
             'option' => $initialOption,
         ]);
 
-        Volt::test('vote')
+        Livewire::test('vote')
             ->set('email', $email)
             ->set('option', $updatedOption)
             ->call('vote');

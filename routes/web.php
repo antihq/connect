@@ -5,12 +5,11 @@ use App\Models\UpdateSubscription;
 use App\Notifications\NewUpdateSubscriberNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
-Volt::route('/', 'welcome')->name('home');
-Volt::route('/changelog', 'changelog')->name('changelog');
+Route::livewire('/', 'welcome')->name('home');
+Route::livewire('/changelog', 'changelog')->name('changelog');
 
-Volt::route('/vote', 'vote');
+Route::livewire('/vote', 'vote');
 
 Route::middleware(['auth', 'verified', EnsureUserIsSubscribed::class])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

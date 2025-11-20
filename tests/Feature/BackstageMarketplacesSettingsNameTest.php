@@ -4,7 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +13,7 @@ it('shows the marketplace name edit form for organization user', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Original Name']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->assertSet('name', 'Original Name');
 });
@@ -23,7 +23,7 @@ it('allows organization user to update the marketplace name', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Old Name']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('name', 'New Name')
         ->call('save')
@@ -38,7 +38,7 @@ it('shows validation errors for invalid input', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Valid Name']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('name', '')
         ->call('save')
@@ -50,7 +50,7 @@ it('shows the marketplace slug edit form for organization user', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'original-slug']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->assertSet('slug', 'original-slug');
 });
@@ -60,7 +60,7 @@ it('allows organization user to update the marketplace slug', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'old-slug']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('slug', 'new-slug')
         ->call('save')
@@ -76,7 +76,7 @@ it('validates that the marketplace slug is unique', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'unique-slug']);
     $otherMarketplace = Marketplace::factory()->create(['slug' => 'taken-slug']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('slug', 'taken-slug')
         ->call('save')
@@ -88,13 +88,13 @@ it('validates that the marketplace slug is required and alpha_dash', function ()
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'valid-slug']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('slug', '')
         ->call('save')
         ->assertHasErrors(['slug' => 'required']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.name')
         ->set('slug', 'invalid slug!')
         ->call('save')
@@ -110,7 +110,7 @@ it('shows the sender email name edit form for organization user', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Acme Marketplace']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->assertSet('sender_email_name', 'Acme Marketplace');
 });
@@ -120,7 +120,7 @@ it('allows organization user to update the sender email name', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Old Sender']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', 'New Sender')
         ->call('save')
@@ -135,13 +135,13 @@ it('shows validation errors for invalid sender email name', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Valid Sender']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', '')
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'required']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', str_repeat('a', 256))
         ->call('save')
@@ -155,7 +155,7 @@ it('prevents users from accessing the sender email name settings for marketplace
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Other Sender']);
     $user->switchOrganization($org);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->call('save')
         ->assertForbidden();
@@ -166,7 +166,7 @@ it('allows organization user to set a custom domain for their marketplace', func
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'custom-domain.com')
         ->call('save')
@@ -181,7 +181,7 @@ it('allows domain to be nullable', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => 'something.com']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', null)
         ->call('save')
@@ -197,7 +197,7 @@ it('validates that the domain is unique', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $otherMarketplace = Marketplace::factory()->create(['domain' => 'taken.com']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'taken.com')
         ->call('save')
@@ -209,7 +209,7 @@ it('validates that the domain is a valid format', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'not a domain!')
         ->call('save')
@@ -222,7 +222,7 @@ it('validates that the domain is not too long', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $longDomain = str_repeat('a', 256).'.com';
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', $longDomain)
         ->call('save')
@@ -236,7 +236,7 @@ it('prevents users from accessing the domain settings for marketplaces they do n
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $user->switchOrganization($org);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->call('save')
         ->assertForbidden();

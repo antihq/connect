@@ -4,7 +4,7 @@ use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\Transaction;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -17,7 +17,7 @@ it('allows an authenticated user to book available dates', function () {
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -56,7 +56,7 @@ it('prevents booking if not logged in', function () {
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
 
-    Volt::test('on-marketplace.listings.show', [
+    Livewire::test('on-marketplace.listings.show', [
         'marketplace' => $marketplace,
         'listing' => $listing,
     ])
@@ -88,7 +88,7 @@ it('prevents booking overlapping dates', function () {
     $overlapStart = now()->addDays(4)->toDateString();
     $overlapEnd = now()->addDays(7)->toDateString();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -112,7 +112,7 @@ it('prevents booking with invalid dates', function () {
     // End before start
     $start = now()->addDays(5)->toDateString();
     $end = now()->addDays(2)->toDateString();
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -122,7 +122,7 @@ it('prevents booking with invalid dates', function () {
         ->assertSet('bookingError', 'End date must be after start date.');
 
     // Missing dates
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,

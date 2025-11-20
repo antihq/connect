@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Transaction;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component {
     public Transaction $transaction;

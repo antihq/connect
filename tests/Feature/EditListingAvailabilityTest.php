@@ -3,7 +3,7 @@
 use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -29,7 +29,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
     ]);
 
     // Validation: timezone required
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -48,7 +48,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         ->assertHasErrors(['timezone' => 'required']);
 
     // Validation: weekly_schedule required
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -68,7 +68,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         'saturday' => false,
         'sunday' => false,
     ];
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
@@ -96,7 +96,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
             'end_date' => '2025-12-12',
         ],
     ];
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,

@@ -3,7 +3,7 @@
 use App\Models\Listing;
 use App\Models\Transaction;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -23,12 +23,12 @@ it('only allows the transaction owner to access the payment page', function () {
         'total' => 300,
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertSee($listing->title)
         ->assertSee('Pay Now');
 
-    Volt::actingAs($other)
+    Livewire::actingAs($other)
         ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertStatus(403);
 });
@@ -48,7 +48,7 @@ it('marks the transaction as paid and redirects to confirmation', function () {
         'total' => 300,
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->call('pay')
         ->assertRedirect(route('marketplaces.transactions.pay.confirmation', ['marketplace' => $marketplace->id, 'transaction' => $transaction->id]));
@@ -81,7 +81,7 @@ it('shows the confirmation page with correct details', function () {
     $marketplace = $listing->marketplace ?? \App\Models\Marketplace::factory()->create();
     $listing->marketplace()->associate($marketplace)->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('marketplaces.transactions.pay-confirmation', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertSee('Payment Successful')
         ->assertSee($listing->title)

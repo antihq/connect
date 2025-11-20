@@ -4,7 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +13,7 @@ it('allows organization user to set a custom domain for their marketplace', func
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'custom-domain.com')
         ->call('save')
@@ -28,7 +28,7 @@ it('allows domain to be nullable', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => 'something.com']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', null)
         ->call('save')
@@ -44,7 +44,7 @@ it('validates that the domain is unique', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $otherMarketplace = Marketplace::factory()->create(['domain' => 'taken.com']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'taken.com')
         ->call('save')
@@ -56,7 +56,7 @@ it('validates that the domain is a valid format', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', 'not a domain!')
         ->call('save')
@@ -69,7 +69,7 @@ it('validates that the domain is not too long', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $longDomain = str_repeat('a', 256).'.com';
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->set('domain', $longDomain)
         ->call('save')
@@ -83,7 +83,7 @@ it('prevents users from accessing the domain settings for marketplaces they do n
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
     $user->switchOrganization($org);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.domain')
         ->call('save')
         ->assertForbidden();

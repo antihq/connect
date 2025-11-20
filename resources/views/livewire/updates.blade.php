@@ -2,9 +2,9 @@
 
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
-new #[Layout('components.layouts.site'), Title('Updates')] class extends Component {} ?>
+new #[Layout('layouts::site'), Title('Updates')] class extends Component {} ?>
 
 <div>
     <div class="mt-16 grid grid-cols-1 gap-8 pb-24 lg:grid-cols-[15rem_1fr] xl:grid-cols-[15rem_1fr_15rem]">

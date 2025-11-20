@@ -3,9 +3,9 @@
 use App\Models\Vote;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
-new #[Layout('components.layouts.site')] class extends Component
+new #[Layout('layouts::site')] class extends Component
 {
     #[Url]
     public ?int $option = null;

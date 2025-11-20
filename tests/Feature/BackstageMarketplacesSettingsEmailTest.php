@@ -4,7 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +13,7 @@ it('shows the sender email name edit form for organization user', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Acme Marketplace']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->assertSet('sender_email_name', 'Acme Marketplace');
 });
@@ -23,7 +23,7 @@ it('allows organization user to update the sender email name', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Old Sender']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', 'New Sender')
         ->call('save')
@@ -38,13 +38,13 @@ it('shows validation errors for invalid sender email name', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Valid Sender']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', '')
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'required']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->set('sender_email_name', str_repeat('a', 256))
         ->call('save')
@@ -58,7 +58,7 @@ it('prevents users from accessing the sender email name settings for marketplace
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Other Sender']);
     $user->switchOrganization($org);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.email')
         ->call('save')
         ->assertForbidden();

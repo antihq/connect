@@ -4,7 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {

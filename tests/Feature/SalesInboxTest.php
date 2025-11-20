@@ -5,7 +5,7 @@ use App\Models\Marketplace;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use App\Models\User;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -24,7 +24,7 @@ it('provider can review the customer after transaction is completed', function (
         'total' => 100,
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('review_rating', 5)
         ->set('review_comment', 'Great customer!')
@@ -67,7 +67,7 @@ it('provider cannot review the customer unless transaction is completed', functi
         'type' => 'review',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('review_rating', 5)
         ->set('review_comment', 'Another review')
@@ -90,7 +90,7 @@ it('provider can mark an accepted transaction as complete', function () {
         'status' => 'accepted',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertHasNoErrors()
@@ -122,7 +122,7 @@ it('non-provider cannot mark as complete', function () {
     ]);
     $otherUser = User::factory()->create();
 
-    Volt::actingAs($otherUser)
+    Livewire::actingAs($otherUser)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertStatus(403);
@@ -143,7 +143,7 @@ it('provider cannot mark as complete unless status is accepted', function () {
         'status' => 'paid',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertStatus(403);
@@ -174,7 +174,7 @@ it('shows only the user\'s sales in the inbox', function () {
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.inbox.sales', ['marketplace' => $marketplace])
         ->assertSee($sale->id)
         ->assertSee($listing->title)
@@ -200,7 +200,7 @@ it('shows sale details and activity log', function () {
         'description' => 'created the sale (awaiting payment)',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->assertSee($listing->title)
         ->assertSee('Sale Pending')
@@ -222,7 +222,7 @@ it('provider can post a message and it appears in the activity log', function ()
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('message', 'Hello buyer!')
         ->call('postMessage')
@@ -254,7 +254,7 @@ it('non-provider cannot post a message', function () {
     ]);
     $otherUser = User::factory()->create();
 
-    Volt::actingAs($otherUser)
+    Livewire::actingAs($otherUser)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('message', 'I should not be able to post')
         ->call('postMessage')
@@ -276,7 +276,7 @@ it('provider can accept a paid transaction', function () {
         'status' => 'paid',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertHasNoErrors()
@@ -307,7 +307,7 @@ it('provider can reject a paid transaction', function () {
         'status' => 'paid',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertHasNoErrors()
@@ -339,12 +339,12 @@ it('non-provider cannot accept or reject', function () {
     ]);
     $otherUser = User::factory()->create();
 
-    Volt::actingAs($otherUser)
+    Livewire::actingAs($otherUser)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertStatus(403);
 
-    Volt::actingAs($otherUser)
+    Livewire::actingAs($otherUser)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertStatus(403);
@@ -365,12 +365,12 @@ it('provider cannot accept or reject unless status is paid', function () {
         'status' => 'pending',
     ]);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertStatus(403);
 
-    Volt::actingAs($provider)
+    Livewire::actingAs($provider)
         ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertStatus(403);

@@ -1,6 +1,6 @@
 <?php
 
-use Livewire\Volt\Component;
+use Livewire\Component;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 

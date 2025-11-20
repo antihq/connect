@@ -5,7 +5,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 
@@ -23,7 +23,7 @@ it('shows the edit form for user\'s own listing', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.edit', ['listing' => $listing->id])
         ->assertSet('title', 'Original Title')
         ->assertSet('description', 'Original Description')
@@ -42,7 +42,7 @@ it('updates the listing with valid data', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.edit', ['listing' => $listing->id])
         ->set('title', 'New Title')
         ->set('description', 'New Description')
@@ -64,7 +64,7 @@ it('shows validation errors for invalid input', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.edit', ['listing' => $listing->id])
         ->set('title', '')
         ->set('price', -10)
@@ -83,7 +83,7 @@ it('returns 404 for listing from another marketplace', function () {
     $user->current_organization_id = $org->id;
     $user->save();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.edit', ['listing' => $otherListing->id])
         ->assertNotFound();
 });
@@ -99,7 +99,7 @@ it('redirects guest to login', function () {
 
 it('returns 404 for non-existent listing', function () {
     $user = User::factory()->create();
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.listings.edit', ['listing' => 999999])
         ->assertNotFound();
 });

@@ -4,7 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Volt\Volt;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +13,7 @@ it('allows organization owner to view the access control settings page', functio
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create();
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->assertOk();
 });
@@ -23,7 +23,7 @@ it('allows owner to update is_private', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['is_private' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->call('save')
@@ -38,7 +38,7 @@ it('allows owner to update require_user_approval', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['require_user_approval' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->call('save')
@@ -53,7 +53,7 @@ it('allows owner to update restrict_view_listings', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['restrict_view_listings' => false, 'is_private' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -69,7 +69,7 @@ it('allows owner to update restrict_posting', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['restrict_posting' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->call('save')
@@ -84,7 +84,7 @@ it('allows owner to update restrict_transactions', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['restrict_transactions' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->call('save')
@@ -99,7 +99,7 @@ it('allows owner to update require_listing_approval', function () {
     $org = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($org)->create(['require_listing_approval' => false]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->call('save')
@@ -116,7 +116,7 @@ it('prevents users from updating access settings for marketplaces they do not ow
     $marketplace = Marketplace::factory()->for($org)->create();
     $user->switchOrganization($org);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->call('save')
@@ -131,7 +131,7 @@ it('prevents setting restrict_view_listings to true when is_private is false', f
         'restrict_view_listings' => false,
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_view_listings', true)
         ->call('save')
@@ -149,7 +149,7 @@ it('allows setting restrict_view_listings to true only when is_private is true',
         'restrict_view_listings' => false,
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_view_listings', true)
         ->call('save')
@@ -171,7 +171,7 @@ it('shows all toggles with correct state', function () {
         'require_listing_approval' => true,
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->assertSet('is_private', true)
         ->assertSet('require_user_approval', true)
@@ -191,7 +191,7 @@ it('allows owner to set restrict_view_listings_action to none, internal, or exte
         'restrict_view_listings_action' => 'none',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -204,7 +204,7 @@ it('allows owner to set restrict_view_listings_action to none, internal, or exte
     expect($marketplace->restrict_view_listings_action)->toBe('internal');
     expect($marketplace->restrict_view_listings_internal_link)->toBe('/dashboard');
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -217,7 +217,7 @@ it('allows owner to set restrict_view_listings_action to none, internal, or exte
     expect($marketplace->restrict_view_listings_action)->toBe('external');
     expect($marketplace->restrict_view_listings_external_link)->toBe('https://example.com');
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -235,7 +235,7 @@ it('requires internal link if restrict_view_listings_action is internal', functi
         'restrict_view_listings' => true,
         'restrict_view_listings_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -252,7 +252,7 @@ it('requires external link and valid url if restrict_view_listings_action is ext
         'restrict_view_listings' => true,
         'restrict_view_listings_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -260,7 +260,7 @@ it('requires external link and valid url if restrict_view_listings_action is ext
         ->set('restrict_view_listings_external_link', null)
         ->call('save')
         ->assertHasErrors(['restrict_view_listings_external_link' => 'required_if']);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -277,7 +277,7 @@ it('does not require links if restrict_view_listings_action is none', function (
         'restrict_view_listings' => true,
         'restrict_view_listings_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('is_private', true)
         ->set('restrict_view_listings', true)
@@ -296,7 +296,7 @@ it('allows owner to set restrict_posting_action to none, internal, or external',
         'restrict_posting' => true,
         'restrict_posting_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'internal')
@@ -307,7 +307,7 @@ it('allows owner to set restrict_posting_action to none, internal, or external',
     $marketplace->refresh();
     expect($marketplace->restrict_posting_action)->toBe('internal');
     expect($marketplace->restrict_posting_internal_link)->toBe('/dashboard');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'external')
@@ -318,7 +318,7 @@ it('allows owner to set restrict_posting_action to none, internal, or external',
     $marketplace->refresh();
     expect($marketplace->restrict_posting_action)->toBe('external');
     expect($marketplace->restrict_posting_external_link)->toBe('https://example.com');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'none')
@@ -334,7 +334,7 @@ it('requires internal link if restrict_posting_action is internal', function () 
         'restrict_posting' => true,
         'restrict_posting_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'internal')
@@ -349,14 +349,14 @@ it('requires external link and valid url if restrict_posting_action is external'
         'restrict_posting' => true,
         'restrict_posting_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'external')
         ->set('restrict_posting_external_link', null)
         ->call('save')
         ->assertHasErrors(['restrict_posting_external_link' => 'required_if']);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'external')
@@ -371,7 +371,7 @@ it('does not require links if restrict_posting_action is none', function () {
         'restrict_posting' => true,
         'restrict_posting_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_posting', true)
         ->set('restrict_posting_action', 'none')
@@ -389,7 +389,7 @@ it('allows owner to set restrict_transactions_action to none, internal, or exter
         'restrict_transactions' => true,
         'restrict_transactions_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'internal')
@@ -400,7 +400,7 @@ it('allows owner to set restrict_transactions_action to none, internal, or exter
     $marketplace->refresh();
     expect($marketplace->restrict_transactions_action)->toBe('internal');
     expect($marketplace->restrict_transactions_internal_link)->toBe('/dashboard');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'external')
@@ -411,7 +411,7 @@ it('allows owner to set restrict_transactions_action to none, internal, or exter
     $marketplace->refresh();
     expect($marketplace->restrict_transactions_action)->toBe('external');
     expect($marketplace->restrict_transactions_external_link)->toBe('https://example.com');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'none')
@@ -427,7 +427,7 @@ it('requires internal link if restrict_transactions_action is internal', functio
         'restrict_transactions' => true,
         'restrict_transactions_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'internal')
@@ -442,14 +442,14 @@ it('requires external link and valid url if restrict_transactions_action is exte
         'restrict_transactions' => true,
         'restrict_transactions_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'external')
         ->set('restrict_transactions_external_link', null)
         ->call('save')
         ->assertHasErrors(['restrict_transactions_external_link' => 'required_if']);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'external')
@@ -464,7 +464,7 @@ it('does not require links if restrict_transactions_action is none', function ()
         'restrict_transactions' => true,
         'restrict_transactions_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('restrict_transactions', true)
         ->set('restrict_transactions_action', 'none')
@@ -482,7 +482,7 @@ it('allows owner to set require_listing_approval_action to none, internal, or ex
         'require_listing_approval' => true,
         'require_listing_approval_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'internal')
@@ -493,7 +493,7 @@ it('allows owner to set require_listing_approval_action to none, internal, or ex
     $marketplace->refresh();
     expect($marketplace->require_listing_approval_action)->toBe('internal');
     expect($marketplace->require_listing_approval_internal_link)->toBe('/dashboard');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'external')
@@ -504,7 +504,7 @@ it('allows owner to set require_listing_approval_action to none, internal, or ex
     $marketplace->refresh();
     expect($marketplace->require_listing_approval_action)->toBe('external');
     expect($marketplace->require_listing_approval_external_link)->toBe('https://example.com');
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'none')
@@ -520,7 +520,7 @@ it('requires internal link if require_listing_approval_action is internal', func
         'require_listing_approval' => true,
         'require_listing_approval_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'internal')
@@ -535,14 +535,14 @@ it('requires external link and valid url if require_listing_approval_action is e
         'require_listing_approval' => true,
         'require_listing_approval_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'external')
         ->set('require_listing_approval_external_link', null)
         ->call('save')
         ->assertHasErrors(['require_listing_approval_external_link' => 'required_if']);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'external')
@@ -557,7 +557,7 @@ it('does not require links if require_listing_approval_action is none', function
         'require_listing_approval' => true,
         'require_listing_approval_action' => 'none',
     ]);
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_listing_approval', true)
         ->set('require_listing_approval_action', 'none')
@@ -576,7 +576,7 @@ it('allows owner to set require_user_approval_action to none, internal, or exter
         'require_user_approval_action' => 'none',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'internal')
@@ -589,7 +589,7 @@ it('allows owner to set require_user_approval_action to none, internal, or exter
     expect($marketplace->require_user_approval_action)->toBe('internal');
     expect($marketplace->require_user_approval_internal_link)->toBe('/dashboard');
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'external')
@@ -602,7 +602,7 @@ it('allows owner to set require_user_approval_action to none, internal, or exter
     expect($marketplace->require_user_approval_action)->toBe('external');
     expect($marketplace->require_user_approval_external_link)->toBe('https://example.com');
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'none')
@@ -621,7 +621,7 @@ it('requires internal link if require_user_approval_action is internal', functio
         'require_user_approval_action' => 'none',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'internal')
@@ -638,7 +638,7 @@ it('requires external link and valid url if require_user_approval_action is exte
         'require_user_approval_action' => 'none',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'external')
@@ -646,7 +646,7 @@ it('requires external link and valid url if require_user_approval_action is exte
         ->call('save')
         ->assertHasErrors(['require_user_approval_external_link' => 'required_if']);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'external')
@@ -663,7 +663,7 @@ it('does not require links if require_user_approval_action is none', function ()
         'require_user_approval_action' => 'none',
     ]);
 
-    Volt::actingAs($user)
+    Livewire::actingAs($user)
         ->test('backstage.marketplaces.settings.access')
         ->set('require_user_approval', true)
         ->set('require_user_approval_action', 'none')

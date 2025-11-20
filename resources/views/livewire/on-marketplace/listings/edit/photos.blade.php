@@ -4,7 +4,7 @@ use App\Models\Listing;
 use App\Models\Marketplace;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
 new class extends Component
