@@ -7,6 +7,9 @@ use App\Notifications\MagicAuthCodeNotification;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
+use function Pest\Laravel\assertAuthenticated;
+use function Pest\Laravel\assertAuthenticatedAs;
+
 it('sends a magic code to any email', function () {
     Notification::fake();
 
@@ -37,7 +40,7 @@ it('logs in existing user with correct code', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create(['email' => 'existing@example.com']);
 
-    $code = MagicAuthCode::create([
+    $code = MagicAuthCode::factory()->create([
         'email' => $user->email,
         'code' => '123456',
         'expires_at' => now()->addMinutes(10),
@@ -49,14 +52,9 @@ it('logs in existing user with correct code', function () {
         ->call('verifyCode')
         ->assertRedirect(route('marketplaces.show', $marketplace, absolute: false));
 
-    $this->assertAuthenticatedAs($user);
+    assertAuthenticatedAs($user);
     expect(MagicAuthCode::where('code', '123456')->exists())->toBeFalse();
-    $this->assertDatabaseHas('organization_user', [
-        'organization_id' => $marketplace->organization->id,
-        'user_id' => $user->id,
-        'role' => 'member',
-    ]);
-
+    expect($marketplace->organization->isMember($user))->toBeTrue();
 });
 
 it('registers and logs in new user with correct code', function () {
@@ -74,14 +72,10 @@ it('registers and logs in new user with correct code', function () {
         ->call('verifyCode')
         ->assertRedirect(route('marketplaces.show', $marketplace, absolute: false));
 
-    $this->assertDatabaseHas('users', ['email' => 'newuser@example.com']);
-    $this->assertAuthenticated();
+    expect(User::where('email', 'newuser@example.com')->exists())->toBeTrue();
+    assertAuthenticated();
     $user = User::where('email', 'newuser@example.com')->first();
-    $this->assertDatabaseHas('organization_user', [
-        'organization_id' => $marketplace->organization->id,
-        'user_id' => $user->id,
-        'role' => 'member',
-    ]);
+    expect($marketplace->organization->isMember($user))->toBeTrue();
 });
 
 it('shows error for invalid or expired code', function () {
@@ -91,7 +85,7 @@ it('shows error for invalid or expired code', function () {
         ->set('email', 'anyone@example.com')
         ->set('code', '000000')
         ->call('verifyCode')
-        ->assertSee('Invalid or expired code');
+        ->assertHasErrors(['code']);
 });
 
 it('sends correct code in notification', function () {
