@@ -47,7 +47,7 @@ it('logs in existing user with correct code', function () {
         ->set('email', $user->email)
         ->set('code', '123456')
         ->call('verifyCode')
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('marketplaces.show', $marketplace, absolute: false));
 
     $this->assertAuthenticatedAs($user);
     expect(MagicAuthCode::where('code', '123456')->exists())->toBeFalse();
@@ -72,7 +72,7 @@ it('registers and logs in new user with correct code', function () {
         ->set('email', 'newuser@example.com')
         ->set('code', $code)
         ->call('verifyCode')
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('marketplaces.show', $marketplace, absolute: false));
 
     $this->assertDatabaseHas('users', ['email' => 'newuser@example.com']);
     $this->assertAuthenticated();
