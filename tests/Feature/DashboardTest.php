@@ -7,7 +7,7 @@ it('redirects guests to the login page', function () {
     $response->assertRedirect('/login');
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('pages::authenticated users can visit the dashboard', function () {
     $user = User::factory()->withPersonalOrganizationAndSubscription()->create();
     $this->actingAs($user);
 

@@ -30,7 +30,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
 
     // Validation: timezone required
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.availability', [
+        ->test('pages::on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -49,7 +49,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
 
     // Validation: weekly_schedule required
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.availability', [
+        ->test('pages::on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -69,7 +69,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         'sunday' => false,
     ];
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.availability', [
+        ->test('pages::on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -97,7 +97,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         ],
     ];
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.availability', [
+        ->test('pages::on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])

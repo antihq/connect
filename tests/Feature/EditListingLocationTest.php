@@ -17,7 +17,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
 
     // Validation: address required
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.location', [
+        ->test('pages::on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -28,7 +28,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
 
     // Success: valid data (with apt_suite)
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.location', [
+        ->test('pages::on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -45,7 +45,7 @@ it('edits a listing address and apt_suite, requires address, and updates the rec
 
     // Success: valid data (no apt_suite)
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.location', [
+        ->test('pages::on-marketplace.listings.edit.location', [
             'marketplace' => $marketplace,
             'listing' => $listing->fresh(),
         ])

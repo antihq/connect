@@ -24,12 +24,12 @@ it('only allows the transaction owner to access the payment page', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
+        ->test('pages::marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertSee($listing->title)
         ->assertSee('Pay Now');
 
     Livewire::actingAs($other)
-        ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
+        ->test('pages::marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertStatus(403);
 });
 
@@ -49,7 +49,7 @@ it('marks the transaction as paid and redirects to confirmation', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
+        ->test('pages::marketplaces.transactions.pay', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->call('pay')
         ->assertRedirect(route('marketplaces.transactions.pay.confirmation', ['marketplace' => $marketplace->id, 'transaction' => $transaction->id]));
 
@@ -82,7 +82,7 @@ it('shows the confirmation page with correct details', function () {
     $listing->marketplace()->associate($marketplace)->save();
 
     Livewire::actingAs($user)
-        ->test('marketplaces.transactions.pay-confirmation', ['marketplace' => $marketplace, 'transaction' => $transaction])
+        ->test('pages::marketplaces.transactions.pay-confirmation', ['marketplace' => $marketplace, 'transaction' => $transaction])
         ->assertSee('Payment Successful')
         ->assertSee($listing->title)
         ->assertSee('300');

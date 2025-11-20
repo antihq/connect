@@ -25,7 +25,7 @@ it('provider can review the customer after transaction is completed', function (
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('review_rating', 5)
         ->set('review_comment', 'Great customer!')
         ->call('submitReview')
@@ -68,7 +68,7 @@ it('provider cannot review the customer unless transaction is completed', functi
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('review_rating', 5)
         ->set('review_comment', 'Another review')
         ->call('submitReview')
@@ -91,7 +91,7 @@ it('provider can mark an accepted transaction as complete', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertHasNoErrors()
         ->assertSee('Sale Completed')
@@ -123,7 +123,7 @@ it('non-provider cannot mark as complete', function () {
     $otherUser = User::factory()->create();
 
     Livewire::actingAs($otherUser)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertStatus(403);
 });
@@ -144,7 +144,7 @@ it('provider cannot mark as complete unless status is accepted', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('markAsComplete')
         ->assertStatus(403);
 });
@@ -175,7 +175,7 @@ it('shows only the user\'s sales in the inbox', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.inbox.sales', ['marketplace' => $marketplace])
+        ->test('pages::marketplaces.inbox.sales', ['marketplace' => $marketplace])
         ->assertSee($sale->id)
         ->assertSee($listing->title)
         ->assertDontSee($otherListing->title);
@@ -201,7 +201,7 @@ it('shows sale details and activity log', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->assertSee($listing->title)
         ->assertSee('Sale Pending')
         ->assertSee('created the sale (awaiting payment)');
@@ -223,7 +223,7 @@ it('provider can post a message and it appears in the activity log', function ()
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('message', 'Hello buyer!')
         ->call('postMessage')
         ->assertHasNoErrors()
@@ -255,7 +255,7 @@ it('non-provider cannot post a message', function () {
     $otherUser = User::factory()->create();
 
     Livewire::actingAs($otherUser)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->set('message', 'I should not be able to post')
         ->call('postMessage')
         ->assertStatus(403);
@@ -277,7 +277,7 @@ it('provider can accept a paid transaction', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertHasNoErrors()
         ->assertSee('Sale Accepted')
@@ -308,7 +308,7 @@ it('provider can reject a paid transaction', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertHasNoErrors()
         ->assertSee('Sale Rejected')
@@ -340,12 +340,12 @@ it('non-provider cannot accept or reject', function () {
     $otherUser = User::factory()->create();
 
     Livewire::actingAs($otherUser)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertStatus(403);
 
     Livewire::actingAs($otherUser)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertStatus(403);
 });
@@ -366,12 +366,12 @@ it('provider cannot accept or reject unless status is paid', function () {
     ]);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('acceptRequest')
         ->assertStatus(403);
 
     Livewire::actingAs($provider)
-        ->test('marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
+        ->test('pages::marketplaces.sales.show', ['marketplace' => $marketplace, 'transaction' => $sale])
         ->call('rejectRequest')
         ->assertStatus(403);
 });

@@ -12,7 +12,7 @@ it('sends a magic code to any email', function () {
 
     $marketplace = Marketplace::factory()->create();
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'anyone@example.com')
         ->call('sendMagicCode');
 
@@ -27,7 +27,7 @@ it('sends a magic code to any email', function () {
 it('shows validation error for invalid email', function () {
     $marketplace = Marketplace::factory()->create();
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'not-an-email')
         ->call('sendMagicCode')
         ->assertHasErrors(['email']);
@@ -43,7 +43,7 @@ it('logs in existing user with correct code', function () {
         'expires_at' => now()->addMinutes(10),
     ]);
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', $user->email)
         ->set('code', '123456')
         ->call('verifyCode')
@@ -62,13 +62,13 @@ it('logs in existing user with correct code', function () {
 it('registers and logs in new user with correct code', function () {
     $marketplace = Marketplace::factory()->create();
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'newuser@example.com')
         ->call('sendMagicCode');
 
     $code = MagicAuthCode::where('email', 'newuser@example.com')->first()->code;
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'newuser@example.com')
         ->set('code', $code)
         ->call('verifyCode')
@@ -87,7 +87,7 @@ it('registers and logs in new user with correct code', function () {
 it('shows error for invalid or expired code', function () {
     $marketplace = Marketplace::factory()->create();
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'anyone@example.com')
         ->set('code', '000000')
         ->call('verifyCode')
@@ -99,7 +99,7 @@ it('sends correct code in notification', function () {
 
     $marketplace = Marketplace::factory()->create();
 
-    Livewire::test('on-marketplace.sign-in', ['marketplace' => $marketplace])
+    Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'anyone@example.com')
         ->call('sendMagicCode');
 

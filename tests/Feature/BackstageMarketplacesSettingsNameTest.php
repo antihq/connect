@@ -14,7 +14,7 @@ it('shows the marketplace name edit form for organization user', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Original Name']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->assertSet('name', 'Original Name');
 });
 
@@ -24,7 +24,7 @@ it('allows organization user to update the marketplace name', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Old Name']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('name', 'New Name')
         ->call('save')
         ->assertHasNoErrors();
@@ -39,7 +39,7 @@ it('shows validation errors for invalid input', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['name' => 'Valid Name']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('name', '')
         ->call('save')
         ->assertHasErrors(['name' => 'required']);
@@ -51,7 +51,7 @@ it('shows the marketplace slug edit form for organization user', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'original-slug']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->assertSet('slug', 'original-slug');
 });
 
@@ -61,7 +61,7 @@ it('allows organization user to update the marketplace slug', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'old-slug']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('slug', 'new-slug')
         ->call('save')
         ->assertHasNoErrors();
@@ -77,7 +77,7 @@ it('validates that the marketplace slug is unique', function () {
     $otherMarketplace = Marketplace::factory()->create(['slug' => 'taken-slug']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('slug', 'taken-slug')
         ->call('save')
         ->assertHasErrors(['slug' => 'unique']);
@@ -89,13 +89,13 @@ it('validates that the marketplace slug is required and alpha_dash', function ()
     $marketplace = Marketplace::factory()->for($org)->create(['slug' => 'valid-slug']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('slug', '')
         ->call('save')
         ->assertHasErrors(['slug' => 'required']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.name')
+        ->test('pages::backstage.marketplaces.settings.name')
         ->set('slug', 'invalid slug!')
         ->call('save')
         ->assertHasErrors(['slug' => 'alpha_dash']);
@@ -111,7 +111,7 @@ it('shows the sender email name edit form for organization user', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Acme Marketplace']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->assertSet('sender_email_name', 'Acme Marketplace');
 });
 
@@ -121,7 +121,7 @@ it('allows organization user to update the sender email name', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Old Sender']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', 'New Sender')
         ->call('save')
         ->assertHasNoErrors();
@@ -136,13 +136,13 @@ it('shows validation errors for invalid sender email name', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Valid Sender']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', '')
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'required']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', str_repeat('a', 256))
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'max']);
@@ -156,7 +156,7 @@ it('prevents users from accessing the sender email name settings for marketplace
     $user->switchOrganization($org);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->call('save')
         ->assertForbidden();
 });
@@ -167,7 +167,7 @@ it('allows organization user to set a custom domain for their marketplace', func
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->set('domain', 'custom-domain.com')
         ->call('save')
         ->assertHasNoErrors();
@@ -182,7 +182,7 @@ it('allows domain to be nullable', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => 'something.com']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->set('domain', null)
         ->call('save')
         ->assertHasNoErrors();
@@ -198,7 +198,7 @@ it('validates that the domain is unique', function () {
     $otherMarketplace = Marketplace::factory()->create(['domain' => 'taken.com']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->set('domain', 'taken.com')
         ->call('save')
         ->assertHasErrors(['domain' => 'unique']);
@@ -210,7 +210,7 @@ it('validates that the domain is a valid format', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['domain' => null]);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->set('domain', 'not a domain!')
         ->call('save')
         ->assertHasErrors(['domain']);
@@ -223,7 +223,7 @@ it('validates that the domain is not too long', function () {
     $longDomain = str_repeat('a', 256).'.com';
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->set('domain', $longDomain)
         ->call('save')
         ->assertHasErrors(['domain' => 'max']);
@@ -237,7 +237,7 @@ it('prevents users from accessing the domain settings for marketplaces they do n
     $user->switchOrganization($org);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.domain')
+        ->test('pages::backstage.marketplaces.settings.domain')
         ->call('save')
         ->assertForbidden();
 });

@@ -20,7 +20,7 @@ it('shows all listings for the user\'s current organization marketplace', functi
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.index')
+        ->test('pages::backstage.listings.index')
         ->assertSee($listings->pluck('title')->all())
         ->assertDontSee('Other Listing');
 });
@@ -34,7 +34,7 @@ it('shows empty state if no listings exist', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.index')
+        ->test('pages::backstage.listings.index')
         ->assertSee('No listings found'); // Adjust message to match your UI
 });
 
@@ -51,7 +51,7 @@ it('shows only listings for the current organization when user has multiple orgs
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.index')
+        ->test('pages::backstage.listings.index')
         ->assertSee('Org2 Listing')
         ->assertDontSee('Org1 Listing');
 });

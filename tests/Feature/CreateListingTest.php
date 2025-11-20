@@ -12,7 +12,7 @@ it('creates a new listing with draft status, stores creator, and requires title 
 
     // Validation: both fields required
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.create', ['marketplace' => $marketplace])
+        ->test('pages::on-marketplace.listings.create', ['marketplace' => $marketplace])
         ->set('title', '')
         ->set('description', '')
         ->call('create')
@@ -20,7 +20,7 @@ it('creates a new listing with draft status, stores creator, and requires title 
 
     // Success: valid data
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.create', ['marketplace' => $marketplace])
+        ->test('pages::on-marketplace.listings.create', ['marketplace' => $marketplace])
         ->set('title', 'Test Listing')
         ->set('description', 'Test description')
         ->call('create')

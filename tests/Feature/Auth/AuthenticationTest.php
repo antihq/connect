@@ -14,7 +14,7 @@ it('renders the login screen', function () {
 it('authenticates users with valid credentials', function () {
     $user = User::factory()->create();
 
-    $response = Livewire::test('auth.login')
+    $response = Livewire::test('pages::auth.login')
         ->set('email', $user->email)
         ->set('password', 'password')
         ->call('login');
@@ -29,7 +29,7 @@ it('authenticates users with valid credentials', function () {
 it('rejects authentication with an invalid password', function () {
     $user = User::factory()->create();
 
-    $response = Livewire::test('auth.login')
+    $response = Livewire::test('pages::auth.login')
         ->set('email', $user->email)
         ->set('password', 'wrong-password')
         ->call('login');

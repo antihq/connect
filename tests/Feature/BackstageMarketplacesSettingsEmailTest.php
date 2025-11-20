@@ -14,7 +14,7 @@ it('shows the sender email name edit form for organization user', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Acme Marketplace']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->assertSet('sender_email_name', 'Acme Marketplace');
 });
 
@@ -24,7 +24,7 @@ it('allows organization user to update the sender email name', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Old Sender']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', 'New Sender')
         ->call('save')
         ->assertHasNoErrors();
@@ -39,13 +39,13 @@ it('shows validation errors for invalid sender email name', function () {
     $marketplace = Marketplace::factory()->for($org)->create(['sender_email_name' => 'Valid Sender']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', '')
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'required']);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->set('sender_email_name', str_repeat('a', 256))
         ->call('save')
         ->assertHasErrors(['sender_email_name' => 'max']);
@@ -59,7 +59,7 @@ it('prevents users from accessing the sender email name settings for marketplace
     $user->switchOrganization($org);
 
     Livewire::actingAs($user)
-        ->test('backstage.marketplaces.settings.email')
+        ->test('pages::backstage.marketplaces.settings.email')
         ->call('save')
         ->assertForbidden();
 });

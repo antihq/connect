@@ -17,7 +17,7 @@ it('edits a listing, requires title and description, and updates the record', fu
 
     // Validation: both fields required
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.details', [
+        ->test('pages::on-marketplace.listings.edit.details', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -28,7 +28,7 @@ it('edits a listing, requires title and description, and updates the record', fu
 
     // Success: valid data
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.details', [
+        ->test('pages::on-marketplace.listings.edit.details', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])

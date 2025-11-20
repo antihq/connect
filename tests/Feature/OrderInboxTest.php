@@ -26,7 +26,7 @@ it('customer can review the provider after transaction is completed', function (
     ]);
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 4)
         ->set('review_comment', 'Great provider!')
         ->call('submitReview')
@@ -65,7 +65,7 @@ it('customer cannot review the provider unless transaction is completed', functi
     ]);
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 3)
         ->set('review_comment', 'Not yet complete')
         ->call('submitReview')
@@ -92,7 +92,7 @@ it('customer cannot review the provider more than once', function () {
     ]);
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('review_rating', 5)
         ->set('review_comment', 'Trying again')
         ->call('submitReview')
@@ -124,7 +124,7 @@ it('shows only the user\'s orders in the inbox', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.inbox.orders', ['marketplace' => $marketplace])
+        ->test('pages::marketplaces.inbox.orders', ['marketplace' => $marketplace])
         ->assertSee($order->id)
         ->assertSee($listing->title)
         ->assertDontSee($notMyOrder->start_date);
@@ -145,7 +145,7 @@ it('buyer can post a message and it appears in the activity log', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('message', 'Hello provider!')
         ->call('postMessage')
         ->assertHasNoErrors();
@@ -173,7 +173,7 @@ it('non-buyer cannot post a message', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->set('message', 'I should not be able to post')
         ->call('postMessage')
         ->assertStatus(403);
@@ -210,7 +210,7 @@ it('customer can initiate payment for a pending order and is redirected to Strip
     $stripeMock->shouldReceive('create')->andReturn($fakeSession);
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertRedirect($fakeSession->url);
 
@@ -241,7 +241,7 @@ it('customer cannot pay if the order is not pending', function () {
     ]);
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertStatus(403);
 });
@@ -271,7 +271,7 @@ it('customer cannot pay if they are not the buyer', function () {
     ]);
 
     Livewire::actingAs($otherUser)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertStatus(403);
 });
@@ -293,7 +293,7 @@ it('customer cannot pay if the provider has not set up payout settings', functio
     // No payout settings for provider
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertHasErrors(['payout_settings' => 'required']);
 });
@@ -325,7 +325,7 @@ it('handles Stripe errors gracefully when creating checkout session', function (
     $stripeMock->shouldReceive('create')->andThrow(new Exception('Stripe error'));
 
     Livewire::actingAs($buyer)
-        ->test('marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
+        ->test('pages::marketplaces.orders.show', ['marketplace' => $marketplace, 'transaction' => $order])
         ->call('payForOrder')
         ->assertHasErrors(['stripe' => 'error']);
 

@@ -71,7 +71,7 @@ it('allows the marketplace owner to update the review via Livewire action', func
     $owner->save();
 
     Livewire::actingAs($owner)
-        ->test('backstage.reviews.edit', ['review' => $review])
+        ->test('pages::backstage.reviews.edit', ['review' => $review])
         ->set('rating', 5)
         ->set('comment', 'Updated comment')
         ->call('updateReview')
@@ -96,7 +96,7 @@ it('shows validation errors when updating with invalid data', function () {
     $owner->save();
 
     Livewire::actingAs($owner)
-        ->test('backstage.reviews.edit', ['review' => $review])
+        ->test('pages::backstage.reviews.edit', ['review' => $review])
         ->set('rating', 10) // invalid rating
         ->set('comment', '') // empty comment
         ->call('updateReview')
@@ -121,7 +121,7 @@ it('forbids non-owners from updating the review via Livewire action', function (
 
     try {
         Livewire::actingAs($nonOwner)
-            ->test('backstage.reviews.edit', ['review' => $review])
+            ->test('pages::backstage.reviews.edit', ['review' => $review])
             ->set('rating', 4)
             ->set('comment', 'Hacker update')
             ->call('updateReview');

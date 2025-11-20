@@ -15,7 +15,7 @@ it('shows the edit form with current user data', function () {
     ]);
 
     Livewire::actingAs($user)
-        ->test('backstage.users.edit', ['user' => $user])
+        ->test('pages::backstage.users.edit', ['user' => $user])
         ->assertSet('first_name', 'Jane')
         ->assertSet('last_name', 'Doe')
         ->assertSet('email', 'jane@example.com')
@@ -26,7 +26,7 @@ it('updates the user with valid data', function () {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
-        ->test('backstage.users.edit', ['user' => $user])
+        ->test('pages::backstage.users.edit', ['user' => $user])
         ->set('first_name', 'John')
         ->set('last_name', 'Smith')
         ->set('email', 'john.smith@example.com')
@@ -45,7 +45,7 @@ it('shows validation errors for invalid data', function () {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
-        ->test('backstage.users.edit', ['user' => $user])
+        ->test('pages::backstage.users.edit', ['user' => $user])
         ->set('first_name', '')
         ->set('last_name', '')
         ->set('email', 'not-an-email')

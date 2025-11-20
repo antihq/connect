@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('marketplace owner can see review details', function () {
+test('pages::marketplace owner can see review details', function () {
     $owner = User::factory()->create();
     $organization = Organization::factory()->for($owner)->create();
     $marketplace = Marketplace::factory()->for($organization)->create();
@@ -33,7 +33,7 @@ test('marketplace owner can see review details', function () {
         ->assertSee($owner->name);
 });
 
-test('non-owner cannot see review details', function () {
+test('pages::non-owner cannot see review details', function () {
     $owner = User::factory()->create();
     $organization = Organization::factory()->for($owner)->create();
     $marketplace = Marketplace::factory()->for($organization)->create();

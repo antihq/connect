@@ -11,7 +11,7 @@ describe('Voting', function () {
         $email = 'test1@example.com';
         $option = 3;
 
-        Livewire::test('vote')
+        Livewire::test('pages::vote')
             ->set('email', $email)
             ->set('option', $option)
             ->call('vote');
@@ -32,7 +32,7 @@ describe('Voting', function () {
             'option' => $initialOption,
         ]);
 
-        Livewire::test('vote')
+        Livewire::test('pages::vote')
             ->set('email', $email)
             ->set('option', $updatedOption)
             ->call('vote');

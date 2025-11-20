@@ -3,7 +3,7 @@
 use App\Models\User;
 use Livewire\Livewire;
 
-test('profile page is displayed', function () {
+test('pages::profile page is displayed', function () {
     $user = User::factory()->withPersonalOrganization()->create();
     $this->actingAs($user);
 
@@ -15,7 +15,7 @@ it('updates the profile information', function () {
 
     $this->actingAs($user);
 
-    $response = Livewire::test('settings.profile')
+    $response = Livewire::test('pages::settings.profile')
         ->set('name', 'Test User')
         ->set('email', 'test@example.com')
         ->call('updateProfileInformation');
@@ -29,12 +29,12 @@ it('updates the profile information', function () {
     expect($user->email_verified_at)->toBeNull();
 });
 
-test('email verification status is unchanged when email address is unchanged', function () {
+test('pages::email verification status is unchanged when email address is unchanged', function () {
     $user = User::factory()->withPersonalOrganization()->create();
 
     $this->actingAs($user);
 
-    $response = Livewire::test('settings.profile')
+    $response = Livewire::test('pages::settings.profile')
         ->set('name', 'Test User')
         ->set('email', $user->email)
         ->call('updateProfileInformation');
@@ -61,7 +61,7 @@ it('deletes the user account with the correct password', function () {
     expect(auth()->check())->toBeFalse();
 });
 
-test('correct password must be provided to delete account', function () {
+test('pages::correct password must be provided to delete account', function () {
     $user = User::factory()->withPersonalOrganization()->create();
 
     $this->actingAs($user);

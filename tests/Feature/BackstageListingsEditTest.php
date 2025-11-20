@@ -24,7 +24,7 @@ it('shows the edit form for user\'s own listing', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.edit', ['listing' => $listing->id])
+        ->test('pages::backstage.listings.edit', ['listing' => $listing->id])
         ->assertSet('title', 'Original Title')
         ->assertSet('description', 'Original Description')
         ->assertSet('price', 100.00);
@@ -43,7 +43,7 @@ it('updates the listing with valid data', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.edit', ['listing' => $listing->id])
+        ->test('pages::backstage.listings.edit', ['listing' => $listing->id])
         ->set('title', 'New Title')
         ->set('description', 'New Description')
         ->set('price', 200.00)
@@ -65,7 +65,7 @@ it('shows validation errors for invalid input', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.edit', ['listing' => $listing->id])
+        ->test('pages::backstage.listings.edit', ['listing' => $listing->id])
         ->set('title', '')
         ->set('price', -10)
         ->call('save')
@@ -84,7 +84,7 @@ it('returns 404 for listing from another marketplace', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.listings.edit', ['listing' => $otherListing->id])
+        ->test('pages::backstage.listings.edit', ['listing' => $otherListing->id])
         ->assertNotFound();
 });
 
@@ -100,6 +100,6 @@ it('redirects guest to login', function () {
 it('returns 404 for non-existent listing', function () {
     $user = User::factory()->create();
     Livewire::actingAs($user)
-        ->test('backstage.listings.edit', ['listing' => 999999])
+        ->test('pages::backstage.listings.edit', ['listing' => 999999])
         ->assertNotFound();
 });

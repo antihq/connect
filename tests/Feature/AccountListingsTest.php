@@ -25,7 +25,7 @@ it('can open a listing to the public', function () {
 
     $this->actingAs($user);
 
-    Livewire::test('marketplaces.account.listings', [
+    Livewire::test('pages::marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('openToPublic', $listing->id)
         ->assertOk();
@@ -51,7 +51,7 @@ it('cannot open a listing to the public if required fields are missing', functio
 
     $this->actingAs($user);
 
-    Livewire::test('marketplaces.account.listings', [
+    Livewire::test('pages::marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('openToPublic', $listing->id)
         ->assertHasErrors(['openToPublic']);
@@ -71,7 +71,7 @@ it('can close a listing to the public', function () {
 
     $this->actingAs($user);
 
-    Livewire::test('marketplaces.account.listings', [
+    Livewire::test('pages::marketplaces.account.listings', [
         'marketplace' => $marketplace,
     ])->call('closeToPublic', $listing->id)
         ->assertOk();

@@ -7,7 +7,7 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-test('switching to a subscribed organization redirects to dashboard', function () {
+test('pages::switching to a subscribed organization redirects to dashboard', function () {
     /** @var User $user */
     $user = User::factory()->withPersonalOrganization()->create();
 
@@ -16,12 +16,12 @@ test('switching to a subscribed organization redirects to dashboard', function (
     $unsubscribedOrg = Organization::factory()->for($user)->create();
     $user->switchOrganization($unsubscribedOrg);
 
-    Livewire::actingAs($user)->test('billing.subscription-required')
+    Livewire::actingAs($user)->test('pages::billing.subscription-required')
         ->call('switchOrganization', $subscribedOrg)
         ->assertRedirect(route('dashboard'));
 });
 
-test('switching to a non-subscribed organization stays on the page', function () {
+test('pages::switching to a non-subscribed organization stays on the page', function () {
     /** @var User $user */
     $user = User::factory()->withPersonalOrganization()->create();
 
@@ -30,12 +30,12 @@ test('switching to a non-subscribed organization stays on the page', function ()
 
     $user->switchOrganization($org1);
 
-    Livewire::actingAs($user)->test('billing.subscription-required')
+    Livewire::actingAs($user)->test('pages::billing.subscription-required')
         ->call('switchOrganization', $org2)
         ->assertOk();
 });
 
-test('user can switch to an organization they are a member of', function () {
+test('pages::user can switch to an organization they are a member of', function () {
     /** @var User $user */
     $user = User::factory()->withPersonalOrganization()->create();
 
@@ -44,12 +44,12 @@ test('user can switch to an organization they are a member of', function () {
 
     $user->switchOrganization($user->organizations->first());
 
-    Livewire::actingAs($user)->test('billing.subscription-required')
+    Livewire::actingAs($user)->test('pages::billing.subscription-required')
         ->call('switchOrganization', $org)
         ->assertOk();
 });
 
-test('user cannot switch to an organization they neither own nor are a member of', function () {
+test('pages::user cannot switch to an organization they neither own nor are a member of', function () {
     /** @var User $user */
     $user = User::factory()->withPersonalOrganization()->create();
 
@@ -58,7 +58,7 @@ test('user cannot switch to an organization they neither own nor are a member of
 
     $user->switchOrganization($user->organizations->first());
 
-    Livewire::actingAs($user)->test('billing.subscription-required')
+    Livewire::actingAs($user)->test('pages::billing.subscription-required')
         ->call('switchOrganization', $otherOrg)
         ->assertForbidden();
 });

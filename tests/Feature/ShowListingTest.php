@@ -18,7 +18,7 @@ it('allows an authenticated user to book available dates', function () {
     $end = now()->addDays(5)->toDateString();
 
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.show', [
+        ->test('pages::on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -56,7 +56,7 @@ it('prevents booking if not logged in', function () {
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
 
-    Livewire::test('on-marketplace.listings.show', [
+    Livewire::test('pages::on-marketplace.listings.show', [
         'marketplace' => $marketplace,
         'listing' => $listing,
     ])
@@ -89,7 +89,7 @@ it('prevents booking overlapping dates', function () {
     $overlapEnd = now()->addDays(7)->toDateString();
 
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.show', [
+        ->test('pages::on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -113,7 +113,7 @@ it('prevents booking with invalid dates', function () {
     $start = now()->addDays(5)->toDateString();
     $end = now()->addDays(2)->toDateString();
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.show', [
+        ->test('pages::on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -123,7 +123,7 @@ it('prevents booking with invalid dates', function () {
 
     // Missing dates
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.show', [
+        ->test('pages::on-marketplace.listings.show', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])

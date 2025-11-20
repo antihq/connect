@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('user sees reviews for their marketplace', function () {
+test('pages::user sees reviews for their marketplace', function () {
     $user = User::factory()->create();
     $organization = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($organization)->create();
@@ -27,7 +27,7 @@ test('user sees reviews for their marketplace', function () {
         ->assertSee((string) $transaction->id);
 });
 
-test('user does not see reviews for other marketplaces', function () {
+test('pages::user does not see reviews for other marketplaces', function () {
     $user = User::factory()->create();
     $organization = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($organization)->create();
@@ -48,12 +48,12 @@ test('user does not see reviews for other marketplaces', function () {
         ->assertDontSee($otherReview->comment);
 });
 
-test('guest is redirected to login', function () {
+test('pages::guest is redirected to login', function () {
     $this->get('/backstage/reviews')
         ->assertRedirect('/login');
 });
 
-test('it paginates reviews', function () {
+test('pages::it paginates reviews', function () {
     $user = User::factory()->create();
     $organization = Organization::factory()->for($user)->create();
     $marketplace = Marketplace::factory()->for($organization)->create();

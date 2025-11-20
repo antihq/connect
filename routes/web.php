@@ -6,10 +6,10 @@ use App\Notifications\NewUpdateSubscriberNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
-Route::livewire('/', 'welcome')->name('home');
-Route::livewire('/changelog', 'changelog')->name('changelog');
+Route::livewire('/', 'pages::welcome')->name('home');
+Route::livewire('/changelog', 'pages::changelog')->name('changelog');
 
-Route::livewire('/vote', 'vote');
+Route::livewire('/vote', 'pages::vote');
 
 Route::middleware(['auth', 'verified', EnsureUserIsSubscribed::class])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

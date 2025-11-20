@@ -17,7 +17,7 @@ it('uploads, validates, and removes listing photos', function () {
 
     // Validation: must be image
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.photos', [
+        ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -27,7 +27,7 @@ it('uploads, validates, and removes listing photos', function () {
 
     // Validation: max size (2MB)
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.photos', [
+        ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -39,7 +39,7 @@ it('uploads, validates, and removes listing photos', function () {
     $photo1 = UploadedFile::fake()->image('photo1.jpg');
     $photo2 = UploadedFile::fake()->image('photo2.png');
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.photos', [
+        ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
@@ -57,7 +57,7 @@ it('uploads, validates, and removes listing photos', function () {
 
     // Remove a photo
     Livewire::actingAs($user)
-        ->test('on-marketplace.listings.edit.photos', [
+        ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])

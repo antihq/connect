@@ -28,7 +28,7 @@ it('shows transaction details for authorized user', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.transactions.show', ['transaction' => $transaction])
+        ->test('pages::backstage.transactions.show', ['transaction' => $transaction])
         ->assertSee('Test Listing')
         ->assertSee('123.45')
         ->assertSee('paid')
@@ -53,7 +53,7 @@ it('returns 404 for transaction from another marketplace', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.transactions.show', ['transaction' => $otherTransaction])
+        ->test('pages::backstage.transactions.show', ['transaction' => $otherTransaction])
         ->assertNotFound();
 });
 
@@ -87,6 +87,6 @@ it('handles missing related data gracefully', function () {
     $user->save();
 
     Livewire::actingAs($user)
-        ->test('backstage.transactions.show', ['transaction' => $transaction])
+        ->test('pages::backstage.transactions.show', ['transaction' => $transaction])
         ->assertSee('N/A');
 });

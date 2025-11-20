@@ -10,7 +10,7 @@ it('creates a new organization for the user with valid data', function () {
     actingAs($user);
 
     $orgName = 'Acme Inc';
-    $response = Livewire::test('organizations.create')
+    $response = Livewire::test('pages::organizations.create')
         ->set('name', $orgName)
         ->call('create');
 
@@ -26,7 +26,7 @@ it('shows validation errors for missing or invalid organization name', function 
     $user = User::factory()->create();
     actingAs($user);
 
-    $response = Livewire::test('organizations.create')
+    $response = Livewire::test('pages::organizations.create')
         ->set('name', '')
         ->call('create');
 
@@ -35,7 +35,7 @@ it('shows validation errors for missing or invalid organization name', function 
 
 it('guests cannot create organizations', function () {
     $orgName = 'Gamma Ltd';
-    $response = Livewire::test('organizations.create')
+    $response = Livewire::test('pages::organizations.create')
         ->set('name', $orgName)
         ->call('create');
 

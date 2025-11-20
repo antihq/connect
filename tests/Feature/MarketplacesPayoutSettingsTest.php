@@ -14,7 +14,7 @@ it('requires account type and country', function () {
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', null)
@@ -30,7 +30,7 @@ it('rejects invalid account type and country', function () {
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'not-a-valid-type')
@@ -57,7 +57,7 @@ it('persists payout settings for the correct user and marketplace', function () 
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -96,7 +96,7 @@ it('cannot change account type or country after they are set', function () {
 
     // Set initial values
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -108,7 +108,7 @@ it('cannot change account type or country after they are set', function () {
 
     // Second call: do NOT mock Stripe, should not be called
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'company')
@@ -135,7 +135,7 @@ it('cannot start onboarding without payout settings', function () {
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -163,7 +163,7 @@ it('can start onboarding when payout settings are configured', function () {
 
     // Save payout settings
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -173,7 +173,7 @@ it('can start onboarding when payout settings are configured', function () {
 
     // Start onboarding
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -211,7 +211,7 @@ it('tracks onboarding state per user and marketplace', function () {
 
     // User 1 saves payout settings and starts onboarding
     Livewire::actingAs($user1)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -219,7 +219,7 @@ it('tracks onboarding state per user and marketplace', function () {
         ->call('save')
         ->assertHasNoErrors();
     Livewire::actingAs($user1)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -227,7 +227,7 @@ it('tracks onboarding state per user and marketplace', function () {
 
     // User 2 saves payout settings and starts onboarding
     Livewire::actingAs($user2)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'company')
@@ -235,7 +235,7 @@ it('tracks onboarding state per user and marketplace', function () {
         ->call('save')
         ->assertHasNoErrors();
     Livewire::actingAs($user2)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -263,7 +263,7 @@ it('can mark onboarding as completed', function () {
 
     // Save payout settings
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -273,7 +273,7 @@ it('can mark onboarding as completed', function () {
 
     // Start onboarding
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -304,7 +304,7 @@ it('redirects to Stripe onboarding after account creation', function () {
 
     // Save payout settings
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->set('accountType', 'individual')
@@ -314,7 +314,7 @@ it('redirects to Stripe onboarding after account creation', function () {
 
     // Start onboarding, expect redirect
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
@@ -354,7 +354,7 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('redirectToStripeDashboard')
@@ -390,7 +390,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->assertSet('onboarding_status', 'completed');
@@ -425,7 +425,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->assertSet('onboarding_status', 'in_progress');
@@ -469,7 +469,7 @@ it('uses payout settings route as refresh and return URLs without query strings'
     app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
-        ->test('marketplaces.account.settings.payout', [
+        ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding');
