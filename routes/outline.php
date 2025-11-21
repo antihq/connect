@@ -28,13 +28,13 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Route::livewire('/{marketplace:slug}/listings', 'pages::on-marketplace.listings.index')->name('on-marketplace.listings.index');
 
-    Route::middleware('auth')->group(function () {
-        // Only the create route requires marketplace membership
-        Route::livewire('/{marketplace:slug}/listings/create', 'pages::on-marketplace.listings.create')
-            ->middleware(['auth', EnsureMarketplaceMember::class])
-            ->name('on-marketplace.listings.create');
+    Route::middleware(['auth', EnsureMarketplaceMember::class])->group(function () {
+        Route::livewire('/{marketplace:slug}/listings/create', 'pages::on-marketplace.listings.create')->name('on-marketplace.listings.create');
 
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/details', 'pages::on-marketplace.listings.edit.details')->name('on-marketplace.listings.edit.details');
+    });
+
+    Route::middleware('auth')->group(function () {
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/location', 'pages::on-marketplace.listings.edit.location')->name('on-marketplace.listings.edit.location');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/pricing', 'pages::on-marketplace.listings.edit.pricing')->name('on-marketplace.listings.edit.pricing');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/availability', 'pages::on-marketplace.listings.edit.availability')->name('on-marketplace.listings.edit.availability');

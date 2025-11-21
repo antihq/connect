@@ -28,7 +28,7 @@ it('edits a listing and updates the record', function () {
     $listing->refresh();
     expect($listing->title)->toBe('Updated Title');
     expect($listing->description)->toBe('Updated description');
-})->only();
+});
 
 it('requires title and description for update', function () {
     $user = User::factory()->create();
@@ -67,6 +67,16 @@ it('redirects to location step if listing is draft on update', function () {
         ->set('description', 'Updated draft description')
         ->call('update')
         ->assertRedirect(route('on-marketplace.listings.edit.location', [$marketplace, $listing]));
+});
+
+it('forbids access to edit details if user is not a marketplace member', function () {
+    $nonMember = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->create();
+
+    actingAs($nonMember)->get(
+        route('on-marketplace.listings.edit.details', [$marketplace, $listing])
+    )->assertRedirect(route('on-marketplace.sign-in', $marketplace));
 });
 
 it('forbids access to edit details if user does not own the listing', function () {

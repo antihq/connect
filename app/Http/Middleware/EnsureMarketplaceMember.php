@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Marketplace;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/** @package App\Http\Middleware */
 class EnsureMarketplaceMember
 {
     /**
@@ -18,9 +20,8 @@ class EnsureMarketplaceMember
         $user = $request->user();
         $marketplace = $request->route('marketplace');
 
-        // If marketplace is a string (slug), resolve the model
         if (is_string($marketplace)) {
-            $marketplace = \App\Models\Marketplace::where('slug', $marketplace)->first();
+            $marketplace = Marketplace::where('slug', $marketplace)->first();
         }
 
         if (! $marketplace) {
