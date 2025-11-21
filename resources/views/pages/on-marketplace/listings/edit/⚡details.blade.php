@@ -31,26 +31,43 @@ new class extends Component
     public function update()
     {
         $this->validate();
+
         $this->listing->update([
             'title' => $this->title,
             'description' => $this->description,
         ]);
-        // Optionally, emit event or redirect
+
+        if ($this->listing->status === 'draft') {
+            return $this->redirectRoute('on-marketplace.listings.edit.location', [
+                $this->marketplace,
+                $this->listing,
+            ], navigate: true);
+        }
     }
 }; ?>
 
 <div class="mx-auto max-w-3xl">
     <flux:navbar class="-mb-px">
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])" current wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])"
+            current
+            wire:navigate
+        >
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])"
+            wire:navigate
+        >
             Location
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])" wire:navigate>
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])"
+            wire:navigate
+        >
             Availability
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])" wire:navigate>

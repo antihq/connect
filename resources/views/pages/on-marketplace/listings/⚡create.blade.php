@@ -25,8 +25,7 @@ new class extends Component
     {
         $this->validate();
 
-        $listing = Listing::create([
-            'marketplace_id' => $this->marketplace->id,
+        $listing = $this->marketplace->listings()->create([
             'user_id' => Auth::id(),
             'title' => $this->title,
             'description' => $this->description,
