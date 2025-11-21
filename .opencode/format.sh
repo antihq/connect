@@ -4,6 +4,8 @@ file=$1
 
 if [[ $file == *.blade.php ]]; then
     npx prettier --write "$file"
+elif [[ $file == *.test.php ]]; then
+    ./vendor/bin/pint "$file"
 elif [[ $file == *.php ]]; then
     ./vendor/bin/pint "$file"
 else

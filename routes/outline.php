@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureMarketplaceMember;
 use Illuminate\Support\Facades\Route;
 
 Route::domain(config('connect.on_url'))->group(function () {
@@ -28,7 +29,10 @@ Route::domain(config('connect.on_url'))->group(function () {
     Route::livewire('/{marketplace:slug}/listings', 'pages::on-marketplace.listings.index')->name('on-marketplace.listings.index');
 
     Route::middleware('auth')->group(function () {
-        Route::livewire('/{marketplace:slug}/listings/create', 'pages::on-marketplace.listings.create')->name('on-marketplace.listings.create');
+        // Only the create route requires marketplace membership
+        Route::livewire('/{marketplace:slug}/listings/create', 'pages::on-marketplace.listings.create')
+            ->middleware(['auth', EnsureMarketplaceMember::class])
+            ->name('on-marketplace.listings.create');
 
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/details', 'pages::on-marketplace.listings.edit.details')->name('on-marketplace.listings.edit.details');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/location', 'pages::on-marketplace.listings.edit.location')->name('on-marketplace.listings.edit.location');

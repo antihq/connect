@@ -4,11 +4,20 @@ use App\Models\Marketplace;
 use App\Models\User;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 
-it('creates a new listing with draft status, stores creator, and requires title and description', function () {
+it('requires the user to be a member of the marketplace to create a listing', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
+
+    // Not a member: should fail (403) on mount
+    actingAs($user)
+        ->get(route('on-marketplace.listings.create', $marketplace))
+        ->assertForbidden();
+
+    // Add user as member
+    $marketplace->addMember($user);
 
     // Validation: both fields required
     Livewire::actingAs($user)
