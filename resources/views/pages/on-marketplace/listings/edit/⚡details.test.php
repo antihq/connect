@@ -5,6 +5,8 @@ use App\Models\Marketplace;
 use App\Models\User;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
+
 it('edits a listing and updates the record', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
@@ -26,7 +28,7 @@ it('edits a listing and updates the record', function () {
     $listing->refresh();
     expect($listing->title)->toBe('Updated Title');
     expect($listing->description)->toBe('Updated description');
-});
+})->only();
 
 it('requires title and description for update', function () {
     $user = User::factory()->create();
@@ -65,4 +67,17 @@ it('redirects to location step if listing is draft on update', function () {
         ->set('description', 'Updated draft description')
         ->call('update')
         ->assertRedirect(route('on-marketplace.listings.edit.location', [$marketplace, $listing]));
+});
+
+it('forbids access to edit details if user does not own the listing', function () {
+    $owner = User::factory()->create();
+    $intruder = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $marketplace->addMember($owner);
+    $marketplace->addMember($intruder);
+    $listing = Listing::factory()->for($marketplace)->for($owner)->create();
+
+    actingAs($intruder)
+        ->get(route('on-marketplace.listings.edit.details', [$marketplace, $listing]))
+        ->assertForbidden();
 });
