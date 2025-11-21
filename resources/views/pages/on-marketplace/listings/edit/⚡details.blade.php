@@ -16,6 +16,7 @@ new class extends Component
 
     public function mount()
     {
+        $this->authorize('update', $this->listing);
         $this->title = $this->listing->title;
         $this->description = $this->listing->description;
     }
