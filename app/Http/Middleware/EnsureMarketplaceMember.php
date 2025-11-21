@@ -28,7 +28,7 @@ class EnsureMarketplaceMember
         }
 
         if (! $user || ! $marketplace->isMember($user)) {
-            abort(403, 'You must be a member of this marketplace.');
+            return redirect()->route('on-marketplace.sign-in', $marketplace);
         }
 
         return $next($request);

@@ -55,7 +55,7 @@ Route::domain(config('connect.on_url'))->group(function () {
 
     Route::livewire('/{marketplace:slug}/users/1', 'pages::marketplaces.users.show')->name('marketplaces.users.show');
 
-    Route::livewire('/{marketplace:slug}/sign-in', 'pages::on-marketplace.sign-in')->name('on-marketplace.sign-in')->middleware('guest');
+    Route::livewire('/{marketplace:slug}/sign-in', 'pages::on-marketplace.sign-in')->name('on-marketplace.sign-in');
 
     Route::livewire('/marketplaces/{marketplace}/transactions/{transaction}/pay', 'pages::marketplaces.transactions.pay')->name('marketplaces.transactions.pay');
     Route::livewire('/marketplaces/{marketplace}/transactions/{transaction}/pay/confirmation', 'pages::marketplaces.transactions.pay-confirmation')->name('marketplaces.transactions.pay.confirmation');
