@@ -108,4 +108,19 @@ it('sends correct code in notification', function () {
     );
 });
 
-todo('rate limiter');
+it('rate limits magic code requests', function () {
+    $marketplace = Marketplace::factory()->create();
+    $email = 'ratelimit@example.com';
+
+    for ($i = 0; $i < 5; $i++) {
+        Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
+            ->set('email', $email)
+            ->call('sendMagicCode')
+            ->assertHasNoErrors('email');
+    }
+
+    $component = Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
+        ->set('email', $email)
+        ->call('sendMagicCode')
+        ->assertHasErrors('email');
+});
