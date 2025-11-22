@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,18 +50,13 @@ class Listing extends Model
     }
 
     /**
-     * Get the price in dollars.
+     * Get and set the price in dollars.
      */
-    public function getPriceDollarsAttribute(): float
+    protected function priceDollars(): Attribute
     {
-        return $this->price !== null ? $this->price / 100 : 0.0;
-    }
-
-    /**
-     * Set the price in dollars.
-     */
-    public function setPriceDollarsAttribute($value): void
-    {
-        $this->attributes['price'] = (int) round($value * 100);
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes['price'] !== null ? round($attributes['price'] / 100, 2) : 0.0,
+            set: fn ($value) => ['price' => (int) round($value * 100)],
+        );
     }
 }
