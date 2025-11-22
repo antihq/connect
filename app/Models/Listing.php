@@ -31,11 +31,15 @@ class Listing extends Model
     protected function casts(): array
     {
         return [
-            'weekly_schedule' => 'array',
             'timezone' => 'string',
             'price' => 'integer',
             'photos' => 'array', // Store photo paths as array
         ];
+    }
+
+    public function weeklyScheduleEntries()
+    {
+        return $this->hasMany(WeeklyScheduleEntry::class);
     }
 
     public function availabilityExceptions()

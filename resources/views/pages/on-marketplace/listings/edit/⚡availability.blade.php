@@ -25,7 +25,8 @@ new class extends Component
     public function mount()
     {
         $this->timezone = $this->listing->timezone ?? config('app.timezone', 'UTC');
-        $this->weekly_schedule = $this->listing->weekly_schedule ?? [
+        // Load weekly schedule from relationship
+        $this->weekly_schedule = [
             'monday' => false,
             'tuesday' => false,
             'wednesday' => false,
@@ -34,6 +35,9 @@ new class extends Component
             'saturday' => false,
             'sunday' => false,
         ];
+        foreach ($this->listing->weeklyScheduleEntries as $entry) {
+            $this->weekly_schedule[$entry->day] = $entry->available;
+        }
         $this->availability_exceptions = $this->listing->availability_exceptions ?? [];
     }
 
@@ -78,8 +82,16 @@ new class extends Component
 
         $this->listing->update([
             'timezone' => $this->timezone,
-            'weekly_schedule' => $this->weekly_schedule,
         ]);
+
+        // Sync weekly schedule entries
+        $this->listing->weeklyScheduleEntries()->delete();
+        foreach ($this->weekly_schedule as $day => $available) {
+            $this->listing->weeklyScheduleEntries()->create([
+                'day' => $day,
+                'available' => $available,
+            ]);
+        }
 
         // Sync availability exceptions
         $this->listing->availabilityExceptions()->delete();

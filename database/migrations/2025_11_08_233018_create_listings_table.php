@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('apt_suite')->nullable();
             $table->integer('price')->nullable();
             $table->string('timezone')->nullable();
-            $table->json('weekly_schedule')->nullable();
             $table->json('photos')->nullable();
             $table->string('status')->default('draft');
             $table->timestamps();
