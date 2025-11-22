@@ -25,7 +25,7 @@ new class extends Component
     public function mount()
     {
         $this->timezone = $this->listing->timezone ?? config('app.timezone', 'UTC');
-        // Load weekly schedule from relationship
+
         $this->weekly_schedule = [
             'monday' => false,
             'tuesday' => false,
@@ -35,9 +35,11 @@ new class extends Component
             'saturday' => false,
             'sunday' => false,
         ];
-        foreach ($this->listing->weeklyScheduleEntries as $entry) {
+
+        $this->listing->weeklyScheduleEntries->each(function ($entry) {
             $this->weekly_schedule[$entry->day] = $entry->available;
-        }
+        });
+
         $this->availability_exceptions = $this->listing->availability_exceptions ?? [];
     }
 
@@ -86,18 +88,18 @@ new class extends Component
 
         // Sync weekly schedule entries
         $this->listing->weeklyScheduleEntries()->delete();
-        foreach ($this->weekly_schedule as $day => $available) {
+        collect($this->weekly_schedule)->each(function ($available, $day) {
             $this->listing->weeklyScheduleEntries()->create([
                 'day' => $day,
                 'available' => $available,
             ]);
-        }
+        });
 
         // Sync availability exceptions
         $this->listing->availabilityExceptions()->delete();
-        foreach ($this->availability_exceptions as $exception) {
+        collect($this->availability_exceptions)->each(function ($exception) {
             $this->listing->availabilityExceptions()->create($exception);
-        }
+        });
 
         return $this->redirectRoute('on-marketplace.listings.edit.photos', [
             'marketplace' => $this->marketplace,

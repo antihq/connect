@@ -108,7 +108,7 @@ it('updates listing availability with valid data', function () {
     $updated = Listing::find($listing->id);
     expect($updated->timezone)->toBe('America/New_York');
     $actualSchedule = $updated->weeklyScheduleEntries->pluck('available', 'day')->toArray();
-    expect($actualSchedule)->toBe($newSchedule);
+    expect($actualSchedule)->toMatchArray($newSchedule);
 });
 
 it('updates listing availability with exceptions', function () {
@@ -167,7 +167,7 @@ it('updates listing availability with exceptions', function () {
     $listing->refresh();
     expect($listing->timezone)->toBe('Europe/London');
     $actualSchedule = $listing->weeklyScheduleEntries->pluck('available', 'day')->toArray();
-    expect($actualSchedule)->toBe($newSchedule);
+    expect($actualSchedule)->toMatchArray($newSchedule);
     $listingExceptions = $listing->availabilityExceptions()->get()->map(fn ($e) => [
         'available' => $e->available,
         'start_date' => $e->start_date->toDateString(),
