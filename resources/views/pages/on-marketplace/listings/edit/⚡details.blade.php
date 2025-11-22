@@ -39,7 +39,7 @@ new class extends Component
         ]);
 
         if ($this->listing->status === 'draft') {
-            return $this->redirectRoute('on-marketplace.listings.edit.location', [
+            return $this->redirectRoute('on-marketplace.listings.edit.pricing', [
                 $this->marketplace,
                 $this->listing,
             ], navigate: true);
