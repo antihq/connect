@@ -17,6 +17,7 @@ new class extends Component
     public function mount()
     {
         $this->authorize('update', $this->listing);
+
         $this->title = $this->listing->title;
         $this->description = $this->listing->description;
     }
@@ -39,7 +40,7 @@ new class extends Component
         ]);
 
         if ($this->listing->status === 'draft') {
-            return $this->redirectRoute('on-marketplace.listings.edit.pricing', [
+            return $this->redirectRoute('on-marketplace.listings.edit.location', [
                 $this->marketplace,
                 $this->listing,
             ], navigate: true);

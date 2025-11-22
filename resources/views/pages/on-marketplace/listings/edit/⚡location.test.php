@@ -93,3 +93,21 @@ it('requires address when updating a listing location', function () {
         ->call('update')
         ->assertHasErrors(['address' => 'required']);
 });
+
+it('forbids non-owners from accessing location edit', function () {
+    $marketplace = Marketplace::factory()->create();
+    $owner = User::factory()->create();
+    $marketplace->addMember($owner);
+    $listing = Listing::factory()->for($marketplace)->for($owner)->create([
+        'address' => '123 Main St',
+        'apt_suite' => 'Apt 1',
+    ]);
+    $otherUser = User::factory()->create();
+
+    Livewire::actingAs($otherUser)
+        ->test('pages::on-marketplace.listings.edit.location', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->assertForbidden();
+});

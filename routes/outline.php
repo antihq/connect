@@ -32,10 +32,11 @@ Route::domain(config('connect.on_url'))->group(function () {
         Route::livewire('/{marketplace:slug}/listings/create', 'pages::on-marketplace.listings.create')->name('on-marketplace.listings.create');
 
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/details', 'pages::on-marketplace.listings.edit.details')->name('on-marketplace.listings.edit.details');
+
+        Route::livewire('/{marketplace:slug}/listings/{listing}/edit/location', 'pages::on-marketplace.listings.edit.location')->name('on-marketplace.listings.edit.location');
     });
 
     Route::middleware('auth')->group(function () {
-        Route::livewire('/{marketplace:slug}/listings/{listing}/edit/location', 'pages::on-marketplace.listings.edit.location')->name('on-marketplace.listings.edit.location');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/pricing', 'pages::on-marketplace.listings.edit.pricing')->name('on-marketplace.listings.edit.pricing');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/availability', 'pages::on-marketplace.listings.edit.availability')->name('on-marketplace.listings.edit.availability');
         Route::livewire('/{marketplace:slug}/listings/{listing}/edit/photos', 'pages::on-marketplace.listings.edit.photos')->name('on-marketplace.listings.edit.photos');
