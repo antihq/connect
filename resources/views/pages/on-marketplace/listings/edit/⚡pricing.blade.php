@@ -29,7 +29,7 @@ new class extends Component
         $this->validate();
 
         $this->listing->update([
-            'price' => $this->price,
+            'price_dollars' => $this->price,
         ]);
 
         return $this->redirectRoute('on-marketplace.listings.edit.availability', [
@@ -44,13 +44,23 @@ new class extends Component
         <flux:navbar.item :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])" wire:navigate>
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])"
+            wire:navigate
+        >
             Location
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])" current wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])"
+            current
+            wire:navigate
+        >
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])"
+            wire:navigate
+        >
             Availability
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])" wire:navigate>

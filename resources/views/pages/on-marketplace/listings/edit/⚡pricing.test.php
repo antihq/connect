@@ -68,7 +68,7 @@ it('edits a listing price and updates the record', function () {
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
-        ->set('price', 25050)
+        ->set('price', 250.50)
         ->call('update')
         ->assertHasNoErrors();
 
