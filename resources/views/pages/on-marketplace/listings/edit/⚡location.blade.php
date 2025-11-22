@@ -16,6 +16,7 @@ new class extends Component
 
     public function mount()
     {
+        $this->authorize('update', $this->listing);
         $this->address = $this->listing->address ?? '';
         $this->apt_suite = $this->listing->apt_suite ?? '';
     }
@@ -43,7 +44,6 @@ new class extends Component
                 $this->listing,
             ], navigate: true);
         }
-        // Optionally, you could redirect elsewhere or do nothing if not draft.
     }
 }; ?>
 
