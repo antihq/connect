@@ -19,7 +19,7 @@ describe('Backstage Listing Show', function () {
         $listing = Listing::factory()->for($marketplace)->create([
             'title' => 'Test Listing',
             'description' => 'A great listing',
-            'price' => 123.45,
+            'price' => 12345, // 123.45 dollars
         ]);
         $user->current_organization_id = $org->id;
         $user->save();

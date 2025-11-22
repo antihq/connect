@@ -18,7 +18,7 @@ it('shows the edit form for user\'s own listing', function () {
     $listing = Listing::factory()->for($marketplace)->create([
         'title' => 'Original Title',
         'description' => 'Original Description',
-        'price' => 100.00,
+        'price' => 10000, // 100.00 dollars
     ]);
     $user->current_organization_id = $org->id;
     $user->save();
@@ -27,7 +27,7 @@ it('shows the edit form for user\'s own listing', function () {
         ->test('pages::backstage.listings.edit', ['listing' => $listing->id])
         ->assertSet('title', 'Original Title')
         ->assertSet('description', 'Original Description')
-        ->assertSet('price', 100.00);
+        ->assertSet('price', 10000);
 });
 
 it('updates the listing with valid data', function () {
@@ -37,7 +37,7 @@ it('updates the listing with valid data', function () {
     $listing = Listing::factory()->for($marketplace)->create([
         'title' => 'Old Title',
         'description' => 'Old Description',
-        'price' => 50.00,
+        'price' => 5000, // 50.00 dollars
     ]);
     $user->current_organization_id = $org->id;
     $user->save();
@@ -46,14 +46,15 @@ it('updates the listing with valid data', function () {
         ->test('pages::backstage.listings.edit', ['listing' => $listing->id])
         ->set('title', 'New Title')
         ->set('description', 'New Description')
-        ->set('price', 200.00)
+        ->set('price', 20000) // 200.00 dollars
         ->call('save')
         ->assertHasNoErrors();
 
     $listing->refresh();
     expect($listing->title)->toBe('New Title');
     expect($listing->description)->toBe('New Description');
-    expect($listing->price)->toBe(200.00);
+    expect($listing->price_dollars)->toBe(200.00);
+    expect($listing->price)->toBe(20000);
 });
 
 it('shows validation errors for invalid input', function () {
