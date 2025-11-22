@@ -14,6 +14,7 @@ new class extends Component
 
     public function mount()
     {
+        $this->authorize('update', $this->listing);
         $this->price = (string) $this->listing->price;
     }
 
@@ -32,10 +33,13 @@ new class extends Component
             'price_dollars' => $this->price,
         ]);
 
-        return $this->redirectRoute('on-marketplace.listings.edit.availability', [
-            'marketplace' => $this->marketplace,
-            'listing' => $this->listing,
-        ], navigate: true);
+        if ($this->listing->status === 'draft') {
+            return $this->redirectRoute('on-marketplace.listings.edit.availability', [
+                $this->marketplace,
+                $this->listing,
+            ], navigate: true);
+        }
+
     }
 }; ?>
 

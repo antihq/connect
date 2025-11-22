@@ -8,7 +8,6 @@ use Livewire\Livewire;
 it('redirects to pricing when listing is draft after location update', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create();
-    $marketplace->addMember($user);
     $listing = Listing::factory()->for($marketplace)->for($user)->create([
         'address' => '123 Main St',
         'apt_suite' => 'Apt 1',
@@ -29,7 +28,6 @@ it('redirects to pricing when listing is draft after location update', function 
 it('updates address and apt_suite for a listing', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create();
-    $marketplace->addMember($user);
     $listing = Listing::factory()->for($marketplace)->for($user)->create([
         'address' => '123 Main St',
         'apt_suite' => 'Apt 1',
@@ -53,7 +51,6 @@ it('updates address and apt_suite for a listing', function () {
 it('updates address and clears apt_suite for a listing', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create();
-    $marketplace->addMember($user);
     $listing = Listing::factory()->for($marketplace)->for($user)->create([
         'address' => '456 Oak Ave',
         'apt_suite' => 'Suite 200',
@@ -77,7 +74,6 @@ it('updates address and clears apt_suite for a listing', function () {
 it('requires address when updating a listing location', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create();
-    $marketplace->addMember($user);
     $listing = Listing::factory()->for($marketplace)->for($user)->create([
         'address' => '123 Main St',
         'apt_suite' => 'Apt 1',
@@ -97,7 +93,6 @@ it('requires address when updating a listing location', function () {
 it('forbids non-owners from accessing location edit', function () {
     $marketplace = Marketplace::factory()->create();
     $owner = User::factory()->create();
-    $marketplace->addMember($owner);
     $listing = Listing::factory()->for($marketplace)->for($owner)->create([
         'address' => '123 Main St',
         'apt_suite' => 'Apt 1',

@@ -76,3 +76,37 @@ it('edits a listing price and updates the record', function () {
     expect($listing->price_dollars)->toBe(250.50);
     expect($listing->price)->toBe(25050);
 });
+
+it('redirects to availability when listing is draft after pricing update', function () {
+    $marketplace = Marketplace::factory()->create();
+    $user = User::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'price' => 100.00,
+        'status' => 'draft',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.pricing', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('price', 200.00)
+        ->call('update')
+        ->assertRedirect(route('on-marketplace.listings.edit.availability', [$marketplace, $listing]));
+});
+
+it('forbids non-owners from updating pricing', function () {
+    $marketplace = Marketplace::factory()->create();
+    $owner = User::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($owner)->create([
+        'price' => 100.00,
+    ]);
+    $otherUser = User::factory()->create();
+
+    Livewire::actingAs($otherUser)
+        ->test('pages::on-marketplace.listings.edit.pricing', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->assertForbidden();
+});
