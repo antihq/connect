@@ -37,10 +37,13 @@ new class extends Component
             'apt_suite' => $this->apt_suite,
         ]);
 
-        return $this->redirectRoute('on-marketplace.listings.edit.pricing', [
-            'marketplace' => $this->marketplace,
-            'listing' => $this->listing,
-        ], navigate: true);
+        if ($this->listing->status === 'draft') {
+            return $this->redirectRoute('on-marketplace.listings.edit.pricing', [
+                $this->marketplace,
+                $this->listing,
+            ], navigate: true);
+        }
+        // Optionally, you could redirect elsewhere or do nothing if not draft.
     }
 }; ?>
 
@@ -49,13 +52,20 @@ new class extends Component
         <flux:navbar.item :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])" wire:navigate>
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])" current wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])"
+            current
+            wire:navigate
+        >
             Location
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])" wire:navigate>
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])"
+            wire:navigate
+        >
             Availability
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])" wire:navigate>
