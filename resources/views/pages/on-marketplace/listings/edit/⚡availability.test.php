@@ -5,17 +5,52 @@ use App\Models\Marketplace;
 use App\Models\User;
 use Livewire\Livewire;
 
-use function Pest\Laravel\assertDatabaseHas;
-
-it('edits a listing availability, requires timezone and weekly_schedule, and updates the record', function () {
+it('requires timezone when editing availability', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
     $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'title' => 'Test Listing',
-        'description' => 'Test description',
-        'address' => '123 Main St',
-        'apt_suite' => 'Apt 1',
-        'price' => 100.00,
+        'timezone' => 'UTC',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.availability', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('timezone', '')
+        ->call('update')
+        ->assertHasErrors(['timezone' => 'required']);
+});
+
+it('requires weekly_schedule when editing availability', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'weekly_schedule' => [
+            'monday' => false,
+            'tuesday' => false,
+            'wednesday' => false,
+            'thursday' => false,
+            'friday' => false,
+            'saturday' => false,
+            'sunday' => false,
+        ],
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.availability', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('weekly_schedule', [])
+        ->call('update')
+        ->assertHasErrors(['weekly_schedule' => 'required']);
+});
+
+it('updates listing availability with valid data', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
         'timezone' => 'UTC',
         'weekly_schedule' => [
             'monday' => false,
@@ -28,37 +63,6 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         ],
     ]);
 
-    // Validation: timezone required
-    Livewire::actingAs($user)
-        ->test('pages::on-marketplace.listings.edit.availability', [
-            'marketplace' => $marketplace,
-            'listing' => $listing,
-        ])
-        ->set('timezone', '')
-        ->set('weekly_schedule', [
-            'monday' => true,
-            'tuesday' => false,
-            'wednesday' => false,
-            'thursday' => false,
-            'friday' => false,
-            'saturday' => false,
-            'sunday' => false,
-        ])
-        ->call('update')
-        ->assertHasErrors(['timezone' => 'required']);
-
-    // Validation: weekly_schedule required
-    Livewire::actingAs($user)
-        ->test('pages::on-marketplace.listings.edit.availability', [
-            'marketplace' => $marketplace,
-            'listing' => $listing,
-        ])
-        ->set('timezone', 'America/New_York')
-        ->set('weekly_schedule', [])
-        ->call('update')
-        ->assertHasErrors(['weekly_schedule' => 'required']);
-
-    // Success: valid data
     $newSchedule = [
         'monday' => true,
         'tuesday' => true,
@@ -78,12 +82,36 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         ->call('update')
         ->assertHasNoErrors();
 
-    assertDatabaseHas('listings', [
-        'id' => $listing->id,
-        'timezone' => 'America/New_York',
+    $updated = Listing::find($listing->id);
+    expect($updated->timezone)->toBe('America/New_York');
+    expect($updated->weekly_schedule)->toBe($newSchedule);
+});
+
+it('updates listing availability with exceptions', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'timezone' => 'UTC',
+        'weekly_schedule' => [
+            'monday' => false,
+            'tuesday' => false,
+            'wednesday' => false,
+            'thursday' => false,
+            'friday' => false,
+            'saturday' => false,
+            'sunday' => false,
+        ],
     ]);
-    expect(Listing::find($listing->id)->weekly_schedule)->toBe($newSchedule);
-    // Success: valid data with availability exceptions
+
+    $newSchedule = [
+        'monday' => true,
+        'tuesday' => true,
+        'wednesday' => false,
+        'thursday' => false,
+        'friday' => true,
+        'saturday' => false,
+        'sunday' => false,
+    ];
     $exceptions = [
         [
             'available' => true,
@@ -108,5 +136,7 @@ it('edits a listing availability, requires timezone and weekly_schedule, and upd
         ->assertHasNoErrors();
 
     $saved = Listing::find($listing->id);
+    expect($saved->timezone)->toBe('Europe/London');
+    expect($saved->weekly_schedule)->toBe($newSchedule);
     expect($saved->availability_exceptions)->toBe($exceptions);
 });
