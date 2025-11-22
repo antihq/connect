@@ -79,8 +79,13 @@ new class extends Component
         $this->listing->update([
             'timezone' => $this->timezone,
             'weekly_schedule' => $this->weekly_schedule,
-            'availability_exceptions' => $this->availability_exceptions,
         ]);
+
+        // Sync availability exceptions
+        $this->listing->availabilityExceptions()->delete();
+        foreach ($this->availability_exceptions as $exception) {
+            $this->listing->availabilityExceptions()->create($exception);
+        }
 
         return $this->redirectRoute('on-marketplace.listings.edit.photos', [
             'marketplace' => $this->marketplace,
@@ -99,13 +104,20 @@ new class extends Component
         <flux:navbar.item :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])" wire:navigate>
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])"
+            wire:navigate
+        >
             Location
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])" wire:navigate>
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])" current wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])"
+            current
+            wire:navigate
+        >
             Availability
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])" wire:navigate>

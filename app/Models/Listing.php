@@ -32,11 +32,15 @@ class Listing extends Model
     {
         return [
             'weekly_schedule' => 'array',
-            'availability_exceptions' => 'array',
             'timezone' => 'string',
             'price' => 'integer',
             'photos' => 'array', // Store photo paths as array
         ];
+    }
+
+    public function availabilityExceptions()
+    {
+        return $this->hasMany(AvailabilityException::class);
     }
 
     public function isPublishable(): bool

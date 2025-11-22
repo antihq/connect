@@ -135,8 +135,13 @@ it('updates listing availability with exceptions', function () {
         ->call('update')
         ->assertHasNoErrors();
 
-    $saved = Listing::find($listing->id);
-    expect($saved->timezone)->toBe('Europe/London');
-    expect($saved->weekly_schedule)->toBe($newSchedule);
-    expect($saved->availability_exceptions)->toBe($exceptions);
+    $listing->refresh();
+    expect($listing->timezone)->toBe('Europe/London');
+    expect($listing->weekly_schedule)->toBe($newSchedule);
+    $listingExceptions = $listing->availabilityExceptions()->get()->map(fn ($e) => [
+        'available' => $e->available,
+        'start_date' => $e->start_date->toDateString(),
+        'end_date' => $e->end_date->toDateString(),
+    ])->toArray();
+    expect($listingExceptions)->toBe($exceptions);
 });
