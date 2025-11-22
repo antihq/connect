@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('address')->nullable();
             $table->string('apt_suite')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
+            $table->integer('price')->nullable();
             $table->string('timezone')->nullable();
             $table->json('weekly_schedule')->nullable();
             $table->json('availability_exceptions')->nullable();
