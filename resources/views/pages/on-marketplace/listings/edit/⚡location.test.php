@@ -5,6 +5,27 @@ use App\Models\Marketplace;
 use App\Models\User;
 use Livewire\Livewire;
 
+it('redirects to pricing when listing is draft after location update', function () {
+    $marketplace = Marketplace::factory()->create();
+    $user = User::factory()->create();
+    $marketplace->addMember($user);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'address' => '123 Main St',
+        'apt_suite' => 'Apt 1',
+        'status' => 'draft',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.location', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('address', '456 Oak Ave')
+        ->set('apt_suite', 'Suite 200')
+        ->call('update')
+        ->assertRedirect(route('on-marketplace.listings.edit.pricing', [$marketplace, $listing]));
+});
+
 it('updates address and apt_suite for a listing', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create();
