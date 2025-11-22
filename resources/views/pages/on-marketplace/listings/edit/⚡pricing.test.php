@@ -68,10 +68,11 @@ it('edits a listing price and updates the record', function () {
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
-        ->set('price', 250.50)
+        ->set('price', 25050)
         ->call('update')
         ->assertHasNoErrors();
 
     $listing->refresh();
-    expect($listing->price)->toBe(250.50);
+    expect($listing->price_dollars)->toBe(250.50);
+    expect($listing->price)->toBe(25050);
 });

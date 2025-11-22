@@ -33,7 +33,7 @@ class Listing extends Model
             'weekly_schedule' => 'array',
             'availability_exceptions' => 'array',
             'timezone' => 'string',
-            'price' => 'float',
+            'price' => 'integer',
             'photos' => 'array', // Store photo paths as array
         ];
     }
@@ -46,5 +46,21 @@ class Listing extends Model
             && is_numeric($this->price) && $this->price > 0
             && is_array($this->weekly_schedule) && count($this->weekly_schedule) > 0
             && is_array($this->photos) && count($this->photos) > 0;
+    }
+
+    /**
+     * Get the price in dollars.
+     */
+    public function getPriceDollarsAttribute(): float
+    {
+        return $this->price !== null ? $this->price / 100 : 0.0;
+    }
+
+    /**
+     * Set the price in dollars.
+     */
+    public function setPriceDollarsAttribute($value): void
+    {
+        $this->attributes['price'] = (int) round($value * 100);
     }
 }

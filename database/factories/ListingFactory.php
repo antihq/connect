@@ -22,6 +22,7 @@ class ListingFactory extends Factory
             'user_id' => \App\Models\User::factory(),
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
+            'price' => $this->faker->numberBetween(1000, 10000), // price in cents
             'status' => 'draft',
         ];
     }
