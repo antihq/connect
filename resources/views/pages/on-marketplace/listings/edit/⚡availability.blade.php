@@ -63,6 +63,7 @@ new class extends Component
         return [
             'timezone' => ['required', 'string'],
             'weekly_schedule' => ['required', 'array'],
+            'weekly_schedule.*' => ['in:monday,tuesday,wednesday,thursday,friday,saturday,sunday'],
             'availability_exceptions' => ['array'],
             'availability_exceptions.*.available' => ['required', 'boolean'],
             'availability_exceptions.*.start_date' => ['required', 'date'],
