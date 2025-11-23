@@ -26,10 +26,10 @@ it('uploads valid images', function () {
 
     $listing->refresh();
     expect($listing->photos)->toHaveCount(2);
-    foreach ($listing->photos as $photo) {
+    $listing->photos->each(function ($photo) {
         $relativePath = str_replace('storage/', '', $photo->path);
         Storage::disk('public')->assertExists($relativePath);
-    }
+    });
 });
 
 it('removes a photo after upload', function () {
