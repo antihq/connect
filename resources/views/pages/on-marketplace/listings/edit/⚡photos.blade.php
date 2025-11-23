@@ -50,6 +50,17 @@ new class extends Component
 
         $this->listing->refresh();
     }
+
+    public function removeNewPhoto($index)
+    {
+        $photo = $this->newPhotos[$index];
+
+        $photo->delete();
+
+        unset($this->newPhotos[$index]);
+
+        $this->newPhotos = array_values($this->newPhotos);
+    }
 }; ?>
 
 <div class="mx-auto max-w-3xl">
@@ -92,7 +103,7 @@ new class extends Component
             <flux:field>
                 <flux:label>Current Photos</flux:label>
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    @foreach ($listing->photos as $idx => $photo)
+                    @foreach ($listing->photos as $photo)
                         <div class="group relative">
                             <img src="/{{ $photo->path }}" class="h-32 w-full rounded object-cover shadow" />
                             <div class="absolute top-2 right-2 flex">
@@ -119,22 +130,15 @@ new class extends Component
                     />
                 </flux:file-upload>
                 <div class="flex flex-col gap-2">
-                    @foreach ($newPhotos as $idx => $photo)
-                        @php
-                            $imageUrl = null;
-                            if (method_exists($photo, 'getMimeType') && str_starts_with($photo->getMimeType(), 'image/')) {
-                                $imageUrl = $photo->temporaryUrl();
-                            }
-                        @endphp
-
+                    @foreach ($newPhotos as $index => $photo)
                         <flux:file-item
                             :heading="$photo->getClientOriginalName()"
+                            :image="$photo->temporaryUrl()"
                             :size="$photo->getSize()"
-                            :image="$imageUrl"
                         >
                             <x-slot name="actions">
                                 <flux:file-item.remove
-                                    wire:click="removePhoto({{ $idx }})"
+                                    wire:click="removeNewPhoto({{ $index }})"
                                     aria-label="Remove file: {{ $photo->getClientOriginalName() }}"
                                 />
                             </x-slot>
