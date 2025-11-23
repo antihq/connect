@@ -18,6 +18,17 @@ new class extends Component
 
     public ?array $bookingBreakdown = null;
 
+    public ?string $bookingMessage = null;
+
+    public ?string $bookingError = null;
+
+    public function mount()
+    {
+        if ($this->listing->marketplace_id !== $this->marketplace->id || $this->listing->status !== 'public') {
+            abort(404);
+        }
+    }
+
     public function updated($property)
     {
         if (in_array($property, ['range.start', 'range.end'])) {
@@ -45,17 +56,6 @@ new class extends Component
             'total' => $total,
         ];
     }
-
-    public function mount()
-    {
-        if ($this->listing->marketplace_id !== $this->marketplace->id || $this->listing->status !== 'public') {
-            abort(404);
-        }
-    }
-
-    public ?string $bookingMessage = null;
-
-    public ?string $bookingError = null;
 
     public function requestToBook()
     {
