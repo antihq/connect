@@ -52,12 +52,13 @@ it('removes a photo after upload', function () {
     $listing->refresh();
     expect($listing->photos)->toHaveCount(2);
 
+    $photoId = $listing->photos[0]->id;
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
-        ->call('removePhoto', 0)
+        ->call('removePhoto', $photoId)
         ->assertHasNoErrors();
 
     $listing->refresh();

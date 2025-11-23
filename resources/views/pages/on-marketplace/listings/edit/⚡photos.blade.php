@@ -35,9 +35,9 @@ new class extends Component
         $this->listing->refresh();
     }
 
-    public function removePhoto($index)
+    public function removePhoto($photoId)
     {
-        $photo = $this->listing->photos[$index] ?? null;
+        $photo = $this->listing->photos()->find($photoId);
         if ($photo) {
             $photoPath = str_replace('storage/', 'public/', $photo->path);
             Storage::delete($photoPath);
@@ -91,7 +91,7 @@ new class extends Component
                         <div class="group relative">
                             <img src="/{{ $photo->path }}" class="h-32 w-full rounded object-cover shadow" />
                             <div class="absolute top-2 right-2 flex">
-                                <flux:button type="button" wire:click="removePhoto({{ $idx }})" size="xs">
+                                <flux:button type="button" wire:click="removePhoto({{ $photo->id }})" size="xs">
                                     Remove
                                 </flux:button>
                             </div>
