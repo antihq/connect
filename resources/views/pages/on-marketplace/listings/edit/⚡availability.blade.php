@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -32,7 +33,7 @@ new class extends Component
             ->pluck('day')
             ->toArray();
 
-        $this->availability_exceptions = $this->listing->availability_exceptions ?? [];
+        $this->availability_exceptions = $this->listing->availabilityExceptions->toArray() ?? [];
     }
 
     #[Computed]
@@ -155,90 +156,90 @@ new class extends Component
             <flux:error name="weekly_schedule" />
         </flux:field>
 
-        @unless (empty($availability_exceptions))
-            <div>
-                <flux:heading>Current availability exceptions</flux:heading>
+        <div class="space-y-3">
+            @unless (empty($availability_exceptions))
+                <div>
+                    <flux:heading>Current availability exceptions</flux:heading>
 
-                <flux:separator variant="subtle" class="mt-2" />
+                    <flux:separator variant="subtle" class="mt-3" />
 
-                <flux:table>
-                    <flux:table.rows>
-                        @foreach ($availability_exceptions as $i => $exception)
-                            <flux:table.row :key="$i">
-                                <flux:table.cell variant="strong" class="w-full tabular-nums">
-                                    {{ $exception['start_date'] }} → {{ $exception['end_date'] }}
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                    <flux:badge
-                                        color="{{ $exception['available'] ? 'green' : 'red' }}"
-                                        size="sm"
-                                        inset="top bottom"
-                                    >
-                                        {{ $exception['available'] ? 'Available' : 'Not available' }}
-                                    </flux:badge>
-                                </flux:table.cell>
-                                <flux:table.cell align="end">
-                                    <flux:button
-                                        type="button"
-                                        size="sm"
-                                        variant="subtle"
-                                        wire:click="removeException({{ $i }})"
-                                        inset="top bottom"
-                                    >
-                                        Remove
-                                    </flux:button>
-                                </flux:table.cell>
-                            </flux:table.row>
-                        @endforeach
-                    </flux:table.rows>
-                </flux:table>
+                    <flux:table>
+                        <flux:table.rows>
+                            @foreach ($availability_exceptions as $i => $exception)
+                                <flux:table.row :key="$i">
+                                    <flux:table.cell variant="strong" class="w-full tabular-nums">
+                                        {{ Carbon::parse($exception['start_date'])->format('M d, Y') }} →
+                                        {{ Carbon::parse($exception['end_date'])->format('M d, Y') }}
+                                    </flux:table.cell>
+                                    <flux:table.cell>
+                                        <flux:badge
+                                            color="{{ $exception['available'] ? 'green' : 'red' }}"
+                                            inset="top bottom"
+                                        >
+                                            {{ $exception['available'] ? 'Available' : 'Not available' }}
+                                        </flux:badge>
+                                    </flux:table.cell>
+                                    <flux:table.cell align="end">
+                                        <flux:button
+                                            type="button"
+                                            size="sm"
+                                            variant="subtle"
+                                            wire:click="removeException({{ $i }})"
+                                            inset="top bottom"
+                                        >
+                                            Remove
+                                        </flux:button>
+                                    </flux:table.cell>
+                                </flux:table.row>
+                            @endforeach
+                        </flux:table.rows>
+                    </flux:table>
 
-                <flux:error name="availability_exceptions" />
-            </div>
-        @endunless
+                    <flux:error name="availability_exceptions" />
+                </div>
+            @endunless
 
-        <flux:spacer class="mb-3" />
-
-        <div x-data="{ showAddException: false }">
-            <flux:button type="button" @click="showAddException = true" x-show="!showAddException" size="sm">
-                Add availability exception
-            </flux:button>
-            <div x-show="showAddException" class="mt-4" x-cloak>
-                <flux:card class="space-y-6">
-                    <div>
-                        <flux:heading>Add an availability exception</flux:heading>
-                        <flux:text class="mt-2">
-                            Use this form to set specific dates when this listing is available or unavailable,
-                            overriding the weekly default schedule.
-                        </flux:text>
-                    </div>
-                    <flux:select
-                        wire:model="new_exception.available"
-                        label="Availability status"
-                        placeholder="Availability status"
-                    >
-                        <flux:select.option value="1">Available</flux:select.option>
-                        <flux:select.option value="0">Not available</flux:select.option>
-                    </flux:select>
-                    <div class="grid grid-cols-2 gap-4">
-                        <flux:date-picker wire:model="new_exception.start_date" label="Start date">
-                            <x-slot name="badge">
-                                <flux:badge color="red">Required</flux:badge>
-                            </x-slot>
-                        </flux:date-picker>
-                        <flux:date-picker wire:model="new_exception.end_date" label="End date">
-                            <x-slot name="badge">
-                                <flux:badge color="red">Required</flux:badge>
-                            </x-slot>
-                        </flux:date-picker>
-                    </div>
-                    <div class="flex gap-2">
-                        <flux:button type="button" wire:click="addException">Add exception</flux:button>
-                        <flux:button type="button" variant="subtle" @click="showAddException = false">
-                            Cancel
-                        </flux:button>
-                    </div>
-                </flux:card>
+            <div x-data="{ showAddException: false }">
+                <flux:button type="button" @click="showAddException = true" x-show="!showAddException" size="sm">
+                    Add availability exception
+                </flux:button>
+                <div x-show="showAddException" class="mt-4" x-cloak>
+                    <flux:card class="space-y-6">
+                        <div>
+                            <flux:heading>Add an availability exception</flux:heading>
+                            <flux:text class="mt-2">
+                                Use this form to set specific dates when this listing is available or unavailable,
+                                overriding the weekly default schedule.
+                            </flux:text>
+                        </div>
+                        <flux:select
+                            wire:model="new_exception.available"
+                            label="Availability status"
+                            placeholder="Availability status"
+                        >
+                            <flux:select.option value="1">Available</flux:select.option>
+                            <flux:select.option value="0">Not available</flux:select.option>
+                        </flux:select>
+                        <div class="grid grid-cols-2 gap-4">
+                            <flux:date-picker wire:model="new_exception.start_date" label="Start date">
+                                <x-slot name="badge">
+                                    <flux:badge color="red">Required</flux:badge>
+                                </x-slot>
+                            </flux:date-picker>
+                            <flux:date-picker wire:model="new_exception.end_date" label="End date">
+                                <x-slot name="badge">
+                                    <flux:badge color="red">Required</flux:badge>
+                                </x-slot>
+                            </flux:date-picker>
+                        </div>
+                        <div class="flex gap-2">
+                            <flux:button type="button" wire:click="addException">Add exception</flux:button>
+                            <flux:button type="button" variant="subtle" @click="showAddException = false">
+                                Cancel
+                            </flux:button>
+                        </div>
+                    </flux:card>
+                </div>
             </div>
         </div>
 
