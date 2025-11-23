@@ -2,7 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
-use App\Models\MarketplacePayoutSetting;
+use App\Models\PayoutSetting;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
 use App\Models\User;
@@ -195,7 +195,7 @@ it('customer can initiate payment for a pending order and is redirected to Strip
         'total' => 100,
     ]);
     // Provider payout settings
-    MarketplacePayoutSetting::create([
+    PayoutSetting::create([
         'user_id' => $provider->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -231,7 +231,7 @@ it('customer cannot pay if the order is not pending', function () {
         'price_per_night' => 100,
         'total' => 100,
     ]);
-    MarketplacePayoutSetting::create([
+    PayoutSetting::create([
         'user_id' => $provider->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -261,7 +261,7 @@ it('customer cannot pay if they are not the buyer', function () {
         'price_per_night' => 100,
         'total' => 100,
     ]);
-    MarketplacePayoutSetting::create([
+    PayoutSetting::create([
         'user_id' => $provider->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -312,7 +312,7 @@ it('handles Stripe errors gracefully when creating checkout session', function (
         'price_per_night' => 100,
         'total' => 100,
     ]);
-    MarketplacePayoutSetting::create([
+    PayoutSetting::create([
         'user_id' => $provider->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',

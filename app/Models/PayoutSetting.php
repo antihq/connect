@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MarketplacePayoutSetting extends Model
+class PayoutSetting extends Model
 {
     protected $guarded = [];
 

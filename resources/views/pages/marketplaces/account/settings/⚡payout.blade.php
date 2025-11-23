@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Marketplace;
-use App\Models\MarketplacePayoutSetting;
+use App\Models\PayoutSetting;
 use App\Services\StripeConnectService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -18,7 +18,7 @@ new class extends Component
 
     public function mount()
     {
-        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+        $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
         if ($setting) {
@@ -41,7 +41,7 @@ new class extends Component
     public function save()
     {
         // Prevent changing accountType or country if already set
-        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+        $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
         if ($setting && ($setting->account_type || $setting->country)) {
@@ -63,7 +63,7 @@ new class extends Component
                 'email' => $user->email,
                 'business_type' => $this->accountType,
             ]);
-            MarketplacePayoutSetting::updateOrCreate(
+            PayoutSetting::updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'marketplace_id' => $this->marketplace->id,
@@ -79,7 +79,7 @@ new class extends Component
 
     public function startOnboarding()
     {
-        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+        $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
         if (! $setting) {
@@ -108,7 +108,7 @@ new class extends Component
 
     public function completeOnboarding()
     {
-        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+        $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
         if ($setting) {
@@ -120,7 +120,7 @@ new class extends Component
 
     public function redirectToStripeDashboard()
     {
-        $setting = MarketplacePayoutSetting::where('user_id', Auth::id())
+        $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
         if ($setting && $setting->stripe_account_id) {
@@ -135,6 +135,13 @@ new class extends Component
 <div class="mx-auto max-w-2xl">
     <flux:heading level="1" size="xl">Payout Settings</flux:heading>
     <flux:spacer class="my-6" />
+
+    @if ($accountType === '' || $country === '')
+        <flux:callout variant="warning" icon="exclamation-triangle" class="mb-6">
+            <flux:callout.heading>Set up payout settings to receive payments</flux:callout.heading>
+            <flux:callout.text>You must set up your payout settings before you can receive payments.</flux:callout.text>
+        </flux:callout>
+    @endif
 
     @if ($accountType !== '' && $country !== '')
         @if ($onboarding_status === 'completed')
@@ -174,7 +181,12 @@ new class extends Component
         {{-- Stripe onboarding callout is shown above when accountType and country are set --}}
         <flux:field>
             @if ($accountType !== '')
-                <flux:input label="Account Type" readonly variant="filled" :value="$accountType === 'individual' ? 'Individual' : 'Company'" />
+                <flux:input
+                    label="Account Type"
+                    readonly
+                    variant="filled"
+                    :value="$accountType === 'individual' ? 'Individual' : 'Company'"
+                />
             @else
                 <flux:label badge="Required">Account Type</flux:label>
                 <flux:select wire:model="accountType">
@@ -189,7 +201,11 @@ new class extends Component
 
         <flux:field>
             @if ($country !== '')
-                <flux:input label="Country" readonly variant="filled" :value="
+                <flux:input
+                    label="Country"
+                    readonly
+                    variant="filled"
+                    :value="
                     match($country) {
                         'AU' => 'Australia',
                         'AT' => 'Austria',
@@ -237,7 +253,8 @@ new class extends Component
                         'GB' => 'United Kingdom',
                         'US' => 'United States',
                         default => $country
-                    }" />
+                    }"
+                />
             @else
                 <flux:label badge="Required">Country</flux:label>
                 <flux:select wire:model="country">

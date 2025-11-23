@@ -66,7 +66,7 @@ it('persists payout settings for the correct user and marketplace', function () 
         ->assertHasNoErrors();
 
     // Assert the settings are persisted for this user and marketplace
-    expect(\Illuminate\Support\Facades\DB::table('marketplace_payout_settings')->where([
+    expect(\Illuminate\Support\Facades\DB::table('payout_settings')->where([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -117,7 +117,7 @@ it('cannot change account type or country after they are set', function () {
         ->assertHasNoErrors(); // No error, but values should not change
 
     // Assert the values did not change
-    $row = \Illuminate\Support\Facades\DB::table('marketplace_payout_settings')->where([
+    $row = \Illuminate\Support\Facades\DB::table('payout_settings')->where([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
     ])->first();
@@ -332,7 +332,7 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id and completed onboarding
-    $setting = \App\Models\MarketplacePayoutSetting::create([
+    $setting = \App\Models\PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -370,7 +370,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\MarketplacePayoutSetting::create([
+    $setting = \App\Models\PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -405,7 +405,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\MarketplacePayoutSetting::create([
+    $setting = \App\Models\PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -440,7 +440,7 @@ it('uses payout settings route as refresh and return URLs without query strings'
     $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\MarketplacePayoutSetting::create([
+    $setting = \App\Models\PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',

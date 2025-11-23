@@ -143,7 +143,7 @@ class User extends Authenticatable
      */
     public function payoutSetting(Marketplace $marketplace)
     {
-        return MarketplacePayoutSetting::where('user_id', $this->id)
+        return PayoutSetting::where('user_id', $this->id)
             ->where('marketplace_id', $marketplace->id)
             ->first();
     }
@@ -153,7 +153,7 @@ class User extends Authenticatable
      */
     public function hasPayoutSettings(Marketplace $marketplace)
     {
-        return MarketplacePayoutSetting::where('user_id', $this->id)
+        return PayoutSetting::where('user_id', $this->id)
             ->where('marketplace_id', $marketplace->id)
             ->exists();
     }

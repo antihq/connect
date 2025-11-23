@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Marketplace;
-use App\Models\MarketplacePayoutSetting;
+use App\Models\PayoutSetting;
 use App\Models\Review;
 use App\Models\Transaction;
 use App\Models\TransactionActivity;
@@ -47,7 +47,7 @@ new class extends Component
         if ($transaction->status !== 'pending') {
             abort(403);
         }
-        $payout = MarketplacePayoutSetting::where('user_id', $provider->id)
+        $payout = PayoutSetting::where('user_id', $provider->id)
             ->where('marketplace_id', $marketplace->id)
             ->first();
         if (! $payout || ! $payout->stripe_account_id) {
