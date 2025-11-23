@@ -93,6 +93,6 @@ new class extends Component
             <flux:error name="apt_suite" />
         </flux:field>
 
-        <flux:button type="submit" variant="primary">Next</flux:button>
+        <flux:button type="submit" variant="primary">{{ $listing->status === 'draft' ? 'Next' : 'Save' }}</flux:button>
     </form>
 </div>

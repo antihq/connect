@@ -244,6 +244,6 @@ new class extends Component
             </div>
         </div>
 
-        <flux:button type="submit" variant="primary">Next</flux:button>
+        <flux:button type="submit" variant="primary">{{ $listing->status === 'draft' ? 'Next' : 'Save' }}</flux:button>
     </form>
 </div>

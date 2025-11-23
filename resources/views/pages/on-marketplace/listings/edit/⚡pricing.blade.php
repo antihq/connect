@@ -85,6 +85,6 @@ new class extends Component
             <flux:input wire:model="price" type="number" step="0.01" min="0" />
             <flux:error name="price" />
         </flux:field>
-        <flux:button type="submit" variant="primary">Next</flux:button>
+        <flux:button type="submit" variant="primary">{{ $listing->status === 'draft' ? 'Next' : 'Save' }}</flux:button>
     </form>
 </div>
