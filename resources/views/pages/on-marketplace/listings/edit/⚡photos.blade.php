@@ -27,29 +27,21 @@ new class extends Component
     public function savePhotos()
     {
         $this->validate();
-        $photos = $this->listing->photos ?? [];
         foreach ($this->newPhotos as $photo) {
             $path = $photo->store("listings/{$this->listing->id}", 'public');
-            $photos[] = 'storage/'.$path;
+            $this->listing->photos()->create(['path' => 'storage/'.$path]);
         }
-        $this->listing->update([
-            'photos' => $photos,
-        ]);
         $this->newPhotos = [];
         $this->listing->refresh();
     }
 
     public function removePhoto($index)
     {
-        $photos = $this->listing->photos ?? [];
-        if (isset($photos[$index])) {
-            $photoPath = str_replace('storage/', 'public/', $photos[$index]);
+        $photo = $this->listing->photos[$index] ?? null;
+        if ($photo) {
+            $photoPath = str_replace('storage/', 'public/', $photo->path);
             Storage::delete($photoPath);
-            Arr::forget($photos, $index);
-            $photos = array_values($photos); // reindex
-            $this->listing->update([
-                'photos' => $photos,
-            ]);
+            $photo->delete();
             $this->listing->refresh();
         }
     }
@@ -60,16 +52,26 @@ new class extends Component
         <flux:navbar.item :href="route('on-marketplace.listings.edit.details', [$marketplace, $listing])" wire:navigate>
             Details
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.location', [$marketplace, $listing])"
+            wire:navigate
+        >
             Location
         </flux:navbar.item>
         <flux:navbar.item :href="route('on-marketplace.listings.edit.pricing', [$marketplace, $listing])" wire:navigate>
             Pricing
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])" wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.availability', [$marketplace, $listing])"
+            wire:navigate
+        >
             Availability
         </flux:navbar.item>
-        <flux:navbar.item :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])" current wire:navigate>
+        <flux:navbar.item
+            :href="route('on-marketplace.listings.edit.photos', [$marketplace, $listing])"
+            current
+            wire:navigate
+        >
             Photos
         </flux:navbar.item>
     </flux:navbar>
@@ -81,13 +83,13 @@ new class extends Component
     <flux:spacer class="my-6" />
 
     <form class="space-y-6" wire:submit="savePhotos">
-        @unless (empty($listing->photos))
+        @unless ($listing->photos->isEmpty())
             <flux:field>
                 <flux:label>Current Photos</flux:label>
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    @foreach (($listing->photos ?? []) as $idx => $photo)
+                    @foreach ($listing->photos as $idx => $photo)
                         <div class="group relative">
-                            <img src="/{{ $photo }}" class="h-32 w-full rounded object-cover shadow" />
+                            <img src="/{{ $photo->path }}" class="h-32 w-full rounded object-cover shadow" />
                             <div class="absolute top-2 right-2 flex">
                                 <flux:button type="button" wire:click="removePhoto({{ $idx }})" size="xs">
                                     Remove

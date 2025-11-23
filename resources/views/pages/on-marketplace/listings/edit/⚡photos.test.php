@@ -11,9 +11,7 @@ it('uploads valid images', function () {
     Storage::fake('public');
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'photos' => [],
-    ]);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     $photo1 = UploadedFile::fake()->image('photo1.jpg');
     $photo2 = UploadedFile::fake()->image('photo2.png');
@@ -28,8 +26,8 @@ it('uploads valid images', function () {
 
     $listing->refresh();
     expect($listing->photos)->toHaveCount(2);
-    foreach ($listing->photos as $photoPath) {
-        $relativePath = str_replace('storage/', '', $photoPath);
+    foreach ($listing->photos as $photo) {
+        $relativePath = str_replace('storage/', '', $photo->path);
         Storage::disk('public')->assertExists($relativePath);
     }
 });
@@ -38,9 +36,7 @@ it('removes a photo after upload', function () {
     Storage::fake('public');
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'photos' => [],
-    ]);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     $photo1 = UploadedFile::fake()->image('photo1.jpg');
     $photo2 = UploadedFile::fake()->image('photo2.png');
@@ -72,9 +68,7 @@ it('fails if uploaded file is not an image', function () {
     Storage::fake('public');
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'photos' => [],
-    ]);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.photos', [
@@ -90,9 +84,7 @@ it('fails if uploaded image exceeds max size', function () {
     Storage::fake('public');
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'photos' => [],
-    ]);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.photos', [

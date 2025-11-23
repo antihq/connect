@@ -28,13 +28,9 @@ class Listing extends Model
         return $this->belongsTo(User::class);
     }
 
-    protected function casts(): array
+    public function photos()
     {
-        return [
-            'timezone' => 'string',
-            'price' => 'integer',
-            'photos' => 'array', // Store photo paths as array
-        ];
+        return $this->hasMany(Photo::class);
     }
 
     public function weeklyScheduleEntries()
@@ -54,7 +50,7 @@ class Listing extends Model
             && filled($this->address)
             && is_numeric($this->price) && $this->price > 0
             && $this->weeklyScheduleEntries()->count() > 0
-            && is_array($this->photos) && count($this->photos) > 0;
+            && $this->photos()->count() > 0;
     }
 
     /**
