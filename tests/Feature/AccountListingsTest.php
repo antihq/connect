@@ -19,8 +19,10 @@ it('can open a listing to the public', function () {
         'description' => 'Test desc',
         'address' => '123 Main St',
         'price' => 100,
-        'photos' => ['photo1.jpg'],
     ]);
+
+    // Add a photo
+    $listing->photos()->create(['path' => 'photos/photo1.jpg']);
 
     // Add weekly schedule entry
     \App\Models\WeeklyScheduleEntry::factory()->create([
@@ -53,8 +55,8 @@ it('cannot open a listing to the public if required fields are missing', functio
         'description' => '', // missing description
         'address' => '', // missing address
         'price' => null, // missing price
-        'photos' => [], // missing photos
     ]);
+    // No photos created (simulates missing photos)
     // No schedule entries created (simulates missing schedule)
 
     $this->actingAs($user);

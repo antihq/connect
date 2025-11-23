@@ -155,7 +155,6 @@ new class extends Component
                     <flux:checkbox wire:model="weekly_schedule" value="{{ $day }}" label="{{ ucfirst($day) }}" />
                 @endforeach
             </div>
-            <flux:error name="weekly_schedule" />
         </flux:field>
 
         <div class="space-y-3">

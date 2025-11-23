@@ -102,7 +102,7 @@ new class extends Component
         @endunless
 
         <flux:field>
-            <flux:label badge="Optional">Add Photos</flux:label>
+            <flux:label>Add Photos</flux:label>
             <flux:card class="space-y-6">
                 <flux:file-upload wire:model="newPhotos" label="Upload photos" multiple>
                     <x-slot name="badge">
