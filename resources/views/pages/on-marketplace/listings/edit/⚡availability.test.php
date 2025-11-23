@@ -133,3 +133,19 @@ it('updates listing availability with exceptions', function () {
     ])->toArray();
     expect($listingExceptions)->toBe($exceptions);
 });
+
+it('rejects invalid weekdays in weekly_schedule', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
+
+    $invalidSchedule = ['monday', 'funday', 'sunday'];
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.availability', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('weekly_schedule', $invalidSchedule)
+        ->call('update')
+        ->assertHasErrors(['weekly_schedule.1' => 'in']);
+});
