@@ -6,9 +6,6 @@ use App\Models\Transaction;
 use App\Models\User;
 use Livewire\Livewire;
 
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
-
 it('allows an authenticated user to book available dates', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
@@ -31,23 +28,22 @@ it('allows an authenticated user to book available dates', function () {
 
     $transaction = Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first();
     // When a transaction is created, it means the user has requested a booking and it is awaiting payment (status: 'pending').
-    assertDatabaseHas('transactions', [
-        'listing_id' => $listing->id,
-        'user_id' => $user->id,
-        'start_date' => $start.' 00:00:00',
-        'end_date' => $end.' 00:00:00',
-        'nights' => 3,
-        'price_per_night' => 100,
-        'total' => 300,
-        'status' => 'pending',
-    ]);
-    // When a transaction is created (booking requested, awaiting payment),
-    // a transaction activity of type 'created' is recorded to mark this event.
-    assertDatabaseHas('transaction_activities', [
-        'transaction_id' => $transaction->id,
-        'type' => 'created',
-        'user_id' => $user->id,
-    ]);
+    // Model assertions for transaction
+    expect($transaction)->not->toBeNull();
+    expect($transaction->listing_id)->toBe($listing->id);
+    expect($transaction->user_id)->toBe($user->id);
+    expect($transaction->start_date->toDateString())->toBe($start);
+    expect($transaction->end_date->toDateString())->toBe($end);
+    expect($transaction->nights)->toBe(3);
+    expect($transaction->price_per_night)->toEqual(100.00);
+    expect($transaction->total)->toEqual(300.00);
+    expect($transaction->status)->toBe('pending');
+    // Model assertions for transaction activity
+    $activity = $transaction->activities()->where('type', 'created')->where('user_id', $user->id)->first();
+    expect($activity)->not->toBeNull();
+    expect($activity->transaction_id)->toBe($transaction->id);
+    expect($activity->type)->toBe('created');
+    expect($activity->user_id)->toBe($user->id);
 });
 
 it('prevents booking if not logged in', function () {
@@ -64,11 +60,12 @@ it('prevents booking if not logged in', function () {
         ->call('requestToBook')
         ->assertSet('bookingError', 'You must be logged in to book.');
 
-    assertDatabaseMissing('transactions', [
-        'listing_id' => $listing->id,
-        'start_date' => $start,
-        'end_date' => $end,
-    ]);
+    // Model assertion: no transaction should exist for this listing and date range
+    $transaction = Transaction::where('listing_id', $listing->id)
+        ->where('start_date', $start)
+        ->where('end_date', $end)
+        ->first();
+    expect($transaction)->toBeNull();
 });
 
 it('prevents booking overlapping dates', function () {
@@ -97,11 +94,12 @@ it('prevents booking overlapping dates', function () {
         ->call('requestToBook')
         ->assertSet('bookingError', 'Selected dates are not available.');
 
-    assertDatabaseMissing('transactions', [
-        'listing_id' => $listing->id,
-        'start_date' => $overlapStart,
-        'end_date' => $overlapEnd,
-    ]);
+    // Model assertion: no transaction should exist for this listing and overlapping date range
+    $transaction = Transaction::where('listing_id', $listing->id)
+        ->where('start_date', $overlapStart)
+        ->where('end_date', $overlapEnd)
+        ->first();
+    expect($transaction)->toBeNull();
 });
 
 it('returns 404 for non-public listing status', function () {
