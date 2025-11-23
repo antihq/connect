@@ -19,21 +19,28 @@ new class extends Component
     public function mount()
     {
         $setting = Auth::user()->payoutSetting($this->marketplace);
-        if ($setting) {
-            $this->accountType = $setting->account_type;
-            $this->country = $setting->country;
-            // Always check latest onboarding status from Stripe if account exists
-            if ($setting->stripe_account_id) {
-                $stripeAccount = app(StripeConnectService::class)->getAccount($setting->stripe_account_id);
-                if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
-                    $this->onboarding_status = 'completed';
-                } else {
-                    $this->onboarding_status = 'in_progress';
-                }
-            } else {
-                $this->onboarding_status = $setting->onboarding_status;
-            }
+
+        if (! $setting) {
+            return;
         }
+
+        $this->accountType = $setting->account_type;
+        $this->country = $setting->country;
+
+        if (! $setting->stripe_account_id) {
+            $this->onboarding_status = $setting->onboarding_status;
+
+            return;
+        }
+
+        $stripeAccount = app(StripeConnectService::class)->getAccount($setting->stripe_account_id);
+        if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
+            $this->onboarding_status = 'completed';
+
+            return;
+        }
+
+        $this->onboarding_status = 'in_progress';
     }
 
     public function save()
@@ -109,11 +116,12 @@ new class extends Component
         $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
-        if ($setting) {
-            $setting->onboarding_status = 'completed';
-            $setting->save();
-            $this->onboarding_status = 'completed';
+        if (! $setting) {
+            return;
         }
+        $setting->onboarding_status = 'completed';
+        $setting->save();
+        $this->onboarding_status = 'completed';
     }
 
     public function redirectToStripeDashboard()
@@ -121,11 +129,12 @@ new class extends Component
         $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
-        if ($setting && $setting->stripe_account_id) {
-            $url = app(StripeConnectService::class)->createExpressDashboardLink($setting->stripe_account_id);
-
-            return redirect()->away($url);
+        if (! $setting || ! $setting->stripe_account_id) {
+            return;
         }
+        $url = app(StripeConnectService::class)->createExpressDashboardLink($setting->stripe_account_id);
+
+        return redirect()->away($url);
     }
 }
 ?>
