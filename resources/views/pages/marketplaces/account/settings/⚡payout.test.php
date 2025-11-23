@@ -114,7 +114,7 @@ it('cannot start onboarding without payout settings', function () {
             'marketplace' => $marketplace,
         ])
         ->call('startOnboarding')
-        ->assertHasErrors(['payout_settings' => 'required']);
+        ->assertStatus(400);
 });
 
 it('can start onboarding when payout settings are configured', function () {
