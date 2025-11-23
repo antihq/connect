@@ -26,6 +26,8 @@ new class extends Component
 
     public function mount()
     {
+        $this->authorize('update', $this->listing);
+
         $this->timezone = $this->listing->timezone ?? config('app.timezone', 'UTC');
 
         $this->weekly_schedule = $this->listing->weeklyScheduleEntries
@@ -74,8 +76,6 @@ new class extends Component
         ];
     }
 
-    public function hideAddExceptionForm() {}
-
     public function removeException($index)
     {
         unset($this->availability_exceptions[$index]);
@@ -95,10 +95,12 @@ new class extends Component
 
         $this->listing->syncAvailabilityExceptions($this->availability_exceptions);
 
-        return $this->redirectRoute('on-marketplace.listings.edit.photos', [
-            'marketplace' => $this->marketplace,
-            'listing' => $this->listing,
-        ], navigate: true);
+        if ($this->listing->status === 'draft') {
+            return $this->redirectRoute('on-marketplace.listings.edit.photos', [
+                'marketplace' => $this->marketplace,
+                'listing' => $this->listing,
+            ], navigate: true);
+        }
     }
 }; ?>
 

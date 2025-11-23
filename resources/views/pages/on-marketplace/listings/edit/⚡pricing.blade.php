@@ -15,7 +15,8 @@ new class extends Component
     public function mount()
     {
         $this->authorize('update', $this->listing);
-        $this->price = (string) $this->listing->price;
+
+        $this->price = (string) $this->listing->price_dollars;
     }
 
     public function rules(): array

@@ -124,3 +124,16 @@ it('rejects invalid weekdays in weekly_schedule', function () {
         ->call('update')
         ->assertHasErrors(['weekly_schedule.1' => 'in']);
 });
+
+it('forbids non-owners from updating availability', function () {
+    $marketplace = Marketplace::factory()->create();
+    $owner = User::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($owner)->create();
+    $otherUser = User::factory()->create();
+
+    Livewire::actingAs($otherUser)
+        ->test('pages::on-marketplace.listings.edit.availability', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])->assertForbidden();
+});
