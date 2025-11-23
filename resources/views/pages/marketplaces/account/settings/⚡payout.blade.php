@@ -16,9 +16,15 @@ new class extends Component
 
     public ?string $onboarding_status = null;
 
+    #[Computed]
+    public function user()
+    {
+        return Auth::user();
+    }
+
     public function mount()
     {
-        $setting = Auth::user()->payoutSetting($this->marketplace);
+        $setting = $this->user()->payoutSetting($this->marketplace);
 
         if (! $setting) {
             return;
@@ -34,6 +40,7 @@ new class extends Component
         }
 
         $stripeAccount = StripeConnectService::getAccount($setting->stripe_account_id);
+
         if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
             $this->onboarding_status = 'completed';
 
@@ -45,12 +52,11 @@ new class extends Component
 
     public function save()
     {
-        // Prevent changing accountType or country if already set
         $setting = PayoutSetting::where('user_id', Auth::id())
             ->where('marketplace_id', $this->marketplace->id)
             ->first();
+
         if ($setting && ($setting->account_type || $setting->country)) {
-            // Optionally, add a flash message or error here
             return;
         }
 
@@ -59,7 +65,7 @@ new class extends Component
             'country' => ['required', 'in:AU,AT,BE,BR,BG,CA,HR,CY,CZ,DK,EE,FI,FR,DE,GI,GR,HK,HU,IN,IE,IT,JP,LV,LI,LT,LU,MY,MT,MX,NL,NZ,NO,PL,PT,RO,SG,SK,SI,ES,SE,CH,TH,AE,GB,US'], // Stripe supported countries
         ]);
 
-        $user = Auth::user();
+        $user = $this->user();
         // Only create Stripe account if not already set
         if (! $setting || ! $setting->stripe_account_id) {
             $stripeAccount = StripeConnectService::createAccount([
