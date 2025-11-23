@@ -26,4 +26,14 @@ class ListingFactory extends Factory
             'status' => 'draft',
         ];
     }
+
+    /**
+     * Indicate that the listing is public.
+     */
+    public function public(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'public',
+        ]);
+    }
 }
