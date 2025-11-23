@@ -48,7 +48,7 @@ new class extends Component
             return;
         }
         $nights = $start->diffInDays($end);
-        $pricePerNight = $this->listing->price ?? 0;
+        $pricePerNight = $this->listing->priceDollars ?? 0;
         $total = $nights * $pricePerNight;
         $this->bookingBreakdown = [
             'nights' => $nights,
@@ -100,7 +100,7 @@ new class extends Component
 
             return;
         }
-        $pricePerNight = $this->listing->price ?? 0;
+        $pricePerNight = $this->listing->priceDollars ?? 0;
         $total = $nights * $pricePerNight;
         $transaction = $this->listing->transactions()->create([
             'marketplace_id' => $this->marketplace->id,
@@ -159,7 +159,7 @@ new class extends Component
 
         <flux:spacer class="my-2" />
 
-        <flux:heading size="xl" level="2">${{ number_format($listing->price, 2) }} per day</flux:heading>
+        <flux:heading size="xl" level="2">${{ number_format($listing->priceDollars, 2) }} per day</flux:heading>
 
         <flux:spacer class="my-6" />
 

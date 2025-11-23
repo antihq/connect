@@ -9,7 +9,7 @@ use Livewire\Livewire;
 it('allows an authenticated user to book available dates', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 100]);
+    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 10000]);
 
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
@@ -45,7 +45,7 @@ it('allows an authenticated user to book available dates', function () {
 
 it('prevents booking if not logged in', function () {
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 100]);
+    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 10000]);
     $start = now()->addDays(2)->toDateString();
     $end = now()->addDays(5)->toDateString();
 
@@ -67,14 +67,14 @@ it('prevents booking if not logged in', function () {
 it('prevents booking overlapping dates', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 100]);
+    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 10000]);
     $existing = Transaction::factory()->for($listing)->for($user)->create([
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
         'nights' => 3,
-        'price_per_night' => 100,
-        'total' => 300,
+        'price_per_night' => 100.00,
+        'total' => 300.00,
         'status' => 'pending',
     ]);
 
@@ -110,7 +110,7 @@ it('returns 404 for non-public listing status', function () {
 it('prevents booking with invalid dates', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 100]);
+    $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 10000]);
 
     $start = now()->addDays(5)->toDateString();
     $end = now()->addDays(2)->toDateString();
