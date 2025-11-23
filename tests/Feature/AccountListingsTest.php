@@ -19,8 +19,16 @@ it('can open a listing to the public', function () {
         'description' => 'Test desc',
         'address' => '123 Main St',
         'price' => 100,
-        'weekly_schedule' => ['monday' => ['09:00-17:00']],
         'photos' => ['photo1.jpg'],
+    ]);
+
+    // Add weekly schedule entry
+    \App\Models\WeeklyScheduleEntry::factory()->create([
+        'listing_id' => $listing->id,
+        'day' => 'monday',
+        'available' => true,
+        'start_time' => '09:00',
+        'end_time' => '17:00',
     ]);
 
     $this->actingAs($user);
@@ -45,9 +53,9 @@ it('cannot open a listing to the public if required fields are missing', functio
         'description' => '', // missing description
         'address' => '', // missing address
         'price' => null, // missing price
-        'weekly_schedule' => [], // missing schedule
         'photos' => [], // missing photos
     ]);
+    // No schedule entries created (simulates missing schedule)
 
     $this->actingAs($user);
 
