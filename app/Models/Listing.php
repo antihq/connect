@@ -82,4 +82,16 @@ class Listing extends Model
             $this->availabilityExceptions()->create($exception);
         });
     }
+
+    public function publish(): void
+    {
+        $this->status = 'public';
+        $this->save();
+    }
+
+    public function draft(): void
+    {
+        $this->status = 'draft';
+        $this->save();
+    }
 }

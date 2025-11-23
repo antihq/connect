@@ -38,6 +38,10 @@ new class extends Component
         $this->newPhotos = [];
 
         $this->listing->refresh();
+
+        if ($this->listing->status === 'draft' && $this->listing->isPublishable()) {
+            $this->listing->publish();
+        }
     }
 
     public function removePhoto(Photo $photo)
@@ -131,10 +135,7 @@ new class extends Component
                 </flux:file-upload>
                 <div class="flex flex-col gap-2">
                     @foreach ($newPhotos as $index => $photo)
-                        <flux:file-item
-                            :heading="$photo->getClientOriginalName()"
-                            :size="$photo->getSize()"
-                        >
+                        <flux:file-item :heading="$photo->getClientOriginalName()" :size="$photo->getSize()">
                             <x-slot name="actions">
                                 <flux:file-item.remove
                                     wire:click="removeNewPhoto({{ $index }})"
@@ -147,6 +148,8 @@ new class extends Component
             </flux:card>
         </flux:field>
 
-        <flux:button type="submit" variant="primary">Save</flux:button>
+        <flux:button type="submit" variant="primary">
+            {{ $listing->isPublishable() ? 'Save & Publish' : 'Save' }}
+        </flux:button>
     </form>
 </div>
