@@ -79,6 +79,7 @@ new class extends Component
         ]);
 
         $this->listing->syncWeeklySchedule($this->weekly_schedule);
+
         $this->listing->syncAvailabilityExceptions($this->availability_exceptions);
 
         return $this->redirectRoute('on-marketplace.listings.edit.photos', [
@@ -90,7 +91,7 @@ new class extends Component
     #[Computed]
     public function timezones(): array
     {
-        return \DateTimeZone::listIdentifiers();
+        return DateTimeZone::listIdentifiers();
     }
 }; ?>
 
@@ -129,10 +130,10 @@ new class extends Component
     <form class="space-y-6" wire:submit="update">
         <flux:field>
             <flux:label badge="Required">Time zone</flux:label>
-            <flux:select wire:model="timezone">
-                <option value="">Select a time zone</option>
+            <flux:select wire:model="timezone" placeholder="Select a time zone">
+                <flux:select.option value="">Select a time zone</flux:select.option>
                 @foreach ($this->timezones as $tz)
-                    <option value="{{ $tz }}">{{ $tz }}</option>
+                    <flux:select.option value="{{ $tz }}">{{ $tz }}</flux:select.option>
                 @endforeach
             </flux:select>
             <flux:error name="timezone" />
@@ -189,9 +190,9 @@ new class extends Component
             <flux:spacer class="mb-3" />
 
             <flux:card class="space-y-6">
-                <flux:select wire:model="new_exception.available" label="Availability status">
-                    <option value="1">Available</option>
-                    <option value="0">Not available</option>
+                <flux:select wire:model="new_exception.available" placeholder="Availability status">
+                    <flux:select.option value="1">Available</flux:select.option>
+                    <flux:select.option value="0">Not available</flux:select.option>
                 </flux:select>
                 <div class="grid grid-cols-2 gap-4">
                     <flux:date-picker wire:model="new_exception.start_date" label="Start date">
