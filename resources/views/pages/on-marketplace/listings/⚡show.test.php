@@ -57,7 +57,6 @@ it('prevents booking if not logged in', function () {
         ->call('requestToBook')
         ->assertRedirect(route('on-marketplace.sign-in', ['marketplace' => $marketplace->slug]));
 
-    // Model assertion: no transaction should exist for this listing and date range
     $transaction = Transaction::where('listing_id', $listing->id)
         ->where('start_date', $start)
         ->where('end_date', $end)
@@ -91,7 +90,6 @@ it('prevents booking overlapping dates', function () {
         ->call('requestToBook')
         ->assertSet('bookingError', 'Selected dates are not available.');
 
-    // Model assertion: no transaction should exist for this listing and overlapping date range
     $transaction = Transaction::where('listing_id', $listing->id)
         ->where('start_date', $overlapStart)
         ->where('end_date', $overlapEnd)
@@ -114,7 +112,6 @@ it('prevents booking with invalid dates', function () {
     $marketplace = Marketplace::factory()->create();
     $listing = Listing::factory()->public()->for($marketplace)->create(['price' => 100]);
 
-    // End before start
     $start = now()->addDays(5)->toDateString();
     $end = now()->addDays(2)->toDateString();
     Livewire::actingAs($user)
@@ -126,7 +123,6 @@ it('prevents booking with invalid dates', function () {
         ->call('requestToBook')
         ->assertSet('bookingError', 'End date must be after start date.');
 
-    // Missing dates
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.show', [
             'marketplace' => $marketplace,

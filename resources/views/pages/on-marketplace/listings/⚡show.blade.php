@@ -171,16 +171,7 @@ new class extends Component
         <flux:spacer class="my-12" />
 
         <form wire:submit="requestToBook">
-            <div class="flex flex-col gap-4 md:flex-row">
-                <flux:date-picker mode="range" wire:model.live="range">
-                    <x-slot name="trigger">
-                        <div class="flex flex-col gap-6 sm:flex-row sm:gap-4">
-                            <flux:date-picker.input label="Start date" />
-                            <flux:date-picker.input label="End date" />
-                        </div>
-                    </x-slot>
-                </flux:date-picker>
-            </div>
+            <flux:date-picker mode="range" wire:model.live="range" label="Select booking dates" />
             @if ($bookingBreakdown)
                 <flux:card class="mt-4 p-0">
                     <div class="px-4 py-4">
