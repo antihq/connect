@@ -2,20 +2,25 @@
 
 namespace App\Services;
 
+use Stripe\Account;
+use Stripe\AccountLink;
+use Stripe\Stripe;
+
 class StripeConnectService
 {
+    public function __construct()
+    {
+        Stripe::setApiKey(config('cashier.secret'));
+    }
+
     public function createAccount(array $params)
     {
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-
-        return \Stripe\Account::create($params);
+        return Account::create($params);
     }
 
     public function createAccountLink(string $accountId, string $refreshUrl, string $returnUrl)
     {
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-
-        return \Stripe\AccountLink::create([
+        return AccountLink::create([
             'account' => $accountId,
             'refresh_url' => $refreshUrl,
             'return_url' => $returnUrl,
@@ -25,15 +30,11 @@ class StripeConnectService
 
     public function getAccount(string $accountId)
     {
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-
-        return \Stripe\Account::retrieve($accountId);
+        return Account::retrieve($accountId);
     }
 
     public function createExpressDashboardLink(string $accountId)
     {
-        \Stripe\Stripe::setApiKey(config('cashier.secret'));
-
-        return \Stripe\Account::createLoginLink($accountId)->url;
+        return Account::createLoginLink($accountId)->url;
     }
 }
