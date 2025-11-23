@@ -2,7 +2,7 @@
 
 use App\Models\Marketplace;
 use App\Models\PayoutSetting;
-use App\Services\StripeConnectService;
+use Facades\App\Services\StripeConnectService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -33,7 +33,7 @@ new class extends Component
             return;
         }
 
-        $stripeAccount = app(StripeConnectService::class)->getAccount($setting->stripe_account_id);
+        $stripeAccount = StripeConnectService::getAccount($setting->stripe_account_id);
         if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
             $this->onboarding_status = 'completed';
 
@@ -62,7 +62,7 @@ new class extends Component
         $user = Auth::user();
         // Only create Stripe account if not already set
         if (! $setting || ! $setting->stripe_account_id) {
-            $stripeAccount = app(\App\Services\StripeConnectService::class)->createAccount([
+            $stripeAccount = StripeConnectService::createAccount([
                 'type' => 'express',
                 'country' => $this->country,
                 'email' => $user->email,
@@ -98,12 +98,11 @@ new class extends Component
             return;
         }
         $payoutUrl = route('on-marketplace.account.settings.payout', ['marketplace' => $this->marketplace]);
-        $accountLink = app(\App\Services\StripeConnectService::class)
-            ->createAccountLink(
-                $setting->stripe_account_id,
-                $payoutUrl,
-                $payoutUrl
-            );
+        $accountLink = StripeConnectService::createAccountLink(
+            $setting->stripe_account_id,
+            $payoutUrl,
+            $payoutUrl
+        );
         $setting->onboarding_status = 'in_progress';
         $setting->save();
         $this->onboarding_status = 'in_progress';
@@ -132,7 +131,7 @@ new class extends Component
         if (! $setting || ! $setting->stripe_account_id) {
             return;
         }
-        $url = app(StripeConnectService::class)->createExpressDashboardLink($setting->stripe_account_id);
+        $url = StripeConnectService::createExpressDashboardLink($setting->stripe_account_id);
 
         return redirect()->away($url);
     }
