@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component
@@ -78,7 +79,6 @@ new class extends Component
         ]);
 
         $this->listing->syncWeeklySchedule($this->weekly_schedule);
-
         $this->listing->syncAvailabilityExceptions($this->availability_exceptions);
 
         return $this->redirectRoute('on-marketplace.listings.edit.photos', [
@@ -87,7 +87,8 @@ new class extends Component
         ], navigate: true);
     }
 
-    public function getTimezonesProperty(): array
+    #[Computed]
+    public function timezones(): array
     {
         return \DateTimeZone::listIdentifiers();
     }
