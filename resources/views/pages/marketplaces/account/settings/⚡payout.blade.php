@@ -45,13 +45,15 @@ new class extends Component
 
         $stripeAccount = StripeConnectService::getAccount($this->setting->stripe_account_id);
 
-        if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
-            $this->onboarding_status = 'completed';
+        $latestStatus = ($stripeAccount->charges_enabled && $stripeAccount->details_submitted)
+            ? 'completed'
+            : 'in_progress';
 
-            return;
+        $this->onboarding_status = $latestStatus;
+
+        if ($this->setting->onboarding_status !== $latestStatus) {
+            $this->setting->update(['onboarding_status' => $latestStatus]);
         }
-
-        $this->onboarding_status = 'in_progress';
     }
 
     public function save()

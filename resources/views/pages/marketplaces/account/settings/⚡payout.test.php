@@ -287,3 +287,32 @@ it('uses payout settings route as refresh and return URLs without query strings'
         ])
         ->call('startOnboarding');
 });
+
+it('persists latest onboarding status from Stripe to the database on mount', function () {
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_test123',
+        'onboarding_status' => null,
+    ]);
+
+    $fakeStripeAccount = (object) [
+        'id' => 'acct_test123',
+        'charges_enabled' => true,
+        'details_submitted' => true,
+    ];
+    StripeConnectService::shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
+
+    Livewire::actingAs($user)
+        ->test('pages::marketplaces.account.settings.payout', [
+            'marketplace' => $marketplace,
+        ]);
+
+    $setting = PayoutSetting::where([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+    ])->first();
+    expect($setting->onboarding_status)->toBe('completed');
+});
