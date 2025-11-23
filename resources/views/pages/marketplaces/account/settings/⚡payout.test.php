@@ -4,6 +4,7 @@ use App\Models\Marketplace;
 use App\Models\Organization;
 use App\Models\PayoutSetting;
 use App\Models\User;
+use Facades\App\Services\StripeConnectService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -38,21 +39,16 @@ it('rejects invalid account type and country', function () {
 });
 
 it('persists payout settings for the correct user and marketplace', function () {
-    $organization = Organization::factory()->create();
     $user = User::factory()->create();
-    $organization->addMember($user);
-    $marketplace = Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->create();
 
-    // Mock StripeConnectService::createAccount
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -64,15 +60,14 @@ it('persists payout settings for the correct user and marketplace', function () 
         ->assertHasNoErrors();
 
     // Assert the settings are persisted for this user and marketplace
-    expect(\Illuminate\Support\Facades\DB::table('payout_settings')->where([
+    $setting = PayoutSetting::where([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
-        'account_type' => 'individual',
-        'country' => 'US',
-        'stripe_account_id' => 'acct_fake123',
-    ])->exists())->toBeTrue();
-
-    Mockery::close();
+    ])->first();
+    expect($setting)->not->toBeNull();
+    expect($setting->account_type)->toBe('individual');
+    expect($setting->country)->toBe('US');
+    expect($setting->stripe_account_id)->toBe('acct_fake123');
 });
 
 it('cannot change account type or country after they are set', function () {
@@ -83,14 +78,12 @@ it('cannot change account type or country after they are set', function () {
 
     // First call: mock StripeConnectService
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     // Set initial values
     Livewire::actingAs($user)
@@ -102,7 +95,7 @@ it('cannot change account type or country after they are set', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    Mockery::close(); // Clean up the mock
+    // Clean up the mock
 
     // Second call: do NOT mock Stripe, should not be called
     Livewire::actingAs($user)
@@ -115,13 +108,14 @@ it('cannot change account type or country after they are set', function () {
         ->assertHasNoErrors(); // No error, but values should not change
 
     // Assert the values did not change
-    $row = \Illuminate\Support\Facades\DB::table('payout_settings')->where([
+    $setting = PayoutSetting::where([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
     ])->first();
-    expect($row->account_type)->toBe('individual');
-    expect($row->country)->toBe('US');
-    expect($row->stripe_account_id)->toBe('acct_fake123');
+    expect($setting)->not->toBeNull();
+    expect($setting->account_type)->toBe('individual');
+    expect($setting->country)->toBe('US');
+    expect($setting->stripe_account_id)->toBe('acct_fake123');
 });
 
 // --- Onboarding TDD tests ---
@@ -149,15 +143,13 @@ it('can start onboarding when payout settings are configured', function () {
     // Mock StripeConnectService::createAccount and createAccountLink
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeAccountLink = (object) ['url' => 'https://connect.stripe.com/onboarding/test'];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    $mock->shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
     // Save payout settings
     Livewire::actingAs($user)
@@ -190,9 +182,8 @@ it('tracks onboarding state per user and marketplace', function () {
     $fakeStripeAccount1 = (object) ['id' => 'acct_fake1'];
     $fakeStripeAccount2 = (object) ['id' => 'acct_fake2'];
     $fakeAccountLink = (object) ['url' => 'https://connect.stripe.com/onboarding/test'];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount1, $fakeStripeAccount2);
-    $mock->shouldReceive('getAccount')->andReturn(
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount1, $fakeStripeAccount2);
+    StripeConnectService::shouldReceive('getAccount')->andReturn(
         (object) [
             'id' => 'acct_fake1',
             'charges_enabled' => false,
@@ -204,8 +195,7 @@ it('tracks onboarding state per user and marketplace', function () {
             'details_submitted' => false,
         ]
     );
-    $mock->shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
     // User 1 saves payout settings and starts onboarding
     Livewire::actingAs($user1)
@@ -249,15 +239,13 @@ it('can mark onboarding as completed', function () {
     // Mock StripeConnectService::createAccount and createAccountLink
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeAccountLink = (object) ['url' => 'https://connect.stripe.com/onboarding/test'];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    $mock->shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
     // Save payout settings
     Livewire::actingAs($user)
@@ -290,15 +278,13 @@ it('redirects to Stripe onboarding after account creation', function () {
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeOnboardingUrl = 'https://connect.stripe.com/onboarding/test';
     $fakeAccountLink = (object) ['url' => $fakeOnboardingUrl];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('createAccount')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
+    StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    $mock->shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
     // Save payout settings
     Livewire::actingAs($user)
@@ -318,7 +304,6 @@ it('redirects to Stripe onboarding after account creation', function () {
         ->call('startOnboarding')
         ->assertRedirect($fakeOnboardingUrl);
 
-    Mockery::close();
 });
 
 // --- Stripe onboarding status and URL TDD ---
@@ -346,10 +331,8 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
         'details_submitted' => true,
     ];
     $dashboardUrl = 'https://connect.stripe.com/express/test-dashboard';
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
-    $mock->shouldReceive('createExpressDashboardLink')->with('acct_test123')->andReturn($dashboardUrl);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
+    StripeConnectService::shouldReceive('createExpressDashboardLink')->with('acct_test123')->andReturn($dashboardUrl);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -358,7 +341,6 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
         ->call('redirectToStripeDashboard')
         ->assertRedirect($dashboardUrl);
 
-    Mockery::close();
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets completed if charges_enabled and details_submitted are true', function () {
@@ -383,9 +365,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
         'charges_enabled' => true,
         'details_submitted' => true,
     ];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -393,7 +373,6 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
         ])
         ->assertSet('onboarding_status', 'completed');
 
-    Mockery::close();
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets in_progress if not completed', function () {
@@ -418,9 +397,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
         'charges_enabled' => false,
         'details_submitted' => false,
     ];
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
+    StripeConnectService::shouldReceive('getAccount')->with('acct_test123')->andReturn($fakeStripeAccount);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -428,7 +405,6 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
         ])
         ->assertSet('onboarding_status', 'in_progress');
 
-    Mockery::close();
 });
 
 it('uses payout settings route as refresh and return URLs without query strings', function () {
@@ -447,13 +423,12 @@ it('uses payout settings route as refresh and return URLs without query strings'
         'onboarding_status' => null,
     ]);
 
-    $mock = Mockery::mock(\App\Services\StripeConnectService::class);
-    $mock->shouldReceive('getAccount')->andReturn((object) [
-        'id' => 'acct_test123',
+    StripeConnectService::shouldReceive('getAccount')->andReturn((object) [
+        'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
     ]);
-    $mock->shouldReceive('createAccountLink')
+    StripeConnectService::shouldReceive('createAccountLink')
         ->withArgs(function ($accountId, $refreshUrl, $returnUrl) use ($marketplace) {
             // The URLs should not contain a query string
             expect($refreshUrl)->toBe(route('on-marketplace.account.settings.payout', ['marketplace' => $marketplace]));
@@ -464,7 +439,6 @@ it('uses payout settings route as refresh and return URLs without query strings'
             return true;
         })
         ->andReturn((object) ['url' => 'https://connect.stripe.com/onboarding/test']);
-    app()->instance(\App\Services\StripeConnectService::class, $mock);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -472,5 +446,4 @@ it('uses payout settings route as refresh and return URLs without query strings'
         ])
         ->call('startOnboarding');
 
-    Mockery::close();
 });
