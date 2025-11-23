@@ -67,4 +67,15 @@ class Listing extends Model
             set: fn ($value) => ['price' => (int) round($value * 100)],
         );
     }
+
+    public function syncWeeklySchedule(array $days): void
+    {
+        $this->weeklyScheduleEntries()->delete();
+        collect(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])->each(function ($day) use ($days) {
+            $this->weeklyScheduleEntries()->create([
+                'day' => $day,
+                'available' => in_array($day, $days),
+            ]);
+        });
+    }
 }

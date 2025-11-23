@@ -26,19 +26,10 @@ new class extends Component
     {
         $this->timezone = $this->listing->timezone ?? config('app.timezone', 'UTC');
 
-        $this->weekly_schedule = [
-            'monday' => false,
-            'tuesday' => false,
-            'wednesday' => false,
-            'thursday' => false,
-            'friday' => false,
-            'saturday' => false,
-            'sunday' => false,
-        ];
-
-        $this->listing->weeklyScheduleEntries->each(function ($entry) {
-            $this->weekly_schedule[$entry->day] = $entry->available;
-        });
+        $this->weekly_schedule = $this->listing->weeklyScheduleEntries
+            ->where('available', true)
+            ->pluck('day')
+            ->toArray();
 
         $this->availability_exceptions = $this->listing->availability_exceptions ?? [];
     }
@@ -86,14 +77,7 @@ new class extends Component
             'timezone' => $this->timezone,
         ]);
 
-        // Sync weekly schedule entries
-        $this->listing->weeklyScheduleEntries()->delete();
-        collect($this->weekly_schedule)->each(function ($available, $day) {
-            $this->listing->weeklyScheduleEntries()->create([
-                'day' => $day,
-                'available' => $available,
-            ]);
-        });
+        $this->listing->syncWeeklySchedule($this->weekly_schedule);
 
         // Sync availability exceptions
         $this->listing->availabilityExceptions()->delete();
@@ -161,7 +145,7 @@ new class extends Component
             <flux:label badge="Required">Weekly default schedule</flux:label>
             <div class="grid grid-cols-2 gap-2">
                 @foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                    <flux:checkbox wire:model="weekly_schedule.{{ $day }}" label="{{ ucfirst($day) }}" />
+                    <flux:checkbox wire:model="weekly_schedule" value="{{ $day }}" label="{{ ucfirst($day) }}" />
                 @endforeach
             </div>
             <flux:error name="weekly_schedule" />

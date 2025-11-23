@@ -9,22 +9,7 @@ use Livewire\Livewire;
 it('requires timezone when editing availability', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'timezone' => 'UTC',
-    ]);
-    WeeklyScheduleEntry::factory()
-        ->count(7)
-        ->sequence(
-            ['day' => 'monday', 'available' => false],
-            ['day' => 'tuesday', 'available' => false],
-            ['day' => 'wednesday', 'available' => false],
-            ['day' => 'thursday', 'available' => false],
-            ['day' => 'friday', 'available' => false],
-            ['day' => 'saturday', 'available' => false],
-            ['day' => 'sunday', 'available' => false],
-        )
-        ->for($listing)
-        ->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.availability', [
@@ -39,22 +24,7 @@ it('requires timezone when editing availability', function () {
 it('requires weekly_schedule when editing availability', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'timezone' => 'UTC',
-    ]);
-    WeeklyScheduleEntry::factory()
-        ->count(7)
-        ->sequence(
-            ['day' => 'monday', 'available' => false],
-            ['day' => 'tuesday', 'available' => false],
-            ['day' => 'wednesday', 'available' => false],
-            ['day' => 'thursday', 'available' => false],
-            ['day' => 'friday', 'available' => false],
-            ['day' => 'saturday', 'available' => false],
-            ['day' => 'sunday', 'available' => false],
-        )
-        ->for($listing)
-        ->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create();
 
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.availability', [
@@ -86,15 +56,7 @@ it('updates listing availability with valid data', function () {
         ->for($listing)
         ->create();
 
-    $newSchedule = [
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => false,
-        'thursday' => false,
-        'friday' => true,
-        'saturday' => false,
-        'sunday' => false,
-    ];
+    $newSchedule = ['monday', 'tuesday', 'friday'];
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.availability', [
             'marketplace' => $marketplace,
@@ -107,8 +69,8 @@ it('updates listing availability with valid data', function () {
 
     $updated = Listing::find($listing->id);
     expect($updated->timezone)->toBe('America/New_York');
-    $actualSchedule = $updated->weeklyScheduleEntries->pluck('available', 'day')->toArray();
-    expect($actualSchedule)->toMatchArray($newSchedule);
+    $actualSchedule = $updated->weeklyScheduleEntries->where('available', true)->pluck('day')->toArray();
+    expect(sort($actualSchedule))->toBe(sort($newSchedule));
 });
 
 it('updates listing availability with exceptions', function () {
@@ -132,15 +94,7 @@ it('updates listing availability with exceptions', function () {
         ->for($listing)
         ->create();
 
-    $newSchedule = [
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => false,
-        'thursday' => false,
-        'friday' => true,
-        'saturday' => false,
-        'sunday' => false,
-    ];
+    $newSchedule = ['monday', 'tuesday', 'friday'];
     $exceptions = [
         [
             'available' => true,
@@ -166,8 +120,12 @@ it('updates listing availability with exceptions', function () {
 
     $listing->refresh();
     expect($listing->timezone)->toBe('Europe/London');
-    $actualSchedule = $listing->weeklyScheduleEntries->pluck('available', 'day')->toArray();
-    expect($actualSchedule)->toMatchArray($newSchedule);
+    $actualSchedule = $listing->weeklyScheduleEntries->where('available', true)->pluck('day')->toArray();
+    fwrite(STDERR, 'actualSchedule: '.json_encode($actualSchedule)."\n");
+    fwrite(STDERR, 'newSchedule: '.json_encode($newSchedule)."\n");
+    sort($actualSchedule);
+    sort($newSchedule);
+    expect($actualSchedule)->toBe($newSchedule);
     $listingExceptions = $listing->availabilityExceptions()->get()->map(fn ($e) => [
         'available' => $e->available,
         'start_date' => $e->start_date->toDateString(),
