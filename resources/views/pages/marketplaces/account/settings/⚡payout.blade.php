@@ -18,9 +18,7 @@ new class extends Component
 
     public function mount()
     {
-        $setting = PayoutSetting::where('user_id', Auth::id())
-            ->where('marketplace_id', $this->marketplace->id)
-            ->first();
+        $setting = Auth::user()->payoutSetting($this->marketplace);
         if ($setting) {
             $this->accountType = $setting->account_type;
             $this->country = $setting->country;
