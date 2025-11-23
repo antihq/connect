@@ -27,18 +27,15 @@ it('allows an authenticated user to book available dates', function () {
         ]));
 
     $transaction = Transaction::where('listing_id', $listing->id)->where('user_id', $user->id)->latest()->first();
-    // When a transaction is created, it means the user has requested a booking and it is awaiting payment (status: 'pending').
-    // Model assertions for transaction
+
     expect($transaction)->not->toBeNull();
-    expect($transaction->listing_id)->toBe($listing->id);
-    expect($transaction->user_id)->toBe($user->id);
     expect($transaction->start_date->toDateString())->toBe($start);
     expect($transaction->end_date->toDateString())->toBe($end);
     expect($transaction->nights)->toBe(3);
     expect($transaction->price_per_night)->toEqual(100.00);
     expect($transaction->total)->toEqual(300.00);
     expect($transaction->status)->toBe('pending');
-    // Model assertions for transaction activity
+
     $activity = $transaction->activities()->where('type', 'created')->where('user_id', $user->id)->first();
     expect($activity)->not->toBeNull();
     expect($activity->transaction_id)->toBe($transaction->id);
@@ -58,7 +55,7 @@ it('prevents booking if not logged in', function () {
     ])
         ->set('range', ['start' => $start, 'end' => $end])
         ->call('requestToBook')
-        ->assertSet('bookingError', 'You must be logged in to book.');
+        ->assertRedirect(route('on-marketplace.sign-in', ['marketplace' => $marketplace->slug]));
 
     // Model assertion: no transaction should exist for this listing and date range
     $transaction = Transaction::where('listing_id', $listing->id)

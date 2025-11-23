@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 new class extends Component
@@ -61,11 +62,12 @@ new class extends Component
         $this->bookingMessage = null;
         $this->bookingError = null;
 
-        if (! \Illuminate\Support\Facades\Auth::check()) {
-            $this->bookingError = 'You must be logged in to book.';
-
-            return;
+        if (! Auth::check()) {
+            return $this->redirectRoute('on-marketplace.sign-in', [
+                'marketplace' => $this->marketplace->slug,
+            ]);
         }
+
         if (! $this->range['start'] || ! $this->range['end']) {
             $this->bookingError = 'Please select both start and end dates.';
 
