@@ -76,25 +76,9 @@ it('updates listing availability with valid data', function () {
 it('updates listing availability with exceptions', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create([
-        'timezone' => 'UTC',
-    ]);
+    $listing = Listing::factory()->for($marketplace)->for($user)->create(['timezone' => 'UTC']);
+    WeeklyScheduleEntry::factory()->for($listing)->create(['day' => 'monday', 'available' => true]);
 
-    WeeklyScheduleEntry::factory()
-        ->count(7)
-        ->sequence(
-            ['day' => 'monday', 'available' => false],
-            ['day' => 'tuesday', 'available' => false],
-            ['day' => 'wednesday', 'available' => false],
-            ['day' => 'thursday', 'available' => false],
-            ['day' => 'friday', 'available' => false],
-            ['day' => 'saturday', 'available' => false],
-            ['day' => 'sunday', 'available' => false],
-        )
-        ->for($listing)
-        ->create();
-
-    $newSchedule = ['monday', 'tuesday', 'friday'];
     $exceptions = [
         [
             'available' => true,
@@ -112,16 +96,11 @@ it('updates listing availability with exceptions', function () {
             'marketplace' => $marketplace,
             'listing' => $listing,
         ])
-        ->set('timezone', 'Europe/London')
-        ->set('weekly_schedule', $newSchedule)
         ->set('availability_exceptions', $exceptions)
         ->call('update')
         ->assertHasNoErrors();
 
     $listing->refresh();
-    expect($listing->timezone)->toBe('Europe/London');
-    $actualSchedule = $listing->weeklyScheduleEntries->where('available', true)->pluck('day')->toArray();
-    expect(sort($actualSchedule))->toBe(sort($newSchedule));
     $listingExceptions = $listing->availabilityExceptions()->get()->map(fn ($e) => [
         'available' => $e->available,
         'start_date' => $e->start_date->toDateString(),

@@ -35,27 +35,10 @@ new class extends Component
         $this->availability_exceptions = $this->listing->availability_exceptions ?? [];
     }
 
-    public function addException()
+    #[Computed]
+    public function timezones(): array
     {
-        // Ensure available is boolean
-        $this->new_exception['available'] = (bool) $this->new_exception['available'];
-        $this->validate([
-            'new_exception.available' => ['required', 'boolean'],
-            'new_exception.start_date' => ['required', 'date'],
-            'new_exception.end_date' => ['required', 'date', 'after_or_equal:new_exception.start_date'],
-        ]);
-        $this->availability_exceptions[] = $this->new_exception;
-        $this->new_exception = [
-            'available' => true,
-            'start_date' => '',
-            'end_date' => '',
-        ];
-    }
-
-    public function removeException($index)
-    {
-        unset($this->availability_exceptions[$index]);
-        $this->availability_exceptions = array_values($this->availability_exceptions);
+        return DateTimeZone::listIdentifiers();
     }
 
     public function rules(): array
@@ -69,6 +52,32 @@ new class extends Component
             'availability_exceptions.*.start_date' => ['required', 'date'],
             'availability_exceptions.*.end_date' => ['required', 'date', 'after_or_equal:availability_exceptions.*.start_date'],
         ];
+    }
+
+    public function addException()
+    {
+        $this->new_exception['available'] = (bool) $this->new_exception['available'];
+
+        $this->validate([
+            'new_exception.available' => ['required', 'boolean'],
+            'new_exception.start_date' => ['required', 'date'],
+            'new_exception.end_date' => ['required', 'date', 'after_or_equal:new_exception.start_date'],
+        ]);
+
+        $this->availability_exceptions[] = $this->new_exception;
+
+        $this->new_exception = [
+            'available' => true,
+            'start_date' => '',
+            'end_date' => '',
+        ];
+    }
+
+    public function removeException($index)
+    {
+        unset($this->availability_exceptions[$index]);
+
+        $this->availability_exceptions = array_values($this->availability_exceptions);
     }
 
     public function update()
@@ -87,12 +96,6 @@ new class extends Component
             'marketplace' => $this->marketplace,
             'listing' => $this->listing,
         ], navigate: true);
-    }
-
-    #[Computed]
-    public function timezones(): array
-    {
-        return DateTimeZone::listIdentifiers();
     }
 }; ?>
 
