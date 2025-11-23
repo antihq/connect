@@ -7,7 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-it('uploads, validates, and removes listing photos', function () {
+it('uploads valid images', function () {
     Storage::fake('public');
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
@@ -15,27 +15,6 @@ it('uploads, validates, and removes listing photos', function () {
         'photos' => [],
     ]);
 
-    // Validation: must be image
-    Livewire::actingAs($user)
-        ->test('pages::on-marketplace.listings.edit.photos', [
-            'marketplace' => $marketplace,
-            'listing' => $listing,
-        ])
-        ->set('newPhotos', [UploadedFile::fake()->create('not-an-image.txt', 10)])
-        ->call('savePhotos')
-        ->assertHasErrors(['newPhotos.0' => 'image']);
-
-    // Validation: max size (2MB)
-    Livewire::actingAs($user)
-        ->test('pages::on-marketplace.listings.edit.photos', [
-            'marketplace' => $marketplace,
-            'listing' => $listing,
-        ])
-        ->set('newPhotos', [UploadedFile::fake()->image('large.jpg')->size(3000)])
-        ->call('savePhotos')
-        ->assertHasErrors(['newPhotos.0' => 'max']);
-
-    // Success: upload valid images
     $photo1 = UploadedFile::fake()->image('photo1.jpg');
     $photo2 = UploadedFile::fake()->image('photo2.png');
     Livewire::actingAs($user)
@@ -51,11 +30,32 @@ it('uploads, validates, and removes listing photos', function () {
     expect($listing->photos)->toHaveCount(2);
     foreach ($listing->photos as $photoPath) {
         $relativePath = str_replace('storage/', '', $photoPath);
-        fwrite(STDERR, "Checking: $relativePath\n");
         Storage::disk('public')->assertExists($relativePath);
     }
+});
 
-    // Remove a photo
+it('removes a photo after upload', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'photos' => [],
+    ]);
+
+    $photo1 = UploadedFile::fake()->image('photo1.jpg');
+    $photo2 = UploadedFile::fake()->image('photo2.png');
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.photos', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('newPhotos', [$photo1, $photo2])
+        ->call('savePhotos')
+        ->assertHasNoErrors();
+
+    $listing->refresh();
+    expect($listing->photos)->toHaveCount(2);
+
     Livewire::actingAs($user)
         ->test('pages::on-marketplace.listings.edit.photos', [
             'marketplace' => $marketplace,
@@ -66,4 +66,40 @@ it('uploads, validates, and removes listing photos', function () {
 
     $listing->refresh();
     expect($listing->photos)->toHaveCount(1);
+});
+
+it('fails if uploaded file is not an image', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'photos' => [],
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.photos', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('newPhotos', [UploadedFile::fake()->create('not-an-image.txt', 10)])
+        ->call('savePhotos')
+        ->assertHasErrors(['newPhotos.0' => 'image']);
+});
+
+it('fails if uploaded image exceeds max size', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
+    $listing = Listing::factory()->for($marketplace)->for($user)->create([
+        'photos' => [],
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('pages::on-marketplace.listings.edit.photos', [
+            'marketplace' => $marketplace,
+            'listing' => $listing,
+        ])
+        ->set('newPhotos', [UploadedFile::fake()->image('large.jpg')->size(3000)])
+        ->call('savePhotos')
+        ->assertHasErrors(['newPhotos.0' => 'max']);
 });
