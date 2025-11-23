@@ -178,6 +178,12 @@ it('can mark onboarding as completed', function () {
 it('redirects to Stripe onboarding after account creation', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeOnboardingUrl = 'https://connect.stripe.com/onboarding/test';
@@ -189,13 +195,6 @@ it('redirects to Stripe onboarding after account creation', function () {
         'details_submitted' => false,
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-
-    PayoutSetting::factory()->for($user)->for($marketplace)->create([
-        'account_type' => 'individual',
-        'country' => 'US',
-        'stripe_account_id' => 'acct_fake123',
-        'onboarding_status' => null,
-    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -232,7 +231,6 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
         ])
         ->call('redirectToStripeDashboard')
         ->assertRedirect($dashboardUrl);
-
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets completed if charges_enabled and details_submitted are true', function () {
@@ -258,7 +256,6 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
             'marketplace' => $marketplace,
         ])
         ->assertSet('onboarding_status', 'completed');
-
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets in_progress if not completed', function () {
