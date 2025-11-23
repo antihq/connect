@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Marketplace;
+use App\Models\Organization;
+use App\Models\PayoutSetting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -8,26 +10,22 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 it('requires account type and country', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
-    $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
             'marketplace' => $marketplace,
         ])
-        ->set('accountType', null)
-        ->set('country', null)
+        ->set('accountType', '')
+        ->set('country', '')
         ->call('save')
         ->assertHasErrors(['accountType' => 'required', 'country' => 'required']);
 });
 
 it('rejects invalid account type and country', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
-    $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $user = User::factory()->create();
+    $marketplace = Marketplace::factory()->create();
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -40,10 +38,10 @@ it('rejects invalid account type and country', function () {
 });
 
 it('persists payout settings for the correct user and marketplace', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Mock StripeConnectService::createAccount
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
@@ -78,10 +76,10 @@ it('persists payout settings for the correct user and marketplace', function () 
 });
 
 it('cannot change account type or country after they are set', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // First call: mock StripeConnectService
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
@@ -129,10 +127,10 @@ it('cannot change account type or country after they are set', function () {
 // --- Onboarding TDD tests ---
 
 it('cannot start onboarding without payout settings', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -143,10 +141,10 @@ it('cannot start onboarding without payout settings', function () {
 });
 
 it('can start onboarding when payout settings are configured', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Mock StripeConnectService::createAccount and createAccountLink
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
@@ -181,12 +179,12 @@ it('can start onboarding when payout settings are configured', function () {
 });
 
 it('tracks onboarding state per user and marketplace', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user1 = \App\Models\User::factory()->create();
-    $user2 = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
     $organization->addMember($user1);
     $organization->addMember($user2);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Mock StripeConnectService::createAccount and createAccountLink for both users
     $fakeStripeAccount1 = (object) ['id' => 'acct_fake1'];
@@ -243,10 +241,10 @@ it('tracks onboarding state per user and marketplace', function () {
 });
 
 it('can mark onboarding as completed', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Mock StripeConnectService::createAccount and createAccountLink
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
@@ -283,10 +281,10 @@ it('can mark onboarding as completed', function () {
 });
 
 it('redirects to Stripe onboarding after account creation', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Mock StripeConnectService::createAccount and createAccountLink
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
@@ -326,13 +324,13 @@ it('redirects to Stripe onboarding after account creation', function () {
 // --- Stripe onboarding status and URL TDD ---
 
 it('redirects to Stripe Express dashboard after onboarding is complete', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id and completed onboarding
-    $setting = \App\Models\PayoutSetting::create([
+    $setting = PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -364,13 +362,13 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets completed if charges_enabled and details_submitted are true', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\PayoutSetting::create([
+    $setting = PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -399,13 +397,13 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
 });
 
 it('fetches latest onboarding status from Stripe on mount and sets in_progress if not completed', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\PayoutSetting::create([
+    $setting = PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -434,13 +432,13 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
 });
 
 it('uses payout settings route as refresh and return URLs without query strings', function () {
-    $organization = \App\Models\Organization::factory()->create();
-    $user = \App\Models\User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create();
     $organization->addMember($user);
-    $marketplace = \App\Models\Marketplace::factory()->for($organization)->create();
+    $marketplace = Marketplace::factory()->for($organization)->create();
 
     // Save payout settings with a Stripe account id
-    $setting = \App\Models\PayoutSetting::create([
+    $setting = PayoutSetting::create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
