@@ -27,8 +27,7 @@ it('uploads valid images', function () {
     $listing->refresh();
     expect($listing->photos)->toHaveCount(2);
     $listing->photos->each(function ($photo) {
-        $relativePath = str_replace('storage/', '', $photo->path);
-        Storage::disk('public')->assertExists($relativePath);
+        Storage::disk('public')->assertExists($photo->path);
     });
 });
 

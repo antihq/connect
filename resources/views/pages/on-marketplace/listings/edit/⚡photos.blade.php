@@ -30,9 +30,9 @@ new class extends Component
         $this->validate();
 
         foreach ($this->newPhotos as $photo) {
-            $path = $photo->storePublicly("listings/{$this->listing->id}", 'public');
-
-            $this->listing->photos()->create(['path' => 'storage/'.$path]);
+            $this->listing->photos()->create([
+                'path' => $photo->storePublicly("listings/{$this->listing->id}", 'public'),
+            ]);
         }
 
         $this->newPhotos = [];
@@ -44,9 +44,7 @@ new class extends Component
     {
         abort_unless($photo->listing->is($this->listing), 403);
 
-        $photoPath = str_replace('storage/', 'public/', $photo->path);
-
-        Storage::delete($photoPath);
+        Storage::delete($photo->path);
 
         $photo->delete();
 
