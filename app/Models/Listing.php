@@ -78,4 +78,12 @@ class Listing extends Model
             ]);
         });
     }
+
+    public function syncAvailabilityExceptions(array $exceptions): void
+    {
+        $this->availabilityExceptions()->delete();
+        collect($exceptions)->each(function ($exception) {
+            $this->availabilityExceptions()->create($exception);
+        });
+    }
 }

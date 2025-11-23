@@ -79,11 +79,7 @@ new class extends Component
 
         $this->listing->syncWeeklySchedule($this->weekly_schedule);
 
-        // Sync availability exceptions
-        $this->listing->availabilityExceptions()->delete();
-        collect($this->availability_exceptions)->each(function ($exception) {
-            $this->listing->availabilityExceptions()->create($exception);
-        });
+        $this->listing->syncAvailabilityExceptions($this->availability_exceptions);
 
         return $this->redirectRoute('on-marketplace.listings.edit.photos', [
             'marketplace' => $this->marketplace,
