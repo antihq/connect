@@ -37,9 +37,7 @@ new class extends Component
 
     public function removePhoto(\App\Models\Photo $photo)
     {
-        if ($photo->listing_id !== $this->listing->id) {
-            abort(403, 'Unauthorized photo removal.');
-        }
+        abort_unless($photo->listing->is($this->listing), 403, 'Unauthorized photo removal.');
         $photoPath = str_replace('storage/', 'public/', $photo->path);
         Storage::delete($photoPath);
         $photo->delete();
