@@ -35,15 +35,12 @@ new class extends Component
         $this->listing->refresh();
     }
 
-    public function removePhoto($photoId)
+    public function removePhoto(\App\Models\Photo $photo)
     {
-        $photo = $this->listing->photos()->find($photoId);
-        if ($photo) {
-            $photoPath = str_replace('storage/', 'public/', $photo->path);
-            Storage::delete($photoPath);
-            $photo->delete();
-            $this->listing->refresh();
-        }
+        $photoPath = str_replace('storage/', 'public/', $photo->path);
+        Storage::delete($photoPath);
+        $photo->delete();
+        $this->listing->refresh();
     }
 }; ?>
 
