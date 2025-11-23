@@ -47,7 +47,7 @@ new class extends Component
 
     public function mount()
     {
-        if ($this->listing->marketplace_id !== $this->marketplace->id) {
+        if ($this->listing->marketplace_id !== $this->marketplace->id || $this->listing->status !== 'public') {
             abort(404);
         }
     }
@@ -214,9 +214,7 @@ new class extends Component
                             </flux:text>
                         </div>
                         <div class="text-right">
-                            <flux:text variant="strong">
-                                ${{ number_format($bookingBreakdown['total'], 2) }}
-                            </flux:text>
+                            <flux:text variant="strong">${{ number_format($bookingBreakdown['total'], 2) }}</flux:text>
                         </div>
                     </div>
                     <flux:separator variant="subtle" />
@@ -233,7 +231,9 @@ new class extends Component
                 </flux:card>
             @endif
 
-            <flux:button type="submit" variant="primary" class="mt-4 w-full" :disabled="! $bookingBreakdown">Request to Book</flux:button>
+            <flux:button type="submit" variant="primary" class="mt-4 w-full" :disabled="! $bookingBreakdown">
+                Request to Book
+            </flux:button>
 
             @if ($bookingMessage)
                 <flux:text class="mt-4 text-green-600">{{ $bookingMessage }}</flux:text>
