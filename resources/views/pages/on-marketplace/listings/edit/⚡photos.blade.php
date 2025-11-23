@@ -25,6 +25,11 @@ new class extends Component
         ];
     }
 
+    public function mount()
+    {
+        $this->authorize('update', $this->listing);
+    }
+
     public function savePhotos()
     {
         $this->validate();
