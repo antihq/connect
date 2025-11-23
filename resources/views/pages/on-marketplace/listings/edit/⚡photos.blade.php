@@ -133,7 +133,6 @@ new class extends Component
                     @foreach ($newPhotos as $index => $photo)
                         <flux:file-item
                             :heading="$photo->getClientOriginalName()"
-                            :image="$photo->temporaryUrl()"
                             :size="$photo->getSize()"
                         >
                             <x-slot name="actions">

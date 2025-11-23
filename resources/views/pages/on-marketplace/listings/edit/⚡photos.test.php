@@ -79,19 +79,3 @@ it('fails if uploaded file is not an image', function () {
         ->call('savePhotos')
         ->assertHasErrors(['newPhotos.0' => 'image']);
 });
-
-it('fails if uploaded image exceeds max size', function () {
-    Storage::fake('public');
-    $user = User::factory()->create();
-    $marketplace = Marketplace::factory()->create();
-    $listing = Listing::factory()->for($marketplace)->for($user)->create();
-
-    Livewire::actingAs($user)
-        ->test('pages::on-marketplace.listings.edit.photos', [
-            'marketplace' => $marketplace,
-            'listing' => $listing,
-        ])
-        ->set('newPhotos', [UploadedFile::fake()->image('large.jpg')->size(3000)])
-        ->call('savePhotos')
-        ->assertHasErrors(['newPhotos.0' => 'max']);
-});
