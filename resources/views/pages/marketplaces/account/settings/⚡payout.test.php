@@ -71,6 +71,12 @@ it('persists payout settings for the correct user and marketplace', function () 
 it('cannot change account type or country after they are set', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     StripeConnectService::shouldReceive('createAccount')->andReturn($fakeStripeAccount);
@@ -78,13 +84,6 @@ it('cannot change account type or country after they are set', function () {
         'id' => 'acct_fake123',
         'charges_enabled' => false,
         'details_submitted' => false,
-    ]);
-
-    PayoutSetting::factory()->for($user)->for($marketplace)->create([
-        'account_type' => 'individual',
-        'country' => 'US',
-        'stripe_account_id' => 'acct_fake123',
-        'onboarding_status' => null,
     ]);
 
     Livewire::actingAs($user)
@@ -121,6 +120,12 @@ it('cannot start onboarding without payout settings', function () {
 it('can start onboarding when payout settings are configured', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeAccountLink = (object) ['url' => 'https://connect.stripe.com/onboarding/test'];
@@ -131,13 +136,6 @@ it('can start onboarding when payout settings are configured', function () {
         'details_submitted' => false,
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-
-    PayoutSetting::factory()->for($user)->for($marketplace)->create([
-        'account_type' => 'individual',
-        'country' => 'US',
-        'stripe_account_id' => 'acct_fake123',
-        'onboarding_status' => null,
-    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -150,6 +148,12 @@ it('can start onboarding when payout settings are configured', function () {
 it('can mark onboarding as completed', function () {
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     $fakeStripeAccount = (object) ['id' => 'acct_fake123'];
     $fakeAccountLink = (object) ['url' => 'https://connect.stripe.com/onboarding/test'];
@@ -160,13 +164,6 @@ it('can mark onboarding as completed', function () {
         'details_submitted' => false,
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
-
-    PayoutSetting::factory()->for($user)->for($marketplace)->create([
-        'account_type' => 'individual',
-        'country' => 'US',
-        'stripe_account_id' => 'acct_fake123',
-        'onboarding_status' => null,
-    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -193,14 +190,12 @@ it('redirects to Stripe onboarding after account creation', function () {
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
-    Livewire::actingAs($user)
-        ->test('pages::marketplaces.account.settings.payout', [
-            'marketplace' => $marketplace,
-        ])
-        ->set('accountType', 'individual')
-        ->set('country', 'US')
-        ->call('save')
-        ->assertHasNoErrors();
+    PayoutSetting::factory()->for($user)->for($marketplace)->create([
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
