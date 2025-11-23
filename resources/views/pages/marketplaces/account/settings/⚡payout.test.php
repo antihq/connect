@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Marketplace;
-use App\Models\Organization;
 use App\Models\PayoutSetting;
 use App\Models\User;
 use Facades\App\Services\StripeConnectService;
@@ -222,7 +221,7 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::create([
+    $setting = PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -253,7 +252,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::create([
+    $setting = PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -281,7 +280,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::create([
+    $setting = PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -308,7 +307,7 @@ it('uses payout settings route as refresh and return URLs without query strings'
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::create([
+    $setting = PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
