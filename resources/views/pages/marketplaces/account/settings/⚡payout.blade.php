@@ -2,8 +2,10 @@
 
 use App\Models\Marketplace;
 use App\Models\PayoutSetting;
+use App\Models\User;
 use Facades\App\Services\StripeConnectService;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component
@@ -16,30 +18,32 @@ new class extends Component
 
     public ?string $onboarding_status = null;
 
+    public ?PayoutSetting $setting = null;
+
     #[Computed]
-    public function user()
+    public function user(): User
     {
         return Auth::user();
     }
 
     public function mount()
     {
-        $setting = $this->user()->payoutSetting($this->marketplace);
+        $this->setting = $this->user()->payoutSetting($this->marketplace);
 
-        if (! $setting) {
+        if (! $this->setting) {
             return;
         }
 
-        $this->accountType = $setting->account_type;
-        $this->country = $setting->country;
+        $this->accountType = $this->setting->account_type;
+        $this->country = $this->setting->country;
 
-        if (! $setting->stripe_account_id) {
-            $this->onboarding_status = $setting->onboarding_status;
+        if (! $this->setting->stripe_account_id) {
+            $this->onboarding_status = $this->setting->onboarding_status;
 
             return;
         }
 
-        $stripeAccount = StripeConnectService::getAccount($setting->stripe_account_id);
+        $stripeAccount = StripeConnectService::getAccount($this->setting->stripe_account_id);
 
         if ($stripeAccount->charges_enabled && $stripeAccount->details_submitted) {
             $this->onboarding_status = 'completed';
@@ -52,92 +56,70 @@ new class extends Component
 
     public function save()
     {
-        $setting = PayoutSetting::where('user_id', Auth::id())
-            ->where('marketplace_id', $this->marketplace->id)
-            ->first();
-
-        if ($setting && ($setting->account_type || $setting->country)) {
-            return;
-        }
+        abort_if($this->setting, 400);
 
         $this->validate([
             'accountType' => ['required', 'in:individual,company'],
             'country' => ['required', 'in:AU,AT,BE,BR,BG,CA,HR,CY,CZ,DK,EE,FI,FR,DE,GI,GR,HK,HU,IN,IE,IT,JP,LV,LI,LT,LU,MY,MT,MX,NL,NZ,NO,PL,PT,RO,SG,SK,SI,ES,SE,CH,TH,AE,GB,US'], // Stripe supported countries
         ]);
 
-        $user = $this->user();
-        // Only create Stripe account if not already set
-        if (! $setting || ! $setting->stripe_account_id) {
-            $stripeAccount = StripeConnectService::createAccount([
-                'type' => 'express',
+        $stripeAccount = StripeConnectService::createAccount([
+            'type' => 'express',
+            'country' => $this->country,
+            'email' => $this->user->email,
+            'business_type' => $this->accountType,
+        ]);
+
+        PayoutSetting::updateOrCreate(
+            [
+                'user_id' => $this->user->id,
+                'marketplace_id' => $this->marketplace->id,
+            ],
+            [
+                'account_type' => $this->accountType,
                 'country' => $this->country,
-                'email' => $user->email,
-                'business_type' => $this->accountType,
-            ]);
-            PayoutSetting::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'marketplace_id' => $this->marketplace->id,
-                ],
-                [
-                    'account_type' => $this->accountType,
-                    'country' => $this->country,
-                    'stripe_account_id' => $stripeAccount->id,
-                ]
-            );
-        }
+                'stripe_account_id' => $stripeAccount->id,
+            ]
+        );
     }
 
     public function startOnboarding()
     {
-        $setting = PayoutSetting::where('user_id', Auth::id())
-            ->where('marketplace_id', $this->marketplace->id)
-            ->first();
-        if (! $setting) {
-            $this->addError('payout_settings', 'required');
+        abort_unless($this->setting?->stripe_account_id, 400);
 
-            return;
-        }
-        if (! $setting->stripe_account_id) {
-            $this->addError('payout_settings', 'required');
-
-            return;
-        }
         $payoutUrl = route('on-marketplace.account.settings.payout', ['marketplace' => $this->marketplace]);
+
         $accountLink = StripeConnectService::createAccountLink(
-            $setting->stripe_account_id,
+            $this->setting->stripe_account_id,
             $payoutUrl,
             $payoutUrl
         );
-        $setting->onboarding_status = 'in_progress';
-        $setting->save();
+
+        $this->setting->update([
+            'onboarding_status' => 'in_progress',
+        ]);
+
         $this->onboarding_status = 'in_progress';
 
-        return redirect($accountLink->url);
+        return redirect()->away($accountLink->url);
     }
 
     public function completeOnboarding()
     {
-        $setting = PayoutSetting::where('user_id', Auth::id())
-            ->where('marketplace_id', $this->marketplace->id)
-            ->first();
-        if (! $setting) {
-            return;
-        }
-        $setting->onboarding_status = 'completed';
-        $setting->save();
+        abort_unless($this->setting?->stripe_account_id, 400);
+
+        $this->setting->update([
+            'onboarding_status' => 'completed',
+        ]);
+
         $this->onboarding_status = 'completed';
     }
 
     public function redirectToStripeDashboard()
     {
-        $setting = PayoutSetting::where('user_id', Auth::id())
-            ->where('marketplace_id', $this->marketplace->id)
-            ->first();
-        if (! $setting || ! $setting->stripe_account_id) {
-            return;
-        }
-        $url = StripeConnectService::createExpressDashboardLink($setting->stripe_account_id);
+        abort_unless($this->setting?->stripe_account_id, 400);
+
+        $url = StripeConnectService::createExpressDashboardLink($this->setting->stripe_account_id);
 
         return redirect()->away($url);
     }
