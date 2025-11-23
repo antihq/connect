@@ -72,7 +72,7 @@ new class extends Component
             'business_type' => $this->accountType,
         ]);
 
-        PayoutSetting::updateOrCreate(
+        $setting = PayoutSetting::updateOrCreate(
             [
                 'user_id' => $this->user->id,
                 'marketplace_id' => $this->marketplace->id,
@@ -83,6 +83,8 @@ new class extends Component
                 'stripe_account_id' => $stripeAccount->id,
             ]
         );
+
+        $this->setting = $setting;
     }
 
     public function startOnboarding()
@@ -121,14 +123,12 @@ new class extends Component
     <flux:heading level="1" size="xl">Payout Settings</flux:heading>
     <flux:spacer class="my-6" />
 
-    @if ($accountType === '' || $country === '')
+    @if (! $this->setting)
         <flux:callout variant="warning" icon="exclamation-triangle" class="mb-6">
             <flux:callout.heading>Set up payout settings to receive payments</flux:callout.heading>
             <flux:callout.text>You must set up your payout settings before you can receive payments.</flux:callout.text>
         </flux:callout>
-    @endif
-
-    @if ($accountType !== '' && $country !== '')
+    @else
         @if ($onboarding_status === 'completed')
             <flux:callout variant="secondary" icon="check-circle" class="mb-6">
                 <flux:callout.heading>Stripe onboarding completed</flux:callout.heading>
@@ -162,85 +162,83 @@ new class extends Component
         @endif
     @endif
 
-    <form class="space-y-6" wire:submit="save">
-        {{-- Stripe onboarding callout is shown above when accountType and country are set --}}
-        <flux:field>
-            @if ($accountType !== '')
-                <flux:input
-                    label="Account Type"
-                    readonly
-                    variant="filled"
-                    :value="$accountType === 'individual' ? 'Individual' : 'Company'"
-                />
-            @else
+    @if ($this->setting)
+        <div class="space-y-6">
+            <flux:input
+                label="Account Type"
+                readonly
+                variant="filled"
+                :value="$accountType === 'individual' ? 'Individual' : 'Company'"
+            />
+
+            <flux:input
+                label="Country"
+                readonly
+                variant="filled"
+                :value="
+                match($country) {
+                    'AU' => 'Australia',
+                    'AT' => 'Austria',
+                    'BE' => 'Belgium',
+                    'BR' => 'Brazil',
+                    'BG' => 'Bulgaria',
+                    'CA' => 'Canada',
+                    'HR' => 'Croatia',
+                    'CY' => 'Cyprus',
+                    'CZ' => 'Czech Republic',
+                    'DK' => 'Denmark',
+                    'EE' => 'Estonia',
+                    'FI' => 'Finland',
+                    'FR' => 'France',
+                    'DE' => 'Germany',
+                    'GI' => 'Gibraltar',
+                    'GR' => 'Greece',
+                    'HK' => 'Hong Kong',
+                    'HU' => 'Hungary',
+                    'IN' => 'India',
+                    'IE' => 'Ireland',
+                    'IT' => 'Italy',
+                    'JP' => 'Japan',
+                    'LV' => 'Latvia',
+                    'LI' => 'Liechtenstein',
+                    'LT' => 'Lithuania',
+                    'LU' => 'Luxembourg',
+                    'MY' => 'Malaysia',
+                    'MT' => 'Malta',
+                    'MX' => 'Mexico',
+                    'NL' => 'Netherlands',
+                    'NZ' => 'New Zealand',
+                    'NO' => 'Norway',
+                    'PL' => 'Poland',
+                    'PT' => 'Portugal',
+                    'RO' => 'Romania',
+                    'SG' => 'Singapore',
+                    'SK' => 'Slovakia',
+                    'SI' => 'Slovenia',
+                    'ES' => 'Spain',
+                    'SE' => 'Sweden',
+                    'CH' => 'Switzerland',
+                    'TH' => 'Thailand',
+                    'AE' => 'United Arab Emirates',
+                    'GB' => 'United Kingdom',
+                    'US' => 'United States',
+                    default => $country
+                }"
+            />
+        </div>
+    @else
+        <form class="space-y-6" wire:submit="save">
+            <flux:field>
                 <flux:label badge="Required">Account Type</flux:label>
                 <flux:select wire:model="accountType">
                     <flux:select.option value="">Select account type</flux:select.option>
                     <flux:select.option value="individual">Individual</flux:select.option>
                     <flux:select.option value="company">Company</flux:select.option>
                 </flux:select>
-            @endif
+                <flux:error name="accountType" />
+            </flux:field>
 
-            <flux:error name="accountType" />
-        </flux:field>
-
-        <flux:field>
-            @if ($country !== '')
-                <flux:input
-                    label="Country"
-                    readonly
-                    variant="filled"
-                    :value="
-                    match($country) {
-                        'AU' => 'Australia',
-                        'AT' => 'Austria',
-                        'BE' => 'Belgium',
-                        'BR' => 'Brazil',
-                        'BG' => 'Bulgaria',
-                        'CA' => 'Canada',
-                        'HR' => 'Croatia',
-                        'CY' => 'Cyprus',
-                        'CZ' => 'Czech Republic',
-                        'DK' => 'Denmark',
-                        'EE' => 'Estonia',
-                        'FI' => 'Finland',
-                        'FR' => 'France',
-                        'DE' => 'Germany',
-                        'GI' => 'Gibraltar',
-                        'GR' => 'Greece',
-                        'HK' => 'Hong Kong',
-                        'HU' => 'Hungary',
-                        'IN' => 'India',
-                        'IE' => 'Ireland',
-                        'IT' => 'Italy',
-                        'JP' => 'Japan',
-                        'LV' => 'Latvia',
-                        'LI' => 'Liechtenstein',
-                        'LT' => 'Lithuania',
-                        'LU' => 'Luxembourg',
-                        'MY' => 'Malaysia',
-                        'MT' => 'Malta',
-                        'MX' => 'Mexico',
-                        'NL' => 'Netherlands',
-                        'NZ' => 'New Zealand',
-                        'NO' => 'Norway',
-                        'PL' => 'Poland',
-                        'PT' => 'Portugal',
-                        'RO' => 'Romania',
-                        'SG' => 'Singapore',
-                        'SK' => 'Slovakia',
-                        'SI' => 'Slovenia',
-                        'ES' => 'Spain',
-                        'SE' => 'Sweden',
-                        'CH' => 'Switzerland',
-                        'TH' => 'Thailand',
-                        'AE' => 'United Arab Emirates',
-                        'GB' => 'United Kingdom',
-                        'US' => 'United States',
-                        default => $country
-                    }"
-                />
-            @else
+            <flux:field>
                 <flux:label badge="Required">Country</flux:label>
                 <flux:select wire:model="country">
                     <flux:select.option value="">Select country</flux:select.option>
@@ -290,13 +288,10 @@ new class extends Component
                     <flux:select.option value="GB">United Kingdom</flux:select.option>
                     <flux:select.option value="US">United States</flux:select.option>
                 </flux:select>
-            @endif
+                <flux:error name="country" />
+            </flux:field>
 
-            <flux:error name="country" />
-        </flux:field>
-
-        @if ($accountType === '' || $country === '')
             <flux:button type="submit" variant="primary">Save</flux:button>
-        @endif
-    </form>
+        </form>
+    @endunless
 </div>
