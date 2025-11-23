@@ -51,7 +51,7 @@ new class extends Component
             $this->listing->publish();
         }
 
-        if (! $this->user->hasPayoutSettings($this->marketplace)) {
+        if ($this->user->requiresPayoutOnboarding($this->marketplace)) {
             return $this->redirect(route('on-marketplace.account.settings.payout', [$this->marketplace]));
         }
     }
@@ -79,7 +79,8 @@ new class extends Component
     }
 
     #[Computed]
-    public function user(): User {
+    public function user(): User
+    {
         return Auth::user();
     }
 }; ?>

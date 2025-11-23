@@ -121,6 +121,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Returns true if user needs payout onboarding for a marketplace.
+     */
+    public function requiresPayoutOnboarding(Marketplace $marketplace): bool
+    {
+        $setting = $this->payoutSetting($marketplace);
+
+        return ! $setting || $setting->onboarding_status !== 'completed';
+    }
+
+    /**
      * Switch the user's current organization.
      */
     public function switchOrganization(Organization $organization): void
