@@ -17,4 +17,20 @@ class PayoutSetting extends Model
     {
         return [];
     }
+
+    /**
+     * Get the user that owns the payout setting.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the marketplace that owns the payout setting.
+     */
+    public function marketplace()
+    {
+        return $this->belongsTo(Marketplace::class, 'marketplace_id');
+    }
 }
