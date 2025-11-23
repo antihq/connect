@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use App\Models\Photo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -27,20 +28,28 @@ new class extends Component
     public function savePhotos()
     {
         $this->validate();
+
         foreach ($this->newPhotos as $photo) {
-            $path = $photo->store("listings/{$this->listing->id}", 'public');
+            $path = $photo->storePublicly("listings/{$this->listing->id}", 'public');
+
             $this->listing->photos()->create(['path' => 'storage/'.$path]);
         }
+
         $this->newPhotos = [];
+
         $this->listing->refresh();
     }
 
-    public function removePhoto(\App\Models\Photo $photo)
+    public function removePhoto(Photo $photo)
     {
-        abort_unless($photo->listing->is($this->listing), 403, 'Unauthorized photo removal.');
+        abort_unless($photo->listing->is($this->listing), 403);
+
         $photoPath = str_replace('storage/', 'public/', $photo->path);
+
         Storage::delete($photoPath);
+
         $photo->delete();
+
         $this->listing->refresh();
     }
 }; ?>
