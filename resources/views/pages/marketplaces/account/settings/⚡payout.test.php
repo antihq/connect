@@ -134,14 +134,14 @@ it('can start onboarding when payout settings are configured', function () {
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
-    Livewire::actingAs($user)
-        ->test('pages::marketplaces.account.settings.payout', [
-            'marketplace' => $marketplace,
-        ])
-        ->set('accountType', 'individual')
-        ->set('country', 'US')
-        ->call('save')
-        ->assertHasNoErrors();
+    PayoutSetting::factory()->create([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -165,14 +165,14 @@ it('can mark onboarding as completed', function () {
     ]);
     StripeConnectService::shouldReceive('createAccountLink')->andReturn($fakeAccountLink);
 
-    Livewire::actingAs($user)
-        ->test('pages::marketplaces.account.settings.payout', [
-            'marketplace' => $marketplace,
-        ])
-        ->set('accountType', 'individual')
-        ->set('country', 'US')
-        ->call('save')
-        ->assertHasNoErrors();
+    PayoutSetting::factory()->create([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
@@ -221,7 +221,7 @@ it('redirects to Stripe Express dashboard after onboarding is complete', functio
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::factory()->create([
+    PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -252,7 +252,7 @@ it('fetches latest onboarding status from Stripe on mount and sets completed if 
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::factory()->create([
+    PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -280,7 +280,7 @@ it('fetches latest onboarding status from Stripe on mount and sets in_progress i
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::factory()->create([
+    PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
@@ -307,7 +307,7 @@ it('uses payout settings route as refresh and return URLs without query strings'
     $user = User::factory()->create();
     $marketplace = Marketplace::factory()->create();
 
-    $setting = PayoutSetting::factory()->create([
+    PayoutSetting::factory()->create([
         'user_id' => $user->id,
         'marketplace_id' => $marketplace->id,
         'account_type' => 'individual',
