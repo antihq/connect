@@ -3,8 +3,11 @@
 use App\Models\Listing;
 use App\Models\Marketplace;
 use App\Models\Photo;
+use App\Models\User;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -47,6 +50,10 @@ new class extends Component
         if ($this->listing->status === 'draft' && $this->listing->isPublishable()) {
             $this->listing->publish();
         }
+
+        if (! $this->user->hasPayoutSettings($this->marketplace)) {
+            return $this->redirect(route('on-marketplace.account.settings.payout', [$this->marketplace]));
+        }
     }
 
     public function removePhoto(Photo $photo)
@@ -69,6 +76,11 @@ new class extends Component
         unset($this->newPhotos[$index]);
 
         $this->newPhotos = array_values($this->newPhotos);
+    }
+
+    #[Computed]
+    public function user(): User {
+        return Auth::user();
     }
 }; ?>
 

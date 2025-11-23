@@ -137,4 +137,24 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Marketplace::class, 'marketplace_user')->withTimestamps();
     }
+
+    /**
+     * Get the user's payout setting for a marketplace.
+     */
+    public function payoutSetting(Marketplace $marketplace)
+    {
+        return MarketplacePayoutSetting::where('user_id', $this->id)
+            ->where('marketplace_id', $marketplace->id)
+            ->first();
+    }
+
+    /**
+     * Check if the user has payout settings for a marketplace.
+     */
+    public function hasPayoutSettings(Marketplace $marketplace)
+    {
+        return MarketplacePayoutSetting::where('user_id', $this->id)
+            ->where('marketplace_id', $marketplace->id)
+            ->exists();
+    }
 }
