@@ -104,17 +104,6 @@ new class extends Component
         return redirect()->away($accountLink->url);
     }
 
-    public function completeOnboarding()
-    {
-        abort_unless($this->setting?->stripe_account_id, 400);
-
-        $this->setting->update([
-            'onboarding_status' => 'completed',
-        ]);
-
-        $this->onboarding_status = 'completed';
-    }
-
     public function redirectToStripeDashboard()
     {
         abort_unless($this->setting?->stripe_account_id, 400);
