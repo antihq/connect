@@ -121,11 +121,7 @@ it('updates listing availability with exceptions', function () {
     $listing->refresh();
     expect($listing->timezone)->toBe('Europe/London');
     $actualSchedule = $listing->weeklyScheduleEntries->where('available', true)->pluck('day')->toArray();
-    fwrite(STDERR, 'actualSchedule: '.json_encode($actualSchedule)."\n");
-    fwrite(STDERR, 'newSchedule: '.json_encode($newSchedule)."\n");
-    sort($actualSchedule);
-    sort($newSchedule);
-    expect($actualSchedule)->toBe($newSchedule);
+    expect(sort($actualSchedule))->toBe(sort($newSchedule));
     $listingExceptions = $listing->availabilityExceptions()->get()->map(fn ($e) => [
         'available' => $e->available,
         'start_date' => $e->start_date->toDateString(),
