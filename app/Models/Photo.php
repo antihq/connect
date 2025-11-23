@@ -16,4 +16,12 @@ class Photo extends Model
     {
         return $this->belongsTo(Listing::class);
     }
+
+    /**
+     * Get the public URL for the photo.
+     */
+    public function url(): string
+    {
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->path);
+    }
 }

@@ -131,14 +131,14 @@ new class extends Component
 
 <flux:container class="[:where(&)]:max-w-5xl!">
     <flux:main>
-        @if (is_array($listing->photos) && count($listing->photos) > 0)
-            <img src="/{{ $listing->photos[0] }}" class="aspect-3/2 w-full rounded object-fill shadow" />
+        @if (! $listing->photos->isEmpty())
+            <img src="{{ $listing->photos->first()->url() }}" class="aspect-3/2 w-full rounded object-fill shadow" />
 
             <flux:spacer class="my-6" />
 
             <div class="grid grid-cols-6 gap-4">
                 @foreach ($listing->photos as $photo)
-                    <img src="/{{ $photo }}" class="aspect-3/2 w-full rounded object-fill shadow" />
+                    <img src="{{ $photo->url() }}" class="aspect-3/2 w-full rounded object-fill shadow" />
                 @endforeach
             </div>
         @endif
