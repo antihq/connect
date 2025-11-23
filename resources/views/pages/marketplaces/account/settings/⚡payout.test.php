@@ -80,14 +80,14 @@ it('cannot change account type or country after they are set', function () {
         'details_submitted' => false,
     ]);
 
-    Livewire::actingAs($user)
-        ->test('pages::marketplaces.account.settings.payout', [
-            'marketplace' => $marketplace,
-        ])
-        ->set('accountType', 'individual')
-        ->set('country', 'US')
-        ->call('save')
-        ->assertHasNoErrors();
+    PayoutSetting::factory()->create([
+        'user_id' => $user->id,
+        'marketplace_id' => $marketplace->id,
+        'account_type' => 'individual',
+        'country' => 'US',
+        'stripe_account_id' => 'acct_fake123',
+        'onboarding_status' => null,
+    ]);
 
     Livewire::actingAs($user)
         ->test('pages::marketplaces.account.settings.payout', [
