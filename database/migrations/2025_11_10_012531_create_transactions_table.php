@@ -19,8 +19,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->unsignedInteger('duration');
-            $table->unsignedInteger('price_per_unit'); // in cents
-            $table->unsignedInteger('total'); // in cents
+            $table->unsignedInteger('price_per_unit');
+            $table->unsignedInteger('total');
             $table->string('status')->default('pending');
             $table->timestamps();
         });
