@@ -48,11 +48,11 @@ new class extends Component
         $start = Carbon::parse($this->range['start']);
         $end = Carbon::parse($this->range['end']);
 
-        if ($end->lessThanOrEqualTo($start)) {
+        if ($end->lessThan($start)) {
             return;
         }
 
-        $days = $start->diffInDays($end);
+        $days = max(1, $start->diffInDays($end));
         $pricePerUnitCents = $this->listing->price ?? 0;
         $totalCents = $days * $pricePerUnitCents;
         $pricePerDay = $pricePerUnitCents / 100;
@@ -85,17 +85,12 @@ new class extends Component
         }
         $start = \Carbon\Carbon::parse($this->range['start']);
         $end = \Carbon\Carbon::parse($this->range['end']);
-        if ($end->lessThanOrEqualTo($start)) {
+        if ($end->lessThan($start)) {
             $this->bookingError = 'End date must be after start date.';
 
             return;
         }
-        $days = $start->diffInDays($end);
-        if ($days < 1) {
-            $this->bookingError = 'Booking must be at least one day.';
-
-            return;
-        }
+        $days = max(1, $start->diffInDays($end));
         // Check for overlapping transactions
         $overlap = $this->listing->transactions()
             ->where(function ($q) use ($start, $end) {
