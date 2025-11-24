@@ -17,18 +17,19 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         $start = $this->faker->dateTimeBetween('-1 month', 'now');
-        $nights = $this->faker->numberBetween(1, 14);
+        $duration = $this->faker->numberBetween(1, 14);
         $price = $this->faker->randomFloat(2, 50, 500);
+        $priceCents = (int) round($price * 100);
 
         return [
             'marketplace_id' => \App\Models\Marketplace::factory(),
             'listing_id' => \App\Models\Listing::factory(),
             'user_id' => \App\Models\User::factory(),
             'start_date' => $start,
-            'end_date' => (clone $start)->modify("+{$nights} days"),
-            'nights' => $nights,
-            'price_per_night' => $price,
-            'total' => $price * $nights,
+            'end_date' => (clone $start)->modify("+{$duration} days"),
+            'duration' => $duration,
+            'price_per_unit' => $priceCents,
+            'total' => $priceCents * $duration,
             'status' => 'pending',
         ];
     }

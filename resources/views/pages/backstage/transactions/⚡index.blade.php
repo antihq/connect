@@ -1,16 +1,18 @@
 <?php
 
-use Livewire\Component;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
     #[Computed]
     public function transactions()
     {
         $user = Auth::user();
         $organization = $user?->currentOrganization;
         $marketplace = $organization?->marketplace;
+
         return $marketplace
             ? $marketplace->transactions()->latest()->get()
             : collect();
@@ -32,13 +34,16 @@ new class extends Component {
             @forelse ($this->transactions as $transaction)
                 <flux:table.row :key="$transaction->id">
                     <flux:table.cell>
-    <a href="{{ route('backstage.transactions.show', $transaction) }}" class="text-blue-600 hover:underline">
-        {{ $transaction->id }}
-    </a>
-</flux:table.cell>
+                        <a
+                            href="{{ route('backstage.transactions.show', $transaction) }}"
+                            class="text-blue-600 hover:underline"
+                        >
+                            {{ $transaction->id }}
+                        </a>
+                    </flux:table.cell>
                     <flux:table.cell>{{ $transaction->listing->title ?? '-' }}</flux:table.cell>
                     <flux:table.cell>{{ $transaction->user->name ?? '-' }}</flux:table.cell>
-                    <flux:table.cell>{{ number_format($transaction->total, 2) }}</flux:table.cell>
+                    <flux:table.cell>{{ number_format($transaction->total / 100, 2) }}</flux:table.cell>
                     <flux:table.cell>{{ $transaction->created_at->format('Y-m-d') }}</flux:table.cell>
                 </flux:table.row>
             @empty

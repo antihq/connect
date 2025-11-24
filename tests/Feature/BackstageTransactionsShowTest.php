@@ -21,7 +21,7 @@ it('shows transaction details for authorized user', function () {
     ]);
     $transaction = Transaction::factory()->for($listing)->for($user)->create([
         'marketplace_id' => $marketplace->id,
-        'total' => 123.45,
+        'total' => 12345,
         'status' => 'paid',
     ]);
     $user->current_organization_id = $org->id;

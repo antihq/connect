@@ -22,15 +22,31 @@ class Transaction extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
-            'nights' => 'integer',
-            'price_per_night' => 'decimal:2',
-            'total' => 'decimal:2',
+            'duration' => 'integer',
+            'price_per_unit' => 'integer',
+            'total' => 'integer',
         ];
     }
 
     public function listing()
     {
         return $this->belongsTo(Listing::class);
+    }
+
+    /**
+     * Get the price per unit in dollars.
+     */
+    public function getPricePerUnitDollarsAttribute(): float
+    {
+        return $this->price_per_unit / 100;
+    }
+
+    /**
+     * Get the total in dollars.
+     */
+    public function getTotalDollarsAttribute(): float
+    {
+        return $this->total / 100;
     }
 
     public function user()

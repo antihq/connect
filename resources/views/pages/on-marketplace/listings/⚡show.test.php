@@ -31,9 +31,9 @@ it('allows an authenticated user to book available dates', function () {
     expect($transaction)->not->toBeNull();
     expect($transaction->start_date->toDateString())->toBe($start);
     expect($transaction->end_date->toDateString())->toBe($end);
-    expect($transaction->nights)->toBe(3);
-    expect($transaction->price_per_night)->toEqual(100.00);
-    expect($transaction->total)->toEqual(300.00);
+    expect($transaction->duration)->toBe(3);
+    expect($transaction->price_per_unit)->toEqual(10000);
+    expect($transaction->total)->toEqual(30000);
     expect($transaction->status)->toBe('pending');
 
     $activity = $transaction->activities()->where('type', 'created')->where('user_id', $user->id)->first();
@@ -72,9 +72,9 @@ it('prevents booking overlapping dates', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
-        'nights' => 3,
-        'price_per_night' => 100.00,
-        'total' => 300.00,
+        'duration' => 3,
+        'price_per_unit' => 10000,
+        'total' => 30000,
         'status' => 'pending',
     ]);
 

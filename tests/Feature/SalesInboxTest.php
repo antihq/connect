@@ -19,9 +19,9 @@ it('provider can review the customer after transaction is completed', function (
         'status' => 'completed',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
 
     Livewire::actingAs($provider)
@@ -58,9 +58,9 @@ it('provider cannot review the customer unless transaction is completed', functi
         'status' => 'completed',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     // Simulate already reviewed
     TransactionActivity::factory()->for($sale)->for($provider)->create([
@@ -84,9 +84,9 @@ it('provider can mark an accepted transaction as complete', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'accepted',
     ]);
 
@@ -115,9 +115,9 @@ it('non-provider cannot mark as complete', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'accepted',
     ]);
     $otherUser = User::factory()->create();
@@ -137,9 +137,9 @@ it('provider cannot mark as complete unless status is accepted', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'paid',
     ]);
 
@@ -158,9 +158,9 @@ it('shows only the user\'s sales in the inbox', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
     $otherListing = Listing::factory()->for($marketplace)->create();
@@ -168,9 +168,9 @@ it('shows only the user\'s sales in the inbox', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(3)->toDateString(),
         'end_date' => now()->addDays(4)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 
@@ -190,9 +190,9 @@ it('shows sale details and activity log', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
     $activity = TransactionActivity::factory()->for($sale)->for($provider)->create([
@@ -216,9 +216,9 @@ it('provider can post a message and it appears in the activity log', function ()
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 
@@ -247,9 +247,9 @@ it('non-provider cannot post a message', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
     $otherUser = User::factory()->create();
@@ -270,9 +270,9 @@ it('provider can accept a paid transaction', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'paid',
     ]);
 
@@ -301,9 +301,9 @@ it('provider can reject a paid transaction', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'paid',
     ]);
 
@@ -332,9 +332,9 @@ it('non-provider cannot accept or reject', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'paid',
     ]);
     $otherUser = User::factory()->create();
@@ -359,9 +359,9 @@ it('provider cannot accept or reject unless status is paid', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 

@@ -18,9 +18,9 @@ it('only allows the transaction owner to access the payment page', function () {
         'status' => 'pending',
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
-        'nights' => 3,
-        'price_per_night' => 100,
-        'total' => 300,
+        'duration' => 3,
+        'price_per_unit' => 10000,
+        'total' => 30000,
     ]);
 
     Livewire::actingAs($user)
@@ -43,9 +43,9 @@ it('marks the transaction as paid and redirects to confirmation', function () {
         'status' => 'pending',
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
-        'nights' => 3,
-        'price_per_night' => 100,
-        'total' => 300,
+        'duration' => 3,
+        'price_per_unit' => 10000,
+        'total' => 30000,
     ]);
 
     Livewire::actingAs($user)
@@ -73,9 +73,9 @@ it('shows the confirmation page with correct details', function () {
         'status' => 'pending',
         'start_date' => now()->addDays(2)->toDateString(),
         'end_date' => now()->addDays(5)->toDateString(),
-        'nights' => 3,
-        'price_per_night' => 100,
-        'total' => 300,
+        'duration' => 3,
+        'price_per_unit' => 10000,
+        'total' => 30000,
     ]);
 
     $marketplace = $listing->marketplace ?? \App\Models\Marketplace::factory()->create();

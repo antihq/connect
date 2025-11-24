@@ -19,11 +19,11 @@ it('shows all transactions for user\'s marketplace', function () {
     $listing = Listing::factory()->for($marketplace)->create();
     $transaction1 = Transaction::factory()->for($listing)->for($user)->create([
         'marketplace_id' => $marketplace->id,
-        'total' => 100,
+        'total' => 10000,
     ]);
     $transaction2 = Transaction::factory()->for($listing)->for($user)->create([
         'marketplace_id' => $marketplace->id,
-        'total' => 200,
+        'total' => 20000,
     ]);
     $user->current_organization_id = $org->id;
     $user->save();
@@ -42,14 +42,14 @@ it('does not show transactions from other marketplaces', function () {
     $listing = Listing::factory()->for($marketplace)->create();
     $transaction = Transaction::factory()->for($listing)->for($user)->create([
         'marketplace_id' => $marketplace->id,
-        'total' => 100,
+        'total' => 10000,
     ]);
     $otherOrg = Organization::factory()->create();
     $otherMarketplace = Marketplace::factory()->for($otherOrg)->create();
     $otherListing = Listing::factory()->for($otherMarketplace)->create();
     $otherTransaction = Transaction::factory()->for($otherListing)->for($user)->create([
         'marketplace_id' => $otherMarketplace->id,
-        'total' => 999,
+        'total' => 99900,
     ]);
     $user->current_organization_id = $org->id;
     $user->save();

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
-            $table->unsignedInteger('nights');
-            $table->decimal('price_per_night', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->unsignedInteger('duration');
+            $table->unsignedInteger('price_per_unit'); // in cents
+            $table->unsignedInteger('total'); // in cents
             $table->string('status')->default('pending');
             $table->timestamps();
         });

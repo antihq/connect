@@ -2,6 +2,7 @@
 
 use App\Models\Listing;
 use App\Models\Marketplace;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -39,21 +40,30 @@ new class extends Component
     protected function calculateBookingBreakdown(): void
     {
         $this->bookingBreakdown = null;
+
         if (! $this->range['start'] || ! $this->range['end']) {
             return;
         }
-        $start = \Carbon\Carbon::parse($this->range['start']);
-        $end = \Carbon\Carbon::parse($this->range['end']);
+
+        $start = Carbon::parse($this->range['start']);
+        $end = Carbon::parse($this->range['end']);
+
         if ($end->lessThanOrEqualTo($start)) {
             return;
         }
-        $nights = $start->diffInDays($end);
-        $pricePerNight = $this->listing->priceDollars ?? 0;
-        $total = $nights * $pricePerNight;
+
+        $days = $start->diffInDays($end);
+        $pricePerUnitCents = $this->listing->price ?? 0;
+        $totalCents = $days * $pricePerUnitCents;
+        $pricePerDay = $pricePerUnitCents / 100;
+        $total = $totalCents / 100;
+
         $this->bookingBreakdown = [
-            'nights' => $nights,
-            'price_per_night' => $pricePerNight,
+            'days' => $days,
+            'price_per_day' => $pricePerDay,
             'total' => $total,
+            'nights' => $days,
+            'price_per_night' => $pricePerDay,
         ];
     }
 
@@ -80,9 +90,9 @@ new class extends Component
 
             return;
         }
-        $nights = $start->diffInDays($end);
-        if ($nights < 1) {
-            $this->bookingError = 'Booking must be at least one night.';
+        $days = $start->diffInDays($end);
+        if ($days < 1) {
+            $this->bookingError = 'Booking must be at least one day.';
 
             return;
         }
@@ -100,16 +110,16 @@ new class extends Component
 
             return;
         }
-        $pricePerNight = $this->listing->priceDollars ?? 0;
-        $total = $nights * $pricePerNight;
+        $pricePerUnitCents = $this->listing->price ?? 0;
+        $totalCents = $days * $pricePerUnitCents;
         $transaction = $this->listing->transactions()->create([
             'marketplace_id' => $this->marketplace->id,
             'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'start_date' => $start,
             'end_date' => $end,
-            'nights' => $nights,
-            'price_per_night' => $pricePerNight,
-            'total' => $total,
+            'duration' => $days,
+            'price_per_unit' => $pricePerUnitCents,
+            'total' => $totalCents,
             'status' => 'pending',
         ]);
         $transaction->activities()->create([
@@ -202,8 +212,8 @@ new class extends Component
                     <div class="grid grid-cols-2 items-center gap-6 px-4 py-4">
                         <div>
                             <flux:text variant="strong">
-                                ${{ number_format($bookingBreakdown['price_per_night'], 2) }} x
-                                {{ $bookingBreakdown['nights'] }} days
+                                ${{ number_format($bookingBreakdown['price_per_day'], 2) }} x
+                                {{ $bookingBreakdown['days'] }} days
                             </flux:text>
                         </div>
                         <div class="text-right">

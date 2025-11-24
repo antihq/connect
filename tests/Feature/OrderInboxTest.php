@@ -20,9 +20,9 @@ it('customer can review the provider after transaction is completed', function (
         'status' => 'completed',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
 
     Livewire::actingAs($buyer)
@@ -59,9 +59,9 @@ it('customer cannot review the provider unless transaction is completed', functi
         'status' => 'pending',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
 
     Livewire::actingAs($buyer)
@@ -82,9 +82,9 @@ it('customer cannot review the provider more than once', function () {
         'status' => 'completed',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     // Simulate already reviewed
     TransactionActivity::factory()->for($order)->for($buyer)->create([
@@ -108,18 +108,18 @@ it('shows only the user\'s orders in the inbox', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
     $notMyOrder = Transaction::factory()->for($listing)->for($otherUser)->create([
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(3)->toDateString(),
         'end_date' => now()->addDays(4)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 
@@ -138,9 +138,9 @@ it('buyer can post a message and it appears in the activity log', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 
@@ -166,9 +166,9 @@ it('non-buyer cannot post a message', function () {
         'marketplace_id' => $marketplace->id,
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
         'status' => 'pending',
     ]);
 
@@ -190,9 +190,9 @@ it('customer can initiate payment for a pending order and is redirected to Strip
         'status' => 'pending',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     // Provider payout settings
     PayoutSetting::create([
@@ -224,12 +224,12 @@ it('customer cannot pay if the order is not pending', function () {
     $buyer = User::factory()->create();
     $order = Transaction::factory()->for($listing)->for($buyer)->create([
         'marketplace_id' => $marketplace->id,
-        'status' => 'paid',
+        'status' => 'completed',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     PayoutSetting::create([
         'user_id' => $provider->id,
@@ -257,9 +257,9 @@ it('customer cannot pay if they are not the buyer', function () {
         'status' => 'pending',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     PayoutSetting::create([
         'user_id' => $provider->id,
@@ -286,9 +286,9 @@ it('customer cannot pay if the provider has not set up payout settings', functio
         'status' => 'pending',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     // No payout settings for provider
 
@@ -308,9 +308,9 @@ it('handles Stripe errors gracefully when creating checkout session', function (
         'status' => 'pending',
         'start_date' => now()->addDays(1)->toDateString(),
         'end_date' => now()->addDays(2)->toDateString(),
-        'nights' => 1,
-        'price_per_night' => 100,
-        'total' => 100,
+        'duration' => 1,
+        'price_per_unit' => 10000,
+        'total' => 10000,
     ]);
     PayoutSetting::create([
         'user_id' => $provider->id,
