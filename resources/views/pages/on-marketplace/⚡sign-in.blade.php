@@ -123,14 +123,7 @@ new class extends Component
             <x-logo />
             <flux:heading level="1" size="xl" class="mt-4">Check your email</flux:heading>
             <form wire:submit="verifyCode" class="mt-8 space-y-6">
-                <flux:input
-                    type="text"
-                    wire:model="code"
-                    :label="'Enter the code sent to ' . $this->email"
-                    maxlength="6"
-                    required
-                />
-                <flux:button type="submit" variant="primary" class="w-full">Verify & Login</flux:button>
+                <flux:otp wire:model="code" :label="'Enter the code sent to ' . $this->email" length="6" submit="auto" />
             </form>
         </div>
     @endif
