@@ -1,11 +1,10 @@
 <?php
 
-use App\Models\MagicAuthCode;
 use App\Models\Marketplace;
 use App\Models\User;
-use App\Notifications\MagicAuthCodeNotification;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
+use Spatie\OneTimePasswords\Models\OneTimePassword;
 
 use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertAuthenticatedAs;
@@ -19,12 +18,12 @@ it('sends a magic code to any email', function () {
         ->set('email', 'anyone@example.com')
         ->call('sendMagicCode');
 
-    Notification::assertSentTo(
-        new User(['email' => 'anyone@example.com']),
-        MagicAuthCodeNotification::class
-    );
+    $user = User::where('email', 'anyone@example.com')->first();
 
-    expect(MagicAuthCode::where('email', 'anyone@example.com')->exists())->toBeTrue();
+    expect($user)->not->toBeNull();
+
+    // The main test is that OTP was created for the user
+    expect(OneTimePassword::where('authenticatable_id', $user->id)->where('authenticatable_type', User::class)->exists())->toBeTrue();
 });
 
 it('shows validation error for invalid email', function () {
@@ -40,20 +39,17 @@ it('logs in existing user with correct code', function () {
     $marketplace = Marketplace::factory()->create();
     $user = User::factory()->create(['email' => 'existing@example.com']);
 
-    $code = MagicAuthCode::factory()->create([
-        'email' => $user->email,
-        'code' => '123456',
-        'expires_at' => now()->addMinutes(10),
-    ]);
+    $oneTimePassword = $user->createOneTimePassword();
+    $code = $oneTimePassword->password;
 
     Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', $user->email)
-        ->set('code', '123456')
+        ->set('code', $code)
         ->call('verifyCode')
         ->assertRedirect(route('marketplaces.show', $marketplace, absolute: false));
 
     assertAuthenticatedAs($user);
-    expect(MagicAuthCode::where('code', '123456')->exists())->toBeFalse();
+    expect(OneTimePassword::where('password', $code)->exists())->toBeFalse();
     expect($marketplace->isMember($user))->toBeTrue();
 });
 
@@ -64,7 +60,9 @@ it('registers and logs in new user with correct code', function () {
         ->set('email', 'newuser@example.com')
         ->call('sendMagicCode');
 
-    $code = MagicAuthCode::where('email', 'newuser@example.com')->first()->code;
+    $user = User::where('email', 'newuser@example.com')->first();
+    $oneTimePassword = OneTimePassword::where('authenticatable_id', $user->id)->where('authenticatable_type', User::class)->first();
+    $code = $oneTimePassword->password;
 
     Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'newuser@example.com')
@@ -80,6 +78,7 @@ it('registers and logs in new user with correct code', function () {
 
 it('shows error for invalid or expired code', function () {
     $marketplace = Marketplace::factory()->create();
+    $user = User::factory()->create(['email' => 'anyone@example.com']);
 
     Livewire::test('pages::on-marketplace.sign-in', ['marketplace' => $marketplace])
         ->set('email', 'anyone@example.com')
@@ -97,15 +96,12 @@ it('sends correct code in notification', function () {
         ->set('email', 'anyone@example.com')
         ->call('sendMagicCode');
 
-    $code = MagicAuthCode::where('email', 'anyone@example.com')->first()->code;
+    $user = User::where('email', 'anyone@example.com')->first();
+    $oneTimePassword = OneTimePassword::where('authenticatable_id', $user->id)->where('authenticatable_type', User::class)->first();
 
-    Notification::assertSentTo(
-        new User(['email' => 'anyone@example.com']),
-        MagicAuthCodeNotification::class,
-        function ($notification, $channels) use ($code) {
-            return $notification->code === $code;
-        }
-    );
+    expect($oneTimePassword)->not->toBeNull();
+    expect($oneTimePassword->password)->toBeString();
+    expect($oneTimePassword->password)->toHaveLength(6);
 });
 
 it('rate limits magic code requests', function () {

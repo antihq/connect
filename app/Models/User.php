@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
+use Spatie\OneTimePasswords\Models\Concerns\HasOneTimePasswords;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use Billable, HasFactory, Notifiable;
+    use Billable, HasFactory, Notifiable, HasOneTimePasswords;
 
     public function transactions()
     {

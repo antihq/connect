@@ -1,10 +1,7 @@
 <?php
 
-use App\Models\MagicAuthCode;
 use App\Models\Marketplace;
 use App\Models\User;
-use App\Notifications\MagicAuthCodeNotification;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -29,21 +26,15 @@ new class extends Component
 
         $this->ensureIsNotRateLimited();
 
-        $code = Str::padLeft((string) random_int(0, 999999), 6, '0');
-
-        $expiresAt = now()->addMinutes(10);
-
-        MagicAuthCode::updateOrCreate(
+        $user = User::firstOrCreate(
             ['email' => $this->email],
             [
-                'code' => $code,
-                'expires_at' => $expiresAt,
+                'name' => Str::before($this->email, '@') ?: $this->email,
+                'password' => Hash::make(Str::random(32)),
             ]
         );
 
-        $user = User::firstOrNew(['email' => $this->email]);
-
-        $user->notify(new MagicAuthCodeNotification($code));
+        $user->sendOneTimePassword();
 
         $this->step = 'code';
     }
@@ -75,34 +66,29 @@ new class extends Component
             'code' => 'required|digits:6',
         ]);
 
-        $authCode = MagicAuthCode::where('email', $this->email)
-            ->where('code', $this->code)
-            ->where('expires_at', '>', now())
-            ->first();
+        $user = User::where('email', $this->email)->first();
 
-        if (! $authCode) {
+        if (! $user) {
             $this->addError('code', 'Invalid or expired code');
-
-            $this->step = 'code';
 
             return;
         }
 
-        $user = User::firstOrCreate(
-            ['email' => $this->email],
-            [
-                'name' => Str::before($this->email, '@') ?: $this->email,
-                'password' => Hash::make(Str::random(32)),
-            ]
-        );
+        $result = $user->attemptLoginUsingOneTimePassword($this->code, remember: true);
 
-        Auth::login($user, true);
+        if (! $result->isOk()) {
+            $this->addError('code', $result->validationMessage());
+
+            return;
+        }
+
+        if (request()->hasSession()) {
+            request()->session()->regenerate();
+        }
 
         if (! $this->marketplace->isMember($user)) {
             $this->marketplace->addMember($user);
         }
-
-        $authCode->delete();
 
         $this->redirectIntended(route('marketplaces.show', $this->marketplace, absolute: false), navigate: true);
     }
@@ -123,7 +109,12 @@ new class extends Component
             <x-logo />
             <flux:heading level="1" size="xl" class="mt-4">Check your email</flux:heading>
             <form wire:submit="verifyCode" class="mt-8 space-y-6">
-                <flux:otp wire:model="code" :label="'Enter the code sent to ' . $this->email" length="6" submit="auto" />
+                <flux:otp
+                    wire:model="code"
+                    :label="'Enter the code sent to ' . $this->email"
+                    length="6"
+                    submit="auto"
+                />
             </form>
         </div>
     @endif
